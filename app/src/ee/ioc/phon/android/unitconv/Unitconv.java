@@ -1,15 +1,19 @@
 package ee.ioc.phon.android.unitconv;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import java.io.InputStream;
+import java.util.List;
+
 import org.grammaticalframework.Linearizer;
 import org.grammaticalframework.PGF;
 import org.grammaticalframework.PGFBuilder;
@@ -17,18 +21,36 @@ import org.grammaticalframework.Parser;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
-public class Unitconv extends Activity {
+public class Unitconv extends AbstractRecognizerActivity {
+
+	// Set of non-standard extras that RecognizerIntentActivity supports
+	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
+
+	// Note: make sure that the grammar has been registered with the server
+	private static final String GRAMMAR = "http://net-speech-api.googlecode.com/git-history/gf/lm/UnitconvEst.jsgf";
 
 	private static final String P_LANG = "UnitconvEst";
 	private static final String L_LANG = "UnitconvApp";
 
 	private ArrayAdapter<String> mArrayAdapter;
+	private TextView mTv;
 	private PGF mPGF;
+	private final Intent mIntent = createRecognizerIntent();
+	private ImageButton speakButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		mTv = (TextView)findViewById(R.id.edittext);
+
+		speakButton = (ImageButton) findViewById(R.id.buttonMicrophone);
+
+		if (getRecognizers().size() == 0) {
+			speakButton.setEnabled(false);
+			toast(getString(R.string.errorRecognizerNotPresent));
+		}
 
 		new LoadPGFTask().execute();
 
@@ -38,9 +60,34 @@ public class Unitconv extends Activity {
 	}
 
 	public void translate(View v) {
-		TextView tv = (TextView)findViewById(R.id.edittext);
-		String input = tv.getText().toString();
+		String input = mTv.getText().toString();
 		new TranslateTask().execute(input);
+	}
+
+
+	public void recognize(View v) {
+		launchRecognizerIntent(mIntent);
+	}
+
+
+	@Override
+	protected void onSuccess(List<String> matches) {
+		if (matches.isEmpty()) {
+			toast("ERROR: Nothing was recognized.");
+		} else {
+			mTv.setText(matches.iterator().next());
+		}
+	}
+
+
+	//TODO: add more interesting extras
+	private static Intent createRecognizerIntent() {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(EXTRA_GRAMMAR_JSGF, GRAMMAR);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
+		return intent;
 	}
 
 
