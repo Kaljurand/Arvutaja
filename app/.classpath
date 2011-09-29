@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="libs/JPGF-1.0rc1.jar"/>
-	<classpathentry kind="lib" path="/home/kaarel/mywork/GIT/Unitconv/app/libs/unit-api-0.6.0.jar"/>
-	<classpathentry kind="lib" path="/home/kaarel/mywork/GIT/Unitconv/app/libs/jscience-4.3.jar"/>
+	<classpathentry kind="lib" path="libs/unit-api-0.6.0.jar"/>
+	<classpathentry kind="lib" path="libs/jscience-4.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

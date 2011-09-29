@@ -14,7 +14,6 @@
 		
 		<EditText
 			android:id="@+id/edittext"
-			android:text="kaks sada tuhat viis teist milli kraadi kraadides"
 			android:imeOptions="actionGo"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"/>
@@ -27,12 +26,12 @@
        android:layout_weight="1"/>
        
 	<LinearLayout
-		android:id="@+id/controls_tagselector"
 		android:background="@color/grey3"
 		android:padding="4dp"
 		android:layout_alignParentBottom="true"
 		android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:orientation="vertical">
+		android:layout_width="fill_parent"
+		android:orientation="vertical">
 
 		<ImageButton
 			android:id="@+id/buttonMicrophone"

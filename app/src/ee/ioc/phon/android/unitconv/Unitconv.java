@@ -7,16 +7,20 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.grammaticalframework.Linearizer;
 import org.grammaticalframework.PGF;
@@ -30,17 +34,16 @@ public class Unitconv extends AbstractRecognizerActivity {
 	// Set of non-standard extras that RecognizerIntentActivity supports
 	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
 
-	// Note: make sure that the grammar has been registered with the server
-	//private static final String GRAMMAR = "http://net-speech-api.googlecode.com/git-history/gf/lm/UnitconvEst.jsgf";
-
+	// These are the concrete languages that we expect to find in the PGF
 	private static final String P_LANG = "UnitconvEst";
 	private static final String L_LANG = "UnitconvApp";
 
-	private ArrayAdapter<String> mArrayAdapter;
+	private ListView mListView;
 	private EditText mEt;
 	private PGF mPGF;
 	private Intent mIntent;
 	private ImageButton speakButton;
+	private Context mContext;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,9 +61,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		new LoadPGFTask().execute();
 
-		mArrayAdapter = new ArrayAdapter<String>(this, R.layout.listitem);
-		ListView list = (ListView)findViewById(R.id.list);
-		list.setAdapter(mArrayAdapter);
+		mListView = (ListView)findViewById(R.id.list);
 
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -72,6 +73,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		});
 
 		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
+		mContext = this;
 	}
 
 
@@ -105,11 +107,10 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 	private class LoadPGFTask extends AsyncTask<Void, Void, PGF> {
 
-		private ProgressDialog progress;
+		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			this.progress =
-				ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressLoadingGrammar), true);
+			mProgress = ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressLoadingGrammar), true);
 		}
 
 		protected PGF doInBackground(Void... a) {
@@ -125,14 +126,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		protected void onPostExecute(PGF result) {
 			mPGF = result;
-			if (this.progress != null) {
-				this.progress.dismiss();
+			if (mProgress != null) {
+				mProgress.dismiss();
 			}
 		}
 	}
 
 
-	private class TranslateTask extends AsyncTask<String, Void, String[]> {
+	private class TranslateTask extends AsyncTask<String, Void, List<Map<String, String>>> {
 
 		private ProgressDialog mProgress;
 
@@ -140,7 +141,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			mProgress = ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressExecuting), true);
 		}
 
-		protected String[] doInBackground(String... s) {
+		protected List<Map<String, String>> doInBackground(String... s) {
 			try {
 				// Creating a Parser object for the P_LANG concrete grammar
 				Parser mParser = new Parser(mPGF, P_LANG);
@@ -151,7 +152,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 				Tree[] trees = (Tree[]) mParseState.getTrees();
 
 				int numberOfTrees = trees.length;
-				String[] translations = new String[numberOfTrees];
+				List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
 
 				if (numberOfTrees == 0) {
 				} else {
@@ -159,12 +160,22 @@ public class Unitconv extends AbstractRecognizerActivity {
 					// Linearizing all the trees (i.e. the ambiguity)
 					Linearizer mLinearizer = new Linearizer(mPGF, L_LANG);
 					for (int i = 0; i < numberOfTrees; i++) {
+						Map<String, String> map = new HashMap<String, String>();
+						Converter conv = null;
 						try {
 							String t = mLinearizer.linearizeString(trees[i]);
-							translations[i] = Converter.convert(t) + " [" + t + "]";
-						} catch (java.lang.Exception e) {
-							translations[i] = getString(R.string.errorLinearizer);
+							conv = new Converter(t);
+							map.put("in", conv.getIn());
+							map.put("out", conv.getOut());
+						} catch (Exception e) {
+							if (conv == null) {
+								map.put("in", e.getMessage());
+							} else {
+								map.put("in", conv.getIn() + " : " + e.getMessage());
+							}
+							map.put("out", getString(R.string.error));
 						}
+						translations.add(map);
 					}
 				}
 				return translations;
@@ -174,17 +185,22 @@ public class Unitconv extends AbstractRecognizerActivity {
 		}
 
 
-		protected void onPostExecute(String[] result) {
+		protected void onPostExecute(List<Map<String, String>> result) {
 			if (mProgress != null) {
 				mProgress.dismiss();
 			}
-			if (result.length == 0) {
+			if (result.isEmpty()) {
 				toast(getString(R.string.warningParserInputNotSupported));
 			} else {
-				mArrayAdapter.clear();
-				for (String sentence : result) {
-					mArrayAdapter.add(sentence);
-				}
+				mListView.setAdapter(new SimpleAdapter(
+						mContext,
+						result,
+						R.layout.list_item_unitconv_result,
+						new String[] { "in", "out" },
+						new int[] { R.id.list_item_in, R.id.list_item_out }
+				)
+				);
+
 			}
 		}
 	}

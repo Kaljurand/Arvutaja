@@ -17,5 +17,5 @@
 
 	<string name="errorRecognizerNotPresent">There exist no activity that provides speech recognition service.</string>
 
-	<string name="errorLinearizer">[Linearizer error]</string>
+	<string name="error">ERROR</string>
 </resources>
