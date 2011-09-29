@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Unitconv</string>
+	<string name="defaultGrammar" translatable="false">http://net-speech-api.googlecode.com/git-history/gf/lm/UnitconvEst.jsgf</string>
+
+    <string name="labelApp">Unitconv</string>
     
+	<string name="progressLoadingGrammar">Please wait. Loading grammar...</string>
+	<string name="progressExecuting">Please wait. Parsing, linearizing, converting...</string>
+	
+	<string name="warningParserInputNotSupported">Input sentence not supported</string>
+
 	<string name="errorResultAudioError">ERROR: audio recording failed</string>
 	<string name="errorResultNetworkError">ERROR: something is wrong with the network</string>
 	<string name="errorResultClientError">ERROR: general client error</string>
 	<string name="errorResultServerError">ERROR: recognizer server error</string>
 	<string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
-	
+
 	<string name="errorRecognizerNotPresent">There exist no activity that provides speech recognition service.</string>
+
+	<string name="errorLinearizer">[Linearizer error]</string>
 </resources>

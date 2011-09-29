@@ -2,11 +2,15 @@ package ee.ioc.phon.android.unitconv;
 
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,15 +31,15 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
 
 	// Note: make sure that the grammar has been registered with the server
-	private static final String GRAMMAR = "http://net-speech-api.googlecode.com/git-history/gf/lm/UnitconvEst.jsgf";
+	//private static final String GRAMMAR = "http://net-speech-api.googlecode.com/git-history/gf/lm/UnitconvEst.jsgf";
 
 	private static final String P_LANG = "UnitconvEst";
 	private static final String L_LANG = "UnitconvApp";
 
 	private ArrayAdapter<String> mArrayAdapter;
-	private TextView mTv;
+	private EditText mEt;
 	private PGF mPGF;
-	private final Intent mIntent = createRecognizerIntent();
+	private Intent mIntent;
 	private ImageButton speakButton;
 
 	@Override
@@ -43,7 +47,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mTv = (TextView)findViewById(R.id.edittext);
+		mEt = (EditText) findViewById(R.id.edittext);
 
 		speakButton = (ImageButton) findViewById(R.id.buttonMicrophone);
 
@@ -57,11 +61,17 @@ public class Unitconv extends AbstractRecognizerActivity {
 		mArrayAdapter = new ArrayAdapter<String>(this, R.layout.listitem);
 		ListView list = (ListView)findViewById(R.id.list);
 		list.setAdapter(mArrayAdapter);
-	}
 
-	public void translate(View v) {
-		String input = mTv.getText().toString();
-		new TranslateTask().execute(input);
+		mEt.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_GO) {
+					new TranslateTask().execute(mEt.getText().toString());
+				}
+				return true;
+			}
+		});
+
+		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
 	}
 
 
@@ -73,20 +83,22 @@ public class Unitconv extends AbstractRecognizerActivity {
 	@Override
 	protected void onSuccess(List<String> matches) {
 		if (matches.isEmpty()) {
-			toast("ERROR: Nothing was recognized.");
+			toast("ERROR: empty list was returned not an error message.");
 		} else {
-			mTv.setText(matches.iterator().next());
+			// TODO: support multiple results
+			String result = matches.iterator().next();
+			mEt.setText(result);
+			new TranslateTask().execute(result);
 		}
 	}
 
 
-	//TODO: add more interesting extras
-	private static Intent createRecognizerIntent() {
+	private static Intent createRecognizerIntent(String grammar) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(EXTRA_GRAMMAR_JSGF, GRAMMAR);
+		intent.putExtra(EXTRA_GRAMMAR_JSGF, grammar);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say e.g.: kaks meetrit jalgades");
 		return intent;
 	}
 
@@ -97,7 +109,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		protected void onPreExecute() {
 			this.progress =
-				ProgressDialog.show(Unitconv.this, "Translate", "Loading grammar, please wait", true);
+				ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressLoadingGrammar), true);
 		}
 
 		protected PGF doInBackground(Void... a) {
@@ -122,11 +134,10 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 	private class TranslateTask extends AsyncTask<String, Void, String[]> {
 
-		private ProgressDialog progress;
+		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			this.progress =
-				ProgressDialog.show(Unitconv.this, "Translate", "Parsing, please wait", true);
+			mProgress = ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressExecuting), true);
 		}
 
 		protected String[] doInBackground(String... s) {
@@ -139,16 +150,21 @@ public class Unitconv extends AbstractRecognizerActivity {
 				ParseState mParseState = mParser.parse(tokens);
 				Tree[] trees = (Tree[]) mParseState.getTrees();
 
-				String[] translations = new String[trees.length];
-				// Creating a Linearizer object for the L_LANG concrete grammar
-				Linearizer mLinearizer = new Linearizer(mPGF, L_LANG);
-				// Linearizing all the trees (i.e. the ambiguity)
-				for (int i = 0 ; i < trees.length ; i++) {
-					try {
-						String t = mLinearizer.linearizeString(trees[i]);
-						translations[i] = t;
-					} catch (java.lang.Exception e) {
-						translations[i] = "/!\\ Linearization error";
+				int numberOfTrees = trees.length;
+				String[] translations = new String[numberOfTrees];
+
+				if (numberOfTrees == 0) {
+				} else {
+					// Creating a Linearizer object for the L_LANG concrete grammar
+					// Linearizing all the trees (i.e. the ambiguity)
+					Linearizer mLinearizer = new Linearizer(mPGF, L_LANG);
+					for (int i = 0; i < numberOfTrees; i++) {
+						try {
+							String t = mLinearizer.linearizeString(trees[i]);
+							translations[i] = Converter.convert(t) + " [" + t + "]";
+						} catch (java.lang.Exception e) {
+							translations[i] = getString(R.string.errorLinearizer);
+						}
 					}
 				}
 				return translations;
@@ -157,12 +173,19 @@ public class Unitconv extends AbstractRecognizerActivity {
 			}
 		}
 
+
 		protected void onPostExecute(String[] result) {
-			mArrayAdapter.clear();
-			for (String sentence : result)
-				mArrayAdapter.add(sentence);
-			if (this.progress != null)
-				this.progress.dismiss();
+			if (mProgress != null) {
+				mProgress.dismiss();
+			}
+			if (result.length == 0) {
+				toast(getString(R.string.warningParserInputNotSupported));
+			} else {
+				mArrayAdapter.clear();
+				for (String sentence : result) {
+					mArrayAdapter.add(sentence);
+				}
+			}
 		}
 	}
 }
