@@ -5,10 +5,10 @@
 
 		<TextView
 			android:id="@+id/list_item_out"
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:typeface="monospace"
-			android:textSize="25sp"
+			android:textSize="24sp"
 			android:singleLine="true"
 			android:text="131,532.12252" />
 
@@ -17,12 +17,23 @@
 			android:layout_below="@+id/list_item_out"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:typeface="monospace"
+			android:textColor="@color/grey2"
+			android:textSize="16sp"
+			android:text="12 m in ft" />
+			
+		<TextView
+			android:id="@+id/list_item_message"
+			android:layout_below="@+id/list_item_in"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentBottom="true"
 			android:layout_alignWithParentIfMissing="true"
 			android:typeface="monospace"
-			android:textColor="@color/grey2"
-			android:textSize="15sp"
-			android:text="12 m in ft" />
+			android:textColor="@color/red"
+			android:textSize="14sp"
+			android:text="Some error occured: java.org.parse.Text ERROR" />
 
 </RelativeLayout>

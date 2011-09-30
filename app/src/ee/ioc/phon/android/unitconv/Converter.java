@@ -22,8 +22,8 @@ public class Converter {
 		String[] splits = str.split(" in ");
 		String number = splits[0].replaceFirst("[^0-9\\. ]+", "").replaceAll("[^0-9\\.]", "");
 		mNumber = Double.parseDouble(number);
-		mIn = splits[0].replaceFirst("^[0-9\\. ]+", "").trim();
-		mOut = splits[1].trim();
+		mIn = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
+		mOut = splits[1].replaceAll("\\s+", "");
 	}
 
 

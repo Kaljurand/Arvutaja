@@ -15,6 +15,7 @@
 		<EditText
 			android:id="@+id/edittext"
 			android:imeOptions="actionGo"
+			android:layout_margin="4dp"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"/>
 	</LinearLayout>

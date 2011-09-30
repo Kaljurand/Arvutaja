@@ -4,15 +4,19 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -48,6 +52,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
 		mEt = (EditText) findViewById(R.id.edittext);
@@ -61,7 +66,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		new LoadPGFTask().execute();
 
-		mListView = (ListView)findViewById(R.id.list);
+		mListView = (ListView) findViewById(R.id.list);
 
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -69,6 +74,19 @@ public class Unitconv extends AbstractRecognizerActivity {
 					new TranslateTask().execute(mEt.getText().toString());
 				}
 				return true;
+			}
+		});
+
+		mListView.setClickable(true);
+
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Object o = mListView.getItemAtPosition(position);
+				// TODO: Why does Eclipse underline it?
+				Map<String, String> map = (Map<String, String>) o;
+				Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
+				search.putExtra(SearchManager.QUERY, map.get("in"));
+				startActivity(search);
 			}
 		});
 
@@ -171,7 +189,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 							if (conv == null) {
 								map.put("in", e.getMessage());
 							} else {
-								map.put("in", conv.getIn() + " : " + e.getMessage());
+								map.put("in", conv.getIn());
+								map.put("message", e.getMessage());
 							}
 							map.put("out", getString(R.string.error));
 						}
@@ -196,8 +215,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 						mContext,
 						result,
 						R.layout.list_item_unitconv_result,
-						new String[] { "in", "out" },
-						new int[] { R.id.list_item_in, R.id.list_item_out }
+						new String[] { "in", "out", "message" },
+						new int[] { R.id.list_item_in, R.id.list_item_out, R.id.list_item_message}
 				)
 				);
 
