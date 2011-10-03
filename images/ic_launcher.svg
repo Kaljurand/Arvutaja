@@ -187,7 +187,7 @@
        x2="5.5"
        y2="-138"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.1791045,0,0,1.0305012,-24.985074,397.20915)" />
+       gradientTransform="matrix(1.2263682,0,0,1.0697169,-17.245025,402.62092)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3850"
@@ -196,7 +196,8 @@
        y1="257"
        x2="492.5"
        y2="257"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0229351,0,0,1.0273795,-518.34848,-9.5365548)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -206,7 +207,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="275.76316"
+     inkscape:cx="138.26316"
      inkscape:cy="230.83871"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -260,14 +261,14 @@
      style="display:inline"
      sodipodi:insensitive="true">
     <rect
-       style="fill:url(#linearGradient3856);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:27;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4231)"
+       style="fill:url(#linearGradient3856);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:27.67918587;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4231)"
        id="rect6076"
-       width="450"
-       height="450"
-       x="30"
-       y="32"
-       ry="31.39535"
-       transform="matrix(0,-1,1,0,-2,512)" />
+       width="460.32083"
+       height="462.32083"
+       x="-487.6604"
+       y="23.33959"
+       ry="32.25494"
+       transform="matrix(0,-1,1,0,0,0)" />
   </g>
   <g
      inkscape:label="Pen and mike"
@@ -277,29 +278,30 @@
      style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:129.41081238px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#003399;fill-opacity:1;stroke:#000000;stroke-width:2.39805746;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans"
-       x="116.73568"
-       y="504.36438"
+       style="font-size:160.59667969px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#003399;fill-opacity:1;stroke:#000000;stroke-width:2.97595;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+       x="92.792"
+       y="627.65765"
        id="text3032"
        sodipodi:linespacing="125%"
-       transform="scale(0.65004299,1.5383598)"><tspan
+       transform="scale(0.80912119,1.2359088)"><tspan
          sodipodi:role="line"
-         x="116.73568"
-         y="504.36438"
+         x="92.792"
+         y="627.65765"
          id="tspan3036"
-         style="fill:#003399;fill-opacity:1;stroke:#000000;stroke-width:2.39805746;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">7 jardi =</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#003399;fill-opacity:1;stroke:#000000;stroke-width:2.97595;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">5 jardi</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:130.16270447px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#cc0000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="82.59771"
-       y="818.17413"
+       style="font-size:116.73674774px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#cc0000;fill-opacity:1;stroke:#000000;stroke-width:1.35763443;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+       x="99.433105"
+       y="720.52148"
        id="text3814"
        sodipodi:linespacing="125%"
-       transform="scale(0.86872664,1.1511101)"><tspan
+       transform="scale(0.75849867,1.3183939)"><tspan
          sodipodi:role="line"
          id="tspan3816"
-         x="82.59771"
-         y="818.17413">? jalga</tspan></text>
+         x="99.433105"
+         y="720.52148"
+         style="stroke-width:1.35763443">jalgades?</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -322,11 +324,11 @@
     <rect
        style="opacity:0.2;fill:url(#linearGradient3931);fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="rect3881"
-       width="474"
-       height="473"
-       x="-492.5"
-       y="18.5"
-       ry="39.618595"
+       width="493"
+       height="491"
+       x="-503.5"
+       y="9.5"
+       ry="41.126278"
        transform="matrix(0,-1,1,0,0,0)" />
   </g>
 </svg>

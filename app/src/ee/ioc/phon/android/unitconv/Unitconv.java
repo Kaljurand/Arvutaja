@@ -128,7 +128,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			mProgress = ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressLoadingGrammar), true);
+			mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressLoadingGrammar), true);
 		}
 
 		protected PGF doInBackground(Void... a) {
@@ -156,7 +156,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			mProgress = ProgressDialog.show(Unitconv.this, getString(R.string.labelApp), getString(R.string.progressExecuting), true);
+			mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressExecuting), true);
 		}
 
 		protected List<Map<String, String>> doInBackground(String... s) {
