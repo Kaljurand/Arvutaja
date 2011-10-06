@@ -74,8 +74,13 @@ public abstract class AbstractRecognizerActivity extends Activity {
 
 
 	protected List<ResolveInfo> getRecognizers() {
+		return getRecognizers(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH));
+	}
+
+
+	protected List<ResolveInfo> getRecognizers(Intent intent) {
 		PackageManager pm = getPackageManager();
-		List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
 		return activities;
 	}
 

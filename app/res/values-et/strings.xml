@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="labelApp">Konverter</string>
+	<string name="labelApp">Arvutaja</string>
 
 	<string name="progressLoadingGrammar">Oodake palun. Laadin grammatikafaili...</string>
-	<string name="progressExecuting">Oodake palun. Parsin, lineariseerin, konverdin...</string>
+	<string name="progressExecuting">Oodake palun. Parsin, lineariseerin, arvutan...</string>
 	<string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
 	<string name="error">VIGA</string>
-	
-	<string name="errorRecognizerNotPresent">Telefonis puudub kõnetuvastusteenust pakkuv rakendus</string>
 
 	<string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
 	<string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
@@ -15,4 +13,5 @@
 	<string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
 	<string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>	
 
+	<string name="errorRecognizerNotPresent">VIGA: Telefonis puudub kõnetuvastusteenus: %1$s</string>
 </resources>

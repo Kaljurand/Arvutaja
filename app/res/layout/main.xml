@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+Note: do not use android:onClick here, because ProGuard might remove
+the methods referenced this way.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
@@ -37,7 +41,6 @@
 		<ImageButton
 			android:id="@+id/buttonMicrophone"
 			android:src="@drawable/ic_btn_speak_now"
-			android:onClick="recognize"
 			android:padding="5dp"
 			android:gravity="center"
 			android:layout_margin="4dp"

@@ -17,6 +17,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -33,20 +34,21 @@ import org.grammaticalframework.Parser;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
+
 public class Unitconv extends AbstractRecognizerActivity {
 
 	// Set of non-standard extras that RecognizerIntentActivity supports
 	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
 
 	// These are the concrete languages that we expect to find in the PGF
-	private static final String P_LANG = "UnitconvEst";
-	private static final String L_LANG = "UnitconvApp";
+	private static final String P_LANG = "CalcEst";
+	private static final String L_LANG = "CalcApp";
 
 	private ListView mListView;
 	private EditText mEt;
 	private PGF mPGF;
 	private Intent mIntent;
-	private ImageButton speakButton;
+	private ImageButton mBMicrophone;
 	private Context mContext;
 
 	@Override
@@ -57,11 +59,17 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		mEt = (EditText) findViewById(R.id.edittext);
 
-		speakButton = (ImageButton) findViewById(R.id.buttonMicrophone);
+		mBMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
 
-		if (getRecognizers().size() == 0) {
-			speakButton.setEnabled(false);
-			toast(getString(R.string.errorRecognizerNotPresent));
+		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
+		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
+
+		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
+		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
+
+		if (getRecognizers(mIntent).size() == 0) {
+			mBMicrophone.setEnabled(false);
+			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
 		}
 
 		new LoadPGFTask().execute();
@@ -74,6 +82,12 @@ public class Unitconv extends AbstractRecognizerActivity {
 					new TranslateTask().execute(mEt.getText().toString());
 				}
 				return true;
+			}
+		});
+
+		mBMicrophone.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				launchRecognizerIntent(mIntent);
 			}
 		});
 
@@ -90,13 +104,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			}
 		});
 
-		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
 		mContext = this;
-	}
-
-
-	public void recognize(View v) {
-		launchRecognizerIntent(mIntent);
 	}
 
 
@@ -132,8 +140,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		}
 
 		protected PGF doInBackground(Void... a) {
-			int pgf_res = R.raw.unitconv;
-			InputStream is = getResources().openRawResource(pgf_res);
+			InputStream is = getResources().openRawResource(R.raw.grammar);
 			try {
 				PGF pgf = PGFBuilder.fromInputStream(is, new String[] {P_LANG, L_LANG});
 				return pgf;
