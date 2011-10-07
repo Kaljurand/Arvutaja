@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="defaultGrammar" translatable="false">http://net-speech-api.googlecode.com/git-history/gf/lm/CalcEst.jsgf</string>
+	<string name="defaultGrammar" translatable="false">http://net-speech-api.googlecode.com/git-history/gf/lm/ActionEst.jsgf</string>
 
 	<string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.recognizerintent</string>
 	<string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.recognizerintent.RecognizerIntentActivity</string>

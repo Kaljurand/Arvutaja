@@ -20,6 +20,7 @@ import javax.measure.unit.Unit;
 public class Converter {
 
 	public enum ExprType {
+		MAP,
 		UNITCONV,
 		EXPR
 	};
@@ -40,6 +41,10 @@ public class Converter {
 			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
 			mOut = splits[1].replaceAll("\\s+", "");
 			mPrettyIn =  mNumber + " " + mIn + " IN " + mOut;
+		} else if (expr.contains(",")) {
+			mExprType = ExprType.MAP;
+			// Remove space between digits
+			mPrettyIn = expr.replaceAll("(\\d)\\s+", "$1");
 		} else {
 			mExprType = ExprType.EXPR;
 			mPrettyIn = expr.replaceAll("\\s+", "");
@@ -55,11 +60,22 @@ public class Converter {
 	}
 
 
+	public String getView() {
+		switch (mExprType) {
+		case MAP:
+			return "http://maps.google.com/maps?q=" + mPrettyIn;
+		}
+		return null;
+	}
+
+
 	/**
 	 * @return evaluation of the expression that was given to the constructor
 	 */
 	public String getOut() {
 		switch (mExprType) {
+		case MAP:
+			return "Click to see the map";
 		case UNITCONV:
 			return "" + Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber);
 		case EXPR:

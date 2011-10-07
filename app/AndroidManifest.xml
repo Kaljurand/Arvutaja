@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ee.ioc.phon.android.unitconv"
-	android:versionCode="30"
-	android:versionName="0.0.30">
+	android:versionCode="35"
+	android:versionName="0.0.35">
 	<application
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/labelApp">

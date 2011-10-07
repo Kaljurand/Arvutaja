@@ -1,5 +1,6 @@
 package ee.ioc.phon.android.unitconv;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.KeyEvent;
@@ -41,8 +42,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
 
 	// These are the concrete languages that we expect to find in the PGF
-	private static final String P_LANG = "CalcEst";
-	private static final String L_LANG = "CalcApp";
+	private static final String P_LANG = "ActionEst";
+	private static final String L_LANG = "ActionApp";
 
 	private ListView mListView;
 	private EditText mEt;
@@ -98,9 +99,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 				Object o = mListView.getItemAtPosition(position);
 				// TODO: Why does Eclipse underline it?
 				Map<String, String> map = (Map<String, String>) o;
-				Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
-				search.putExtra(SearchManager.QUERY, map.get("in"));
-				startActivity(search);
+				String actionView = map.get("view");
+				if (actionView != null && actionView.startsWith("http://")) {
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(actionView)));
+				} else {
+					Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
+					search.putExtra(SearchManager.QUERY, map.get("in"));
+					startActivity(search);
+				}
 			}
 		});
 
@@ -192,6 +198,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 							conv = new Converter(t);
 							map.put("in", conv.getIn());
 							map.put("out", conv.getOut());
+							map.put("view", conv.getView());
 						} catch (Exception e) {
 							if (conv == null) {
 								map.put("in", e.getMessage());
@@ -222,8 +229,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 						mContext,
 						result,
 						R.layout.list_item_unitconv_result,
-						new String[] { "in", "out", "message" },
-						new int[] { R.id.list_item_in, R.id.list_item_out, R.id.list_item_message}
+						new String[] { "in", "out", "message", "view" },
+						new int[] { R.id.list_item_in, R.id.list_item_out, R.id.list_item_message, R.id.list_item_view }
 				)
 				);
 

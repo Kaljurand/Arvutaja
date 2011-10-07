@@ -26,12 +26,22 @@
 			android:layout_below="@+id/list_item_in"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentBottom="true"
-			android:layout_alignWithParentIfMissing="true"
 			android:typeface="monospace"
 			android:textColor="@color/red"
 			android:textSize="14sp"
 			android:text="Some error occured: java.org.parse.Text ERROR" />
+
+		<TextView
+			android:id="@+id/list_item_view"
+			android:layout_below="@+id/list_item_message"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentBottom="true"
+			android:layout_alignWithParentIfMissing="true"
+			android:typeface="monospace"
+			android:textColor="@color/blue"
+			android:textSize="14sp"
+			android:text="http://blah.blah.com" />
 
 </RelativeLayout>
