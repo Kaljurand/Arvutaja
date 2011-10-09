@@ -1,7 +1,7 @@
-Unitconv
-========
+Calc
+====
 
-Yet another Android unit conversion app.
+Yet another Android unit conversion and arithmetical expression evaluator app.
 
 _Work in progress_
 
@@ -24,19 +24,21 @@ Background
 Other
 -----
 
-### Building PGF
+### Getting the PGF grammar file
 
-The PGF file is not checked in. To compile the app you have to build the PGF and
-copy it into the app's `res/raw/` directory. The relevant GF-files are currently
-part of the net-speech-api project's gf-branch (http://net-speech-api.googlecode.com).
+The PGF file is not checked in. To compile the app you have to first get the PGF and
+copy it into the app's `res/raw/` directory. The grammars are developed by a separate
+project (http://github.com/Kaljurand/Grammars/), and pre-compiled grammars have been
+made available at http://kaljurand.github.com/Grammars/. So updating to the latest PGF
+(before compiling) is as simple as:
 
-    gf -make -s -optimize-pgf -mk-index --path ../lib/:../Numerals/ Unitconv???.gf
-    mv Unitconv.pgf ${APP}/res/raw/unitconv.pgf
+   curl http://kaljurand.github.com/Grammars/grammars/pgf/Calc.pgf > ${APP}/res/raw/grammar.pgf
 
 
 Tests
 -----
 
   * kaks sada tuhat viis teist milli kraadi kraadides
-  * kaks minutit sekundites (2 readings, 2nd currently gets a Java parse error)
+  * kaks minutit sekundites (2 readings)
   * kaks hektarit ruut kilo meetrites
+  * Pii korda miinus kaks jagatud pool teist

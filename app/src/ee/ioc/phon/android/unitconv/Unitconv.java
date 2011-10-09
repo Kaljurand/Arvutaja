@@ -41,9 +41,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 	// Set of non-standard extras that RecognizerIntentActivity supports
 	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
 
-	// These are the concrete languages that we expect to find in the PGF
-	private static final String P_LANG = "ActionEst";
-	private static final String L_LANG = "ActionApp";
+	private String mLangParse;
+	private String mLangLinearize;
 
 	private ListView mListView;
 	private EditText mEt;
@@ -64,6 +63,9 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
+
+		mLangParse = getString(R.string.nameLangParse);
+		mLangLinearize = getString(R.string.nameLangLinearize);
 
 		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
 		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
@@ -148,7 +150,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		protected PGF doInBackground(Void... a) {
 			InputStream is = getResources().openRawResource(R.raw.grammar);
 			try {
-				PGF pgf = PGFBuilder.fromInputStream(is, new String[] {P_LANG, L_LANG});
+				PGF pgf = PGFBuilder.fromInputStream(is, new String[] {mLangParse, mLangLinearize});
 				return pgf;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -175,7 +177,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		protected List<Map<String, String>> doInBackground(String... s) {
 			try {
 				// Creating a Parser object for the P_LANG concrete grammar
-				Parser mParser = new Parser(mPGF, P_LANG);
+				Parser mParser = new Parser(mPGF, mLangParse);
 				// Simple tokenization
 				String[] tokens = s[0].split(" ");
 				// Parsing the tokens
@@ -189,7 +191,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 				} else {
 					// Creating a Linearizer object for the L_LANG concrete grammar
 					// Linearizing all the trees (i.e. the ambiguity)
-					Linearizer mLinearizer = new Linearizer(mPGF, L_LANG);
+					Linearizer mLinearizer = new Linearizer(mPGF, mLangLinearize);
 					for (int i = 0; i < numberOfTrees; i++) {
 						Map<String, String> map = new HashMap<String, String>();
 						Converter conv = null;
