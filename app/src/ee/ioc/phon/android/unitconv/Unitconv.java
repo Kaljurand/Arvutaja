@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
@@ -21,7 +24,10 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +45,10 @@ import org.grammaticalframework.Trees.Absyn.Tree;
 public class Unitconv extends AbstractRecognizerActivity {
 
 	// Set of non-standard extras that RecognizerIntentActivity supports
-	public static final String EXTRA_GRAMMAR_JSGF = "EXTRA_GRAMMAR_JSGF";
+	public static final String EXTRA_GRAMMAR_URL = "EXTRA_GRAMMAR_URL";
+	public static final String EXTRA_GRAMMAR_LANG = "EXTRA_GRAMMAR_LANG";
+
+	private SharedPreferences mPrefs;
 
 	private String mLangParse;
 	private String mLangLinearize;
@@ -51,11 +60,16 @@ public class Unitconv extends AbstractRecognizerActivity {
 	private ImageButton mBMicrophone;
 	private Context mContext;
 
+	private boolean mUseInternalTranslator = true;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", true);
 
 		mEt = (EditText) findViewById(R.id.edittext);
 
@@ -67,7 +81,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		mLangParse = getString(R.string.nameLangParse);
 		mLangLinearize = getString(R.string.nameLangLinearize);
 
-		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar));
+		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), mUseInternalTranslator);
 		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
 		if (getRecognizers(mIntent).size() == 0) {
@@ -75,14 +89,18 @@ public class Unitconv extends AbstractRecognizerActivity {
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
 		}
 
-		new LoadPGFTask().execute();
+		if (mUseInternalTranslator) {
+			new LoadPGFTask().execute();
+		}
 
 		mListView = (ListView) findViewById(R.id.list);
 
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_GO) {
-					new TranslateTask().execute(mEt.getText().toString());
+					List<String> inputs = new ArrayList<String>();
+					inputs.add(mEt.getText().toString());
+					new TranslateTask().execute(inputs);
 				}
 				return true;
 			}
@@ -117,23 +135,52 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 
 	@Override
-	protected void onSuccess(List<String> matches) {
-		if (matches.isEmpty()) {
-			toast("ERROR: empty list was returned not an error message.");
-		} else {
-			// TODO: support multiple results
-			String result = matches.iterator().next();
-			mEt.setText(result);
-			new TranslateTask().execute(result);
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+
+		case R.id.menuSettings:
+			startActivity(new Intent(this, Preferences.class));
+			return true;
+			/*
+		case R.id.menuAbout:
+			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+			 */
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
 
-	private static Intent createRecognizerIntent(String grammar) {
+	@Override
+	protected void onSuccess(List<String> matches) {
+		if (matches.isEmpty()) {
+			toast("ERROR: empty list was returned not an error message.");
+		} else {
+			String result = matches.iterator().next();
+			mEt.setText(result);
+			new TranslateTask().execute(matches);
+		}
+	}
+
+
+	private static Intent createRecognizerIntent(String grammar, boolean useInternalTranslator) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(EXTRA_GRAMMAR_JSGF, grammar);
+		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
+		if (! useInternalTranslator) {
+			intent.putExtra(EXTRA_GRAMMAR_LANG, "App");
+		}
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		// we shouldn't specify this
+		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 100);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say e.g.: kaks meetrit jalgades");
 		return intent;
 	}
@@ -166,20 +213,30 @@ public class Unitconv extends AbstractRecognizerActivity {
 	}
 
 
-	private class TranslateTask extends AsyncTask<String, Void, List<Map<String, String>>> {
+	private class TranslateTask extends AsyncTask<List<String>, Void, List<Map<String, String>>> {
 
 		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressExecuting), true);
+			if (mUseInternalTranslator) {
+				mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressExecuting), true);
+			}
 		}
 
-		protected List<Map<String, String>> doInBackground(String... s) {
+		protected List<Map<String, String>> doInBackground(List<String>... s) {
+			if (mUseInternalTranslator) {
+				return getResultsWithInternalTranslator(s[0].get(0));
+			}
+			return getResultsWithExternalTranslator(s);
+		}
+
+
+		private List<Map<String, String>> getResultsWithInternalTranslator(String s) {
 			try {
 				// Creating a Parser object for the P_LANG concrete grammar
 				Parser mParser = new Parser(mPGF, mLangParse);
 				// Simple tokenization
-				String[] tokens = s[0].split(" ");
+				String[] tokens = s.split(" ");
 				// Parsing the tokens
 				ParseState mParseState = mParser.parse(tokens);
 				Tree[] trees = (Tree[]) mParseState.getTrees();
@@ -212,6 +269,35 @@ public class Unitconv extends AbstractRecognizerActivity {
 						}
 						translations.add(map);
 					}
+				}
+				return translations;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+
+		private List<Map<String, String>> getResultsWithExternalTranslator(List<String>... s) {
+			try {
+				List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
+				for (String lin : s[0]) {
+					Map<String, String> map = new HashMap<String, String>();
+					Converter conv = null;
+					try {
+						conv = new Converter(lin);
+						map.put("in", conv.getIn());
+						map.put("out", conv.getOut());
+						map.put("view", conv.getView());
+					} catch (Exception e) {
+						if (conv == null) {
+							map.put("in", e.getMessage());
+						} else {
+							map.put("in", conv.getIn());
+							map.put("message", e.getMessage());
+						}
+						map.put("out", getString(R.string.error));
+					}
+					translations.add(map);
 				}
 				return translations;
 			} catch (Exception e) {

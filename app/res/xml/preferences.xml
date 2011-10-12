@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="@string/titleCategorySettings">
+
+		<CheckBoxPreference
+			android:key="keyUseInternalTranslator"
+			android:title="@string/titleUseInternalTranslator"
+			android:summary="@string/summaryUseInternalTranslator"
+			android:defaultValue="true" />
+
+	</PreferenceCategory>
+
+<!--
+	<PreferenceCategory android:title="@string/titleCategoryOther">
+
+		<Preference
+			android:title="@string/labelActivityAbout">
+			<intent
+				android:targetPackage="ee.ioc.phon.android.recognizerintent"
+				android:targetClass="ee.ioc.phon.android.recognizerintent.AboutActivity"/>
+		</Preference>
+	</PreferenceCategory>
+	-->
+</PreferenceScreen>

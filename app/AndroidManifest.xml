@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ee.ioc.phon.android.unitconv"
-	android:versionCode="40"
-	android:versionName="0.0.40">
+	android:versionCode="50"
+	android:versionName="0.0.50">
 	<application
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/labelApp">
@@ -15,6 +15,11 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+		</activity>
+
+		<activity
+			android:name="Preferences"
+			android:label="@string/labelPreferences">
 		</activity>
 	</application>
 </manifest> 
