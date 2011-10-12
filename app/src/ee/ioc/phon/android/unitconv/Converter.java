@@ -63,7 +63,14 @@ public class Converter {
 	public String getView() {
 		switch (mExprType) {
 		case MAP:
-			return "http://maps.google.com/maps?q=" + mPrettyIn;
+			String query = mPrettyIn;
+			if (query.contains("FROM")) {
+				query = query.replaceFirst("FROM", "saddr=");
+				query = query.replaceFirst("TO", "&daddr=");
+				return "http://maps.google.com/maps?" + query;
+			} else {
+				return "http://maps.google.com/maps?daddr=" + query;
+			}
 		}
 		return null;
 	}

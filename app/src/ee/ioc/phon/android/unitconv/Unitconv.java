@@ -78,10 +78,10 @@ public class Unitconv extends AbstractRecognizerActivity {
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
 
-		mLangParse = getString(R.string.nameLangParse);
-		mLangLinearize = getString(R.string.nameLangLinearize);
+		mLangParse = getString(R.string.nameGrammar) + getString(R.string.nameLangParse);
+		mLangLinearize = getString(R.string.nameGrammar) + getString(R.string.nameLangLinearize);
 
-		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), mUseInternalTranslator);
+		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
 		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
 		if (getRecognizers(mIntent).size() == 0) {
@@ -172,15 +172,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 	}
 
 
-	private static Intent createRecognizerIntent(String grammar, boolean useInternalTranslator) {
+	private static Intent createRecognizerIntent(String grammar, String langLinearize, boolean useInternalTranslator) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
 		if (! useInternalTranslator) {
-			intent.putExtra(EXTRA_GRAMMAR_LANG, "App");
+			intent.putExtra(EXTRA_GRAMMAR_LANG, langLinearize);
 		}
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		// we shouldn't specify this
-		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 100);
+		//intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 100);
 		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say e.g.: kaks meetrit jalgades");
 		return intent;
 	}

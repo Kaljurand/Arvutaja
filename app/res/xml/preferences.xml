@@ -7,19 +7,7 @@
 			android:key="keyUseInternalTranslator"
 			android:title="@string/titleUseInternalTranslator"
 			android:summary="@string/summaryUseInternalTranslator"
-			android:defaultValue="true" />
+			android:defaultValue="false" />
 
 	</PreferenceCategory>
-
-<!--
-	<PreferenceCategory android:title="@string/titleCategoryOther">
-
-		<Preference
-			android:title="@string/labelActivityAbout">
-			<intent
-				android:targetPackage="ee.ioc.phon.android.recognizerintent"
-				android:targetClass="ee.ioc.phon.android.recognizerintent.AboutActivity"/>
-		</Preference>
-	</PreferenceCategory>
-	-->
 </PreferenceScreen>

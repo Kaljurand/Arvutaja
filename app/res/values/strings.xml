@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Calc.pgf</string>
+	<string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
 
-	<string name="nameLangParse" translatable="false">CalcEst</string>
-	<string name="nameLangLinearize" translatable="false">CalcApp</string>
+	<!--  Calc is only used for internal parsing -->
+	<string name="nameGrammar" translatable="false">Calc</string>
+	<string name="nameLangParse" translatable="false">Est</string>
+	<string name="nameLangLinearize" translatable="false">App</string>
 
 	<string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.recognizerintent</string>
 	<string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.recognizerintent.RecognizerIntentActivity</string>
