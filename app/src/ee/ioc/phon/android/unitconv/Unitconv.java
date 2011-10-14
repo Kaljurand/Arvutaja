@@ -2,7 +2,9 @@ package ee.ioc.phon.android.unitconv;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.RecognizerIntent;
+import android.text.format.Time;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +48,7 @@ import org.grammaticalframework.Parser;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
-import ee.ioc.phon.android.unitconv.provider.Grammar;
+import ee.ioc.phon.android.unitconv.provider.Query;
 
 
 public class Unitconv extends AbstractRecognizerActivity {
@@ -55,7 +57,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "EXTRA_GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_LANG = "EXTRA_GRAMMAR_LANG";
 
-	private static final Uri CONTENT_URI = Grammar.Columns.CONTENT_URI;
+	private static final Uri CONTENT_URI = Query.Columns.CONTENT_URI;
 
 	private SharedPreferences mPrefs;
 
@@ -75,14 +77,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 	private boolean mUseInternalTranslator = true;
 
 	private static final String[] CONTACTS_PROJECTION = new String[] {
-		Grammar.Columns._ID,
-		Grammar.Columns.TIMESTAMP
+		Query.Columns._ID,
+		Query.Columns.TIMESTAMP
 	};
 	private static final int GROUP_ID_COLUMN_INDEX = 0;
 
 	private static final String[] PHONE_NUMBER_PROJECTION = new String[] {
-		Grammar.Columns._ID,
-		Grammar.Columns.TRANSLATION
+		Query.Columns._ID,
+		Query.Columns.TRANSLATION
 	};
 
 	private static final int TOKEN_GROUP = 0;
@@ -182,11 +184,11 @@ public class Unitconv extends AbstractRecognizerActivity {
 		mContext = this;
 /*		
 		String[] columns = new String[] {
-				Grammar.Columns._ID,
-				Grammar.Columns.TIMESTAMP,
-				Grammar.Columns.UTTERANCE,
-				Grammar.Columns.TRANSLATION,
-				Grammar.Columns.EVALUATION
+				Query.Columns._ID,
+				Query.Columns.TIMESTAMP,
+				Query.Columns.UTTERANCE,
+				Query.Columns.TRANSLATION,
+				Query.Columns.EVALUATION
 		};
 
 		Cursor managedCursor = managedQuery(
@@ -194,17 +196,17 @@ public class Unitconv extends AbstractRecognizerActivity {
 				columns, 
 				null,
 				null,
-				Grammar.Columns.TIMESTAMP + " DESC"
+				Query.Columns.TIMESTAMP + " DESC"
 		);
 
 		mAdapter = new SimpleCursorTreeAdapter(
 				this,
 				null,
 				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Grammar.Columns.TIMESTAMP },
+				new String[] { Query.Columns.TIMESTAMP },
 				new int[] { android.R.id.text1 },
 				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Grammar.Columns.TRANSLATION },
+				new String[] { Query.Columns.TRANSLATION },
 				new int[] { android.R.id.text1 });
 */
 
@@ -213,9 +215,9 @@ public class Unitconv extends AbstractRecognizerActivity {
 				this,
 				android.R.layout.simple_expandable_list_item_1,
 				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Grammar.Columns.TIMESTAMP }, // Name for group layouts
+				new String[] { Query.Columns.TIMESTAMP }, // Name for group layouts
 				new int[] { android.R.id.text1 },
-				new String[] { Grammar.Columns.TRANSLATION }, // Number for child layouts
+				new String[] { Query.Columns.TRANSLATION }, // Number for child layouts
 				new int[] { android.R.id.text1 });
 
 		mListView.setAdapter(mAdapter);
@@ -224,7 +226,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
 		mQueryHandler.startQuery(TOKEN_GROUP, null, CONTENT_URI, CONTACTS_PROJECTION, 
-				Grammar.Columns.TIMESTAMP + "=1", null, null);
+				Query.Columns.TIMESTAMP + "=1", null, null);
 				*/
 	}
 
@@ -408,10 +410,17 @@ public class Unitconv extends AbstractRecognizerActivity {
 				toast(getString(R.string.warningParserInputNotSupported));
 			} else {
 				ContentValues values = new ContentValues();
-				values.put(Grammar.Columns.TIMESTAMP, result.get(0).get("in"));
-				values.put(Grammar.Columns.UTTERANCE, "blah blah blah");
-				values.put(Grammar.Columns.TRANSLATION, result.get(0).get("in"));
-				values.put(Grammar.Columns.EVALUATION, result.get(0).get("out"));
+				/*
+				values.put(Query.Columns.TIMESTAMP, result.get(0).get("in"));
+				values.put(Query.Columns.UTTERANCE, "blah blah blah");
+				values.put(Query.Columns.TRANSLATION, result.get(0).get("in"));
+				values.put(Query.Columns.EVALUATION, result.get(0).get("out"));
+				values.put(Query.Columns.TIMESTAMP, result.get(0).get("in"));
+				*/
+				values.put(Query.Columns.TIMESTAMP, "" + SystemClock.uptimeMillis());
+				values.put(Query.Columns.UTTERANCE, "blah blah blah");
+				values.put(Query.Columns.TRANSLATION, "translation");
+				values.put(Query.Columns.EVALUATION, "evaluation");
 				insert(CONTENT_URI, values);
 				/*
 				mListView.setAdapter(new SimpleAdapter(
@@ -463,12 +472,12 @@ childTo	The child views (from the child layouts) that should display column in t
 
 			Uri.Builder builder = CONTENT_URI.buildUpon();
 			ContentUris.appendId(builder, groupCursor.getLong(GROUP_ID_COLUMN_INDEX));
-			//builder.appendEncodedPath(Grammar.Columns.TIMESTAMP);
+			//builder.appendEncodedPath(Query.Columns.TIMESTAMP);
 			Uri evaluationsUri = builder.build();
 
 			mQueryHandler.startQuery(TOKEN_CHILD, groupCursor.getPosition(), evaluationsUri, 
-					PHONE_NUMBER_PROJECTION, Grammar.Columns.EVALUATION + "=?", 
-					new String[] { Grammar.Columns.EVALUATION }, null);
+					PHONE_NUMBER_PROJECTION, Query.Columns.EVALUATION + "=?", 
+					new String[] { Query.Columns.EVALUATION }, null);
 			return null;
 		}
 	}

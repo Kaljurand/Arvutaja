@@ -32,22 +32,24 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class AppsContentProvider extends ContentProvider {
+public class QueriesContentProvider extends ContentProvider {
 
-	private static final String TAG = "AppsContentProvider";
+	public static final String QUERIES_TABLE_NAME = "queries";
+
+	private static final String TAG = "QueriesContentProvider";
 
 	private static final String DATABASE_NAME = "unitconv.db";
 
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
+	
+	private static final String UNKNOWN_URI = "Unknown URI: ";
 
-	private static final String GRAMMARS_TABLE_NAME = "grammars";
-
-	public static final String AUTHORITY = "ee.ioc.phon.android.unitconv.provider.AppsContentProvider";
+	public static final String AUTHORITY = "ee.ioc.phon.android.unitconv.provider.QueriesContentProvider";
 
 	private static final UriMatcher sUriMatcher;
 
-	private static final int GRAMMARS = 1;
-	private static final int GRAMMAR_ID = 2;
+	private static final int QUERIES = 1;
+	private static final int QUERY_ID = 2;
 
 	private static HashMap<String, String> grammarsProjectionMap;
 
@@ -62,15 +64,15 @@ public class AppsContentProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL("CREATE TABLE " + GRAMMARS_TABLE_NAME + " ("
-					+ Grammar.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ Grammar.Columns.TIMESTAMP + " TEXT,"
-					+ Grammar.Columns.UTTERANCE + " TEXT,"
-					+ Grammar.Columns.TRANSLATION + " TEXT,"
-					+ Grammar.Columns.EVALUATION + " TEXT"
+			db.execSQL("CREATE TABLE " + QUERIES_TABLE_NAME + " ("
+					+ Query.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ Query.Columns.TIMESTAMP + " TEXT,"
+					+ Query.Columns.UTTERANCE + " TEXT,"
+					+ Query.Columns.TRANSLATION + " TEXT,"
+					+ Query.Columns.EVALUATION + " TEXT"
 					+ ");");
 			
-			db.execSQL("INSERT INTO " + GRAMMARS_TABLE_NAME + " VALUES (" +
+			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
 					"'1', " +
 					"'20111014:1904', " +
 					"'kaks minutit sekundites', " +
@@ -78,7 +80,7 @@ public class AppsContentProvider extends ContentProvider {
 					"'120'" +
 			");");
 			
-			db.execSQL("INSERT INTO " + GRAMMARS_TABLE_NAME + " VALUES (" +
+			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
 					"'2', " +
 					"'20111014:1904', " +
 					"'kaks minutit sekundites', " +
@@ -91,7 +93,7 @@ public class AppsContentProvider extends ContentProvider {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w(TAG, "Upgrading database v" + oldVersion + " -> v" + newVersion + ", which will destroy all old data.");
-			db.execSQL("DROP TABLE IF EXISTS " + GRAMMARS_TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + QUERIES_TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -103,20 +105,20 @@ public class AppsContentProvider extends ContentProvider {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		int count;
 		switch (sUriMatcher.match(uri)) {
-		case GRAMMARS:
-			count = db.delete(GRAMMARS_TABLE_NAME, where, whereArgs);
+		case QUERIES:
+			count = db.delete(QUERIES_TABLE_NAME, where, whereArgs);
 			break;
 
-		case GRAMMAR_ID:
+		case QUERY_ID:
 			String grammarId = uri.getPathSegments().get(1);
 			count = db.delete(
-					GRAMMARS_TABLE_NAME,
-					Grammar.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+					QUERIES_TABLE_NAME,
+					Query.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
 					whereArgs);
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -127,11 +129,11 @@ public class AppsContentProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		switch (sUriMatcher.match(uri)) {
-		case GRAMMARS:
-			return Grammar.Columns.CONTENT_TYPE;
+		case QUERIES:
+			return Query.Columns.CONTENT_TYPE;
 
 		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
 	}
 
@@ -150,17 +152,17 @@ public class AppsContentProvider extends ContentProvider {
 		Uri returnUri = null;
 
 		switch (sUriMatcher.match(uri)) {
-		case GRAMMARS:
-			rowId = db.insert(GRAMMARS_TABLE_NAME, Grammar.Columns.EVALUATION, values);
+		case QUERIES:
+			rowId = db.insert(QUERIES_TABLE_NAME, Query.Columns.EVALUATION, values);
 			if (rowId <= 0) {
 				throw new SQLException("Failed to insert row into " + uri);
 			}
-			returnUri = ContentUris.withAppendedId(Grammar.Columns.CONTENT_URI, rowId);
+			returnUri = ContentUris.withAppendedId(Query.Columns.CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(returnUri, null);
 			return returnUri;
 
 		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
 	}
 
@@ -177,13 +179,13 @@ public class AppsContentProvider extends ContentProvider {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		switch (sUriMatcher.match(uri)) {
-		case GRAMMARS:
-			qb.setTables(GRAMMARS_TABLE_NAME);
+		case QUERIES:
+			qb.setTables(QUERIES_TABLE_NAME);
 			qb.setProjectionMap(grammarsProjectionMap);
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
 
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -199,21 +201,21 @@ public class AppsContentProvider extends ContentProvider {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		int count;
 		switch (sUriMatcher.match(uri)) {
-		case GRAMMARS:
-			count = db.update(GRAMMARS_TABLE_NAME, values, where, whereArgs);
+		case QUERIES:
+			count = db.update(QUERIES_TABLE_NAME, values, where, whereArgs);
 			break;
 
-		case GRAMMAR_ID:
+		case QUERY_ID:
 			String grammarId = uri.getPathSegments().get(1);
 			count = db.update(
-					GRAMMARS_TABLE_NAME,
+					QUERIES_TABLE_NAME,
 					values,
-					Grammar.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+					Query.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
 					whereArgs);
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
 
 		getContext().getContentResolver().notifyChange(uri, null);
@@ -222,15 +224,15 @@ public class AppsContentProvider extends ContentProvider {
 
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		sUriMatcher.addURI(AUTHORITY, GRAMMARS_TABLE_NAME, GRAMMARS);
-		sUriMatcher.addURI(AUTHORITY, GRAMMARS_TABLE_NAME + "/#", GRAMMAR_ID);
+		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME, QUERIES);
+		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME + "/#", QUERY_ID);
 
 		grammarsProjectionMap = new HashMap<String, String>();
-		grammarsProjectionMap.put(Grammar.Columns._ID, Grammar.Columns._ID);
-		grammarsProjectionMap.put(Grammar.Columns.TIMESTAMP, Grammar.Columns.TIMESTAMP);
-		grammarsProjectionMap.put(Grammar.Columns.UTTERANCE, Grammar.Columns.UTTERANCE);
-		grammarsProjectionMap.put(Grammar.Columns.TRANSLATION, Grammar.Columns.TRANSLATION);
-		grammarsProjectionMap.put(Grammar.Columns.EVALUATION, Grammar.Columns.EVALUATION);
+		grammarsProjectionMap.put(Query.Columns._ID, Query.Columns._ID);
+		grammarsProjectionMap.put(Query.Columns.TIMESTAMP, Query.Columns.TIMESTAMP);
+		grammarsProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
+		grammarsProjectionMap.put(Query.Columns.TRANSLATION, Query.Columns.TRANSLATION);
+		grammarsProjectionMap.put(Query.Columns.EVALUATION, Query.Columns.EVALUATION);
 
 	}
 }

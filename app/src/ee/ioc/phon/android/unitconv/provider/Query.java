@@ -19,25 +19,22 @@ package ee.ioc.phon.android.unitconv.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class Grammar {
+public class Query {
 
-	public Grammar() {
+	public Query() {
 	}
 
 	public static final class Columns implements BaseColumns {
 		private Columns() {
 		}
 
-		public static final Uri CONTENT_URI = Uri.parse("content://" + AppsContentProvider.AUTHORITY + "/queries");
+		public static final Uri CONTENT_URI = Uri.parse("content://" +
+				QueriesContentProvider.AUTHORITY +
+				"/" +
+				QueriesContentProvider.QUERIES_TABLE_NAME);
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.unitconv";
 
-		/*
-		public static final String NAME = "NAME";
-		public static final String DESC = "DESC";
-		public static final String LANG = "LANG";
-		public static final String URL = "URL";
-*/
 		public static final String TIMESTAMP = "TIMESTAMP";
 		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";

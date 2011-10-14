@@ -2,14 +2,14 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ee.ioc.phon.android.unitconv"
-	android:versionCode="50"
-	android:versionName="0.0.50">
+	android:versionCode="100"
+	android:versionName="0.1.00">
 	<application
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/labelApp">
 
         <activity
-			android:name="Unitconv"
+			android:name=".Unitconv"
 			android:label="@string/labelApp">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -18,8 +18,12 @@
 		</activity>
 
 		<activity
-			android:name="Preferences"
+			android:name=".Preferences"
 			android:label="@string/labelPreferences">
 		</activity>
+		
+		<provider
+			android:name=".provider.QueriesContentProvider"
+			android:authorities="ee.ioc.phon.android.unitconv.provider.QueriesContentProvider" />
 	</application>
 </manifest>
