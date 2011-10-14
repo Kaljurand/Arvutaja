@@ -11,20 +11,25 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorTreeAdapter;
 import android.widget.TextView;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
@@ -41,6 +46,8 @@ import org.grammaticalframework.Parser;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
+import ee.ioc.phon.android.unitconv.provider.Grammar;
+
 
 public class Unitconv extends AbstractRecognizerActivity {
 
@@ -48,19 +55,61 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "EXTRA_GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_LANG = "EXTRA_GRAMMAR_LANG";
 
+	private static final Uri CONTENT_URI = Grammar.Columns.CONTENT_URI;
+
 	private SharedPreferences mPrefs;
 
 	private String mLangParse;
 	private String mLangLinearize;
 
-	private ListView mListView;
+	private ExpandableListView mListView;
 	private EditText mEt;
 	private PGF mPGF;
 	private Intent mIntent;
 	private ImageButton mBMicrophone;
 	private Context mContext;
 
+	private CursorTreeAdapter mAdapter;
+	private QueryHandler mQueryHandler;
+
 	private boolean mUseInternalTranslator = true;
+
+	private static final String[] CONTACTS_PROJECTION = new String[] {
+		Grammar.Columns._ID,
+		Grammar.Columns.TIMESTAMP
+	};
+	private static final int GROUP_ID_COLUMN_INDEX = 0;
+
+	private static final String[] PHONE_NUMBER_PROJECTION = new String[] {
+		Grammar.Columns._ID,
+		Grammar.Columns.TRANSLATION
+	};
+
+	private static final int TOKEN_GROUP = 0;
+	private static final int TOKEN_CHILD = 1;
+
+	private static final class QueryHandler extends AsyncQueryHandler {
+		private CursorTreeAdapter mAdapter;
+
+		public QueryHandler(Context context, CursorTreeAdapter adapter) {
+			super(context.getContentResolver());
+			this.mAdapter = adapter;
+		}
+
+		@Override
+		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+			switch (token) {
+			case TOKEN_GROUP:
+				mAdapter.setGroupCursor(cursor);
+				break;
+
+			case TOKEN_CHILD:
+				int groupPosition = (Integer) cookie;
+				mAdapter.setChildrenCursor(groupPosition, cursor);
+				break;
+			}
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +142,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			new LoadPGFTask().execute();
 		}
 
-		mListView = (ListView) findViewById(R.id.list);
+		mListView = (ExpandableListView) findViewById(R.id.list);
 
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -131,6 +180,52 @@ public class Unitconv extends AbstractRecognizerActivity {
 		});
 
 		mContext = this;
+/*		
+		String[] columns = new String[] {
+				Grammar.Columns._ID,
+				Grammar.Columns.TIMESTAMP,
+				Grammar.Columns.UTTERANCE,
+				Grammar.Columns.TRANSLATION,
+				Grammar.Columns.EVALUATION
+		};
+
+		Cursor managedCursor = managedQuery(
+				CONTENT_URI,
+				columns, 
+				null,
+				null,
+				Grammar.Columns.TIMESTAMP + " DESC"
+		);
+
+		mAdapter = new SimpleCursorTreeAdapter(
+				this,
+				null,
+				android.R.layout.simple_expandable_list_item_1,
+				new String[] { Grammar.Columns.TIMESTAMP },
+				new int[] { android.R.id.text1 },
+				android.R.layout.simple_expandable_list_item_1,
+				new String[] { Grammar.Columns.TRANSLATION },
+				new int[] { android.R.id.text1 });
+*/
+
+		/*
+		mAdapter = new MyExpandableListAdapter(
+				this,
+				android.R.layout.simple_expandable_list_item_1,
+				android.R.layout.simple_expandable_list_item_1,
+				new String[] { Grammar.Columns.TIMESTAMP }, // Name for group layouts
+				new int[] { android.R.id.text1 },
+				new String[] { Grammar.Columns.TRANSLATION }, // Number for child layouts
+				new int[] { android.R.id.text1 });
+
+		mListView.setAdapter(mAdapter);
+*/
+		/*
+		mQueryHandler = new QueryHandler(this, mAdapter);
+
+		mQueryHandler.startQuery(TOKEN_GROUP, null, CONTENT_URI, CONTACTS_PROJECTION, 
+				Grammar.Columns.TIMESTAMP + "=1", null, null);
+				*/
 	}
 
 
@@ -312,6 +407,13 @@ public class Unitconv extends AbstractRecognizerActivity {
 			if (result.isEmpty()) {
 				toast(getString(R.string.warningParserInputNotSupported));
 			} else {
+				ContentValues values = new ContentValues();
+				values.put(Grammar.Columns.TIMESTAMP, result.get(0).get("in"));
+				values.put(Grammar.Columns.UTTERANCE, "blah blah blah");
+				values.put(Grammar.Columns.TRANSLATION, result.get(0).get("in"));
+				values.put(Grammar.Columns.EVALUATION, result.get(0).get("out"));
+				insert(CONTENT_URI, values);
+				/*
 				mListView.setAdapter(new SimpleAdapter(
 						mContext,
 						result,
@@ -320,8 +422,54 @@ public class Unitconv extends AbstractRecognizerActivity {
 						new int[] { R.id.list_item_in, R.id.list_item_out, R.id.list_item_message, R.id.list_item_view }
 				)
 				);
+				 */
 
 			}
+		}
+	}
+
+
+	public class MyExpandableListAdapter extends SimpleCursorTreeAdapter {
+
+		// Note that the constructor does not take a Cursor. This is done to avoid querying the 
+		// database on the main thread.
+		public MyExpandableListAdapter(Context context, int groupLayout,
+				int childLayout, String[] groupFrom, int[] groupTo, String[] childrenFrom,
+				int[] childrenTo) {
+
+			/*
+			 * 
+context	The context where the ExpandableListView associated with this SimpleCursorTreeAdapter is running
+cursor	The database cursor
+groupLayout	The resource identifier of a layout file that defines the views for a group.
+            The layout file should include at least those named views defined in groupTo.
+groupFrom	A list of column names that will be used to display the data for a group.
+groupTo	The group views (from the group layouts) that should display column in the "from" parameter.
+These should all be TextViews or ImageViews.
+The first N views in this list are given the values of the first N columns in the from parameter.
+
+childLayout	The resource identifier of a layout file that defines the views for a child. The layout file should include at least those named views defined in childTo.
+childFrom	A list of column names that will be used to display the data for a child.
+childTo	The child views (from the child layouts) that should display column in the "from" parameter. These should all be TextViews or ImageViews. The first N views in this list are given the values of the first N columns in the from parameter.
+			 */
+			super(context, null, groupLayout, groupFrom, groupTo, childLayout, childrenFrom, childrenTo);
+		}
+
+		@Override
+		protected Cursor getChildrenCursor(Cursor groupCursor) {
+			// Given the group, we return a cursor for all the children within that group 
+
+			// Return a cursor that points to this contact's phone numbers
+
+			Uri.Builder builder = CONTENT_URI.buildUpon();
+			ContentUris.appendId(builder, groupCursor.getLong(GROUP_ID_COLUMN_INDEX));
+			//builder.appendEncodedPath(Grammar.Columns.TIMESTAMP);
+			Uri evaluationsUri = builder.build();
+
+			mQueryHandler.startQuery(TOKEN_CHILD, groupCursor.getPosition(), evaluationsUri, 
+					PHONE_NUMBER_PROJECTION, Grammar.Columns.EVALUATION + "=?", 
+					new String[] { Grammar.Columns.EVALUATION }, null);
+			return null;
 		}
 	}
 }

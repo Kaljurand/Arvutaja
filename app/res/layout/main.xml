@@ -24,12 +24,12 @@ the methods referenced this way.
 			android:layout_height="wrap_content"/>
 	</LinearLayout>
 
-    <ListView
+    <ExpandableListView
        android:id="@+id/list"
        android:layout_width="fill_parent"
        android:layout_height="fill_parent"
        android:layout_weight="1"/>
-       
+
 	<LinearLayout
 		android:background="@color/grey3"
 		android:padding="4dp"

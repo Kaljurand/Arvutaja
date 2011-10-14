@@ -38,7 +38,7 @@ public class AppsContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "unitconv.db";
 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private static final String GRAMMARS_TABLE_NAME = "grammars";
 
@@ -60,21 +60,31 @@ public class AppsContentProvider extends ContentProvider {
 			mContext = context;
 		}
 
-		/**
-		 * GRAMMAR and SERVER should be a foreign keys
-		 * Grammar should have language ID
-		 */
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE " + GRAMMARS_TABLE_NAME + " ("
 					+ Grammar.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ Grammar.Columns.NAME + " VARCHAR(255),"
-					+ Grammar.Columns.DESC + " TEXT,"
-					+ Grammar.Columns.LANG + " VARCHAR(255),"
-					+ Grammar.Columns.URL + " TEXT NOT NULL,"
-					+ "UNIQUE(" + Grammar.Columns.URL + ") ON CONFLICT REPLACE"
+					+ Grammar.Columns.TIMESTAMP + " TEXT,"
+					+ Grammar.Columns.UTTERANCE + " TEXT,"
+					+ Grammar.Columns.TRANSLATION + " TEXT,"
+					+ Grammar.Columns.EVALUATION + " TEXT"
 					+ ");");
-
+			
+			db.execSQL("INSERT INTO " + GRAMMARS_TABLE_NAME + " VALUES (" +
+					"'1', " +
+					"'20111014:1904', " +
+					"'kaks minutit sekundites', " +
+					"'2 min IN sec', " +
+					"'120'" +
+			");");
+			
+			db.execSQL("INSERT INTO " + GRAMMARS_TABLE_NAME + " VALUES (" +
+					"'2', " +
+					"'20111014:1904', " +
+					"'kaks minutit sekundites', " +
+					"'2 angmin IN angsec', " +
+					"'ang120'" +
+			");");
 		}
 
 
@@ -141,7 +151,7 @@ public class AppsContentProvider extends ContentProvider {
 
 		switch (sUriMatcher.match(uri)) {
 		case GRAMMARS:
-			rowId = db.insert(GRAMMARS_TABLE_NAME, Grammar.Columns.DESC, values);
+			rowId = db.insert(GRAMMARS_TABLE_NAME, Grammar.Columns.EVALUATION, values);
 			if (rowId <= 0) {
 				throw new SQLException("Failed to insert row into " + uri);
 			}
@@ -217,10 +227,10 @@ public class AppsContentProvider extends ContentProvider {
 
 		grammarsProjectionMap = new HashMap<String, String>();
 		grammarsProjectionMap.put(Grammar.Columns._ID, Grammar.Columns._ID);
-		grammarsProjectionMap.put(Grammar.Columns.NAME, Grammar.Columns.NAME);
-		grammarsProjectionMap.put(Grammar.Columns.LANG, Grammar.Columns.LANG);
-		grammarsProjectionMap.put(Grammar.Columns.DESC, Grammar.Columns.DESC);
-		grammarsProjectionMap.put(Grammar.Columns.URL, Grammar.Columns.URL);
+		grammarsProjectionMap.put(Grammar.Columns.TIMESTAMP, Grammar.Columns.TIMESTAMP);
+		grammarsProjectionMap.put(Grammar.Columns.UTTERANCE, Grammar.Columns.UTTERANCE);
+		grammarsProjectionMap.put(Grammar.Columns.TRANSLATION, Grammar.Columns.TRANSLATION);
+		grammarsProjectionMap.put(Grammar.Columns.EVALUATION, Grammar.Columns.EVALUATION);
 
 	}
 }

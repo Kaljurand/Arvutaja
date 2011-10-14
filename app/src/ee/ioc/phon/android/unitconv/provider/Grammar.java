@@ -32,9 +32,15 @@ public class Grammar {
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.unitconv";
 
+		/*
 		public static final String NAME = "NAME";
 		public static final String DESC = "DESC";
 		public static final String LANG = "LANG";
 		public static final String URL = "URL";
+*/
+		public static final String TIMESTAMP = "TIMESTAMP";
+		public static final String UTTERANCE = "UTTERANCE";
+		public static final String TRANSLATION = "TRANSLATION";
+		public static final String EVALUATION = "EVALUATION";
 	}
 }
