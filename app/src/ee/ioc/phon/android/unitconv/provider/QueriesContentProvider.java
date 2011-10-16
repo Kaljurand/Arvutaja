@@ -40,7 +40,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "unitconv.db";
 
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -66,7 +66,7 @@ public class QueriesContentProvider extends ContentProvider {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE " + QUERIES_TABLE_NAME + " ("
 					+ Query.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ Query.Columns.TIMESTAMP + " TEXT,"
+					+ Query.Columns.TIMESTAMP + " TIMESTAMP,"
 					+ Query.Columns.UTTERANCE + " TEXT,"
 					+ Query.Columns.TRANSLATION + " TEXT,"
 					+ Query.Columns.EVALUATION + " TEXT"
@@ -74,7 +74,7 @@ public class QueriesContentProvider extends ContentProvider {
 			
 			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
 					"'1', " +
-					"'20111014:1904', " +
+					"'201110141904', " +
 					"'kaks minutit sekundites', " +
 					"'2 min IN sec', " +
 					"'120'" +
@@ -82,7 +82,7 @@ public class QueriesContentProvider extends ContentProvider {
 			
 			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
 					"'2', " +
-					"'20111014:1904', " +
+					"'201110141904', " +
 					"'kaks minutit sekundites', " +
 					"'2 angmin IN angsec', " +
 					"'ang120'" +

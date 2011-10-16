@@ -2,7 +2,6 @@ package ee.ioc.phon.android.unitconv;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.text.format.Time;
 import android.view.KeyEvent;
@@ -17,7 +16,6 @@ import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.SimpleCursorTreeAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
@@ -71,22 +69,28 @@ public class Unitconv extends AbstractRecognizerActivity {
 	private ImageButton mBMicrophone;
 	private Context mContext;
 
-	private CursorTreeAdapter mAdapter;
+	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
 
 	private boolean mUseInternalTranslator = true;
 
-	private static final String[] CONTACTS_PROJECTION = new String[] {
+	private static final String[] PROJECTION = new String[] {
 		Query.Columns._ID,
-		Query.Columns.TIMESTAMP
+		Query.Columns.TIMESTAMP,
+		Query.Columns.UTTERANCE,
+		Query.Columns.TRANSLATION,
+		Query.Columns.EVALUATION
 	};
 	private static final int GROUP_ID_COLUMN_INDEX = 0;
 
+	/*
 	private static final String[] PHONE_NUMBER_PROJECTION = new String[] {
 		Query.Columns._ID,
 		Query.Columns.TRANSLATION
 	};
+	 */
 
+	// Query identifiers for onQueryComplete
 	private static final int TOKEN_GROUP = 0;
 	private static final int TOKEN_CHILD = 1;
 
@@ -182,7 +186,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		});
 
 		mContext = this;
-/*		
+		/*		
 		String[] columns = new String[] {
 				Query.Columns._ID,
 				Query.Columns.TIMESTAMP,
@@ -208,26 +212,30 @@ public class Unitconv extends AbstractRecognizerActivity {
 				android.R.layout.simple_expandable_list_item_1,
 				new String[] { Query.Columns.TRANSLATION },
 				new int[] { android.R.id.text1 });
-*/
+		 */
 
-		/*
 		mAdapter = new MyExpandableListAdapter(
 				this,
 				android.R.layout.simple_expandable_list_item_1,
 				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Query.Columns.TIMESTAMP }, // Name for group layouts
+				new String[] { Query.Columns.TRANSLATION }, // Name for group layouts
 				new int[] { android.R.id.text1 },
 				new String[] { Query.Columns.TRANSLATION }, // Number for child layouts
 				new int[] { android.R.id.text1 });
 
 		mListView.setAdapter(mAdapter);
-*/
-		/*
+
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
-		mQueryHandler.startQuery(TOKEN_GROUP, null, CONTENT_URI, CONTACTS_PROJECTION, 
-				Query.Columns.TIMESTAMP + "=1", null, null);
-				*/
+		mQueryHandler.startQuery(
+				TOKEN_GROUP,
+				null,
+				CONTENT_URI,
+				PROJECTION,
+				null, //Query.Columns.TIMESTAMP + "=1",
+				null,
+				Query.Columns.TIMESTAMP + " DESC"
+		);
 	}
 
 
@@ -246,11 +254,6 @@ public class Unitconv extends AbstractRecognizerActivity {
 		case R.id.menuSettings:
 			startActivity(new Intent(this, Preferences.class));
 			return true;
-			/*
-		case R.id.menuAbout:
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
-			 */
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -276,8 +279,6 @@ public class Unitconv extends AbstractRecognizerActivity {
 			intent.putExtra(EXTRA_GRAMMAR_LANG, langLinearize);
 		}
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		//intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 100);
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say e.g.: kaks meetrit jalgades");
 		return intent;
 	}
 
@@ -402,37 +403,23 @@ public class Unitconv extends AbstractRecognizerActivity {
 		}
 
 
-		protected void onPostExecute(List<Map<String, String>> result) {
+		protected void onPostExecute(List<Map<String, String>> results) {
 			if (mProgress != null) {
 				mProgress.dismiss();
 			}
-			if (result.isEmpty()) {
+			if (results.isEmpty()) {
 				toast(getString(R.string.warningParserInputNotSupported));
 			} else {
-				ContentValues values = new ContentValues();
-				/*
-				values.put(Query.Columns.TIMESTAMP, result.get(0).get("in"));
-				values.put(Query.Columns.UTTERANCE, "blah blah blah");
-				values.put(Query.Columns.TRANSLATION, result.get(0).get("in"));
-				values.put(Query.Columns.EVALUATION, result.get(0).get("out"));
-				values.put(Query.Columns.TIMESTAMP, result.get(0).get("in"));
-				*/
-				values.put(Query.Columns.TIMESTAMP, "" + SystemClock.uptimeMillis());
-				values.put(Query.Columns.UTTERANCE, "blah blah blah");
-				values.put(Query.Columns.TRANSLATION, "translation");
-				values.put(Query.Columns.EVALUATION, "evaluation");
-				insert(CONTENT_URI, values);
-				/*
-				mListView.setAdapter(new SimpleAdapter(
-						mContext,
-						result,
-						R.layout.list_item_unitconv_result,
-						new String[] { "in", "out", "message", "view" },
-						new int[] { R.id.list_item_in, R.id.list_item_out, R.id.list_item_message, R.id.list_item_view }
-				)
-				);
-				 */
-
+				Time now = new Time();
+				now.setToNow();
+				for (Map<String, String> r : results) {
+					ContentValues values = new ContentValues();
+					values.put(Query.Columns.TIMESTAMP, now.toMillis(false));
+					values.put(Query.Columns.UTTERANCE, "blah blah blah");
+					values.put(Query.Columns.TRANSLATION, r.get("in"));
+					values.put(Query.Columns.EVALUATION, r.get("out"));
+					insert(CONTENT_URI, values);
+				}
 			}
 		}
 	}
@@ -470,14 +457,29 @@ childTo	The child views (from the child layouts) that should display column in t
 
 			// Return a cursor that points to this contact's phone numbers
 
+			/*
 			Uri.Builder builder = CONTENT_URI.buildUpon();
 			ContentUris.appendId(builder, groupCursor.getLong(GROUP_ID_COLUMN_INDEX));
 			//builder.appendEncodedPath(Query.Columns.TIMESTAMP);
 			Uri evaluationsUri = builder.build();
+			 */
 
+			/*
 			mQueryHandler.startQuery(TOKEN_CHILD, groupCursor.getPosition(), evaluationsUri, 
 					PHONE_NUMBER_PROJECTION, Query.Columns.EVALUATION + "=?", 
 					new String[] { Query.Columns.EVALUATION }, null);
+			 */
+
+			mQueryHandler.startQuery(
+					TOKEN_CHILD,
+					groupCursor.getPosition(),
+					CONTENT_URI,
+					PROJECTION,
+					null,
+					new String[] { Query.Columns.EVALUATION },
+					null
+			);
+
 			return null;
 		}
 	}
