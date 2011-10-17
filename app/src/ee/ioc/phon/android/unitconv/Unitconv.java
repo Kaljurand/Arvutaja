@@ -16,6 +16,7 @@ import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
@@ -24,7 +25,6 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -236,6 +236,19 @@ public class Unitconv extends AbstractRecognizerActivity {
 				null,
 				Query.Columns.TIMESTAMP + " DESC"
 		);
+	}
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		LinearLayout ll = (LinearLayout) findViewById(R.id.llEditor);
+
+		if (mPrefs.getBoolean("keyShowEditor", false)) {
+			ll.setVisibility(View.VISIBLE);
+		} else {
+			ll.setVisibility(View.GONE);
+		}
 	}
 
 

@@ -9,5 +9,11 @@
 			android:summary="@string/summaryUseInternalTranslator"
 			android:defaultValue="false" />
 
+		<CheckBoxPreference
+			android:key="keyShowEditor"
+			android:title="@string/titleShowEditor"
+			android:summary="@string/summaryShowEditor"
+			android:defaultValue="false" />
+
 	</PreferenceCategory>
 </PreferenceScreen>
