@@ -19,9 +19,9 @@ package ee.ioc.phon.android.unitconv.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class Query {
+public class Qeval {
 
-	public Query() {
+	public Qeval() {
 	}
 
 	public static final class Columns implements BaseColumns {
@@ -31,12 +31,11 @@ public class Query {
 		public static final Uri CONTENT_URI = Uri.parse("content://" +
 				QueriesContentProvider.AUTHORITY +
 				"/" +
-				QueriesContentProvider.QUERIES_TABLE_NAME);
+				QueriesContentProvider.QEVALS_TABLE_NAME);
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.unitconv";
 
 		public static final String TIMESTAMP = "TIMESTAMP";
-		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";
 		public static final String EVALUATION = "EVALUATION";
 		public static final String VIEW = "VIEW";

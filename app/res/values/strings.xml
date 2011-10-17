@@ -27,6 +27,7 @@
 	<string name="errorRecognizerNotPresent">ERROR: Could not find speech recognition service: %1$s</string>
 
 	<string name="error">ERROR</string>
+	<string name="ambiguous">AMBIGUOUS</string>
 
 	<string name="menuSettings">Settings</string>
 	<string name="titleCategorySettings">Settings</string>

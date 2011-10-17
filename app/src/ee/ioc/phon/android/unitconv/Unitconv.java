@@ -11,14 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
@@ -46,6 +44,7 @@ import org.grammaticalframework.Parser;
 import org.grammaticalframework.parser.ParseState;
 import org.grammaticalframework.Trees.Absyn.Tree;
 
+import ee.ioc.phon.android.unitconv.provider.Qeval;
 import ee.ioc.phon.android.unitconv.provider.Query;
 
 
@@ -55,7 +54,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "EXTRA_GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_LANG = "EXTRA_GRAMMAR_LANG";
 
-	private static final Uri CONTENT_URI = Query.Columns.CONTENT_URI;
+	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
+	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
 
 	private SharedPreferences mPrefs;
 
@@ -67,28 +67,32 @@ public class Unitconv extends AbstractRecognizerActivity {
 	private PGF mPGF;
 	private Intent mIntent;
 	private ImageButton mBMicrophone;
-	private Context mContext;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
 
 	private boolean mUseInternalTranslator = true;
 
-	private static final String[] PROJECTION = new String[] {
+	private static final String[] QUERY_PROJECTION = new String[] {
 		Query.Columns._ID,
 		Query.Columns.TIMESTAMP,
 		Query.Columns.UTTERANCE,
 		Query.Columns.TRANSLATION,
-		Query.Columns.EVALUATION
+		Query.Columns.EVALUATION,
+		Query.Columns.VIEW,
+		Query.Columns.MESSAGE
 	};
-	private static final int GROUP_ID_COLUMN_INDEX = 0;
 
-	/*
-	private static final String[] PHONE_NUMBER_PROJECTION = new String[] {
-		Query.Columns._ID,
-		Query.Columns.TRANSLATION
+	private static final String[] QEVAL_PROJECTION = new String[] {
+		Qeval.Columns._ID,
+		Qeval.Columns.TIMESTAMP,
+		Qeval.Columns.TRANSLATION,
+		Qeval.Columns.EVALUATION,
+		Qeval.Columns.VIEW,
+		Qeval.Columns.MESSAGE
 	};
-	 */
+
+	private static final int GROUP_TIMESTAMP_COLUMN_INDEX = 1;
 
 	// Query identifiers for onQueryComplete
 	private static final int TOKEN_GROUP = 0;
@@ -124,7 +128,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		setContentView(R.layout.main);
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", true);
+		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", false);
 
 		mEt = (EditText) findViewById(R.id.edittext);
 
@@ -149,6 +153,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
+		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -169,59 +174,40 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		mListView.setClickable(true);
 
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Object o = mListView.getItemAtPosition(position);
-				// TODO: Why does Eclipse underline it?
-				Map<String, String> map = (Map<String, String>) o;
-				String actionView = map.get("view");
-				if (actionView != null && actionView.startsWith("http://")) {
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(actionView)));
-				} else {
-					Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
-					search.putExtra(SearchManager.QUERY, map.get("in"));
-					startActivity(search);
-				}
+		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				Cursor cursor = (Cursor) parent.getItemAtPosition(groupPosition);
+				String view = cursor.getString(cursor.getColumnIndex(Query.Columns.VIEW));
+				String translation = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
+				launchIntent(view, translation);
+				return false;
 			}
 		});
 
-		mContext = this;
-		/*		
-		String[] columns = new String[] {
-				Query.Columns._ID,
-				Query.Columns.TIMESTAMP,
-				Query.Columns.UTTERANCE,
-				Query.Columns.TRANSLATION,
-				Query.Columns.EVALUATION
-		};
 
-		Cursor managedCursor = managedQuery(
-				CONTENT_URI,
-				columns, 
-				null,
-				null,
-				Query.Columns.TIMESTAMP + " DESC"
-		);
+		// TODO: make this work, it currently does not
+		mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+				Cursor cursor = (Cursor) parent.getItemAtPosition(childPosition);
+				String view = cursor.getString(cursor.getColumnIndex(Qeval.Columns.VIEW));
+				String translation = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
+				launchIntent(view, translation);
+				return false;
+			}
+		});
 
-		mAdapter = new SimpleCursorTreeAdapter(
-				this,
-				null,
-				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Query.Columns.TIMESTAMP },
-				new int[] { android.R.id.text1 },
-				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Query.Columns.TRANSLATION },
-				new int[] { android.R.id.text1 });
-		 */
 
 		mAdapter = new MyExpandableListAdapter(
 				this,
-				android.R.layout.simple_expandable_list_item_1,
-				android.R.layout.simple_expandable_list_item_1,
-				new String[] { Query.Columns.TRANSLATION }, // Name for group layouts
-				new int[] { android.R.id.text1 },
-				new String[] { Query.Columns.TRANSLATION }, // Number for child layouts
-				new int[] { android.R.id.text1 });
+				R.layout.list_item_unitconv_result,
+				R.layout.list_item_unitconv_result,
+				new String[] { Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
+				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
+				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
+				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message }
+		);
 
 		mListView.setAdapter(mAdapter);
 
@@ -230,9 +216,9 @@ public class Unitconv extends AbstractRecognizerActivity {
 		mQueryHandler.startQuery(
 				TOKEN_GROUP,
 				null,
-				CONTENT_URI,
-				PROJECTION,
-				null, //Query.Columns.TIMESTAMP + "=1",
+				QUERY_CONTENT_URI,
+				QUERY_PROJECTION,
+				null,
 				null,
 				Query.Columns.TIMESTAMP + " DESC"
 		);
@@ -249,6 +235,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 		} else {
 			ll.setVisibility(View.GONE);
 		}
+	}
+
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mAdapter.changeCursor(null);
+		mAdapter = null;
 	}
 
 
@@ -281,6 +275,17 @@ public class Unitconv extends AbstractRecognizerActivity {
 			String result = matches.iterator().next();
 			mEt.setText(result);
 			new TranslateTask().execute(matches);
+		}
+	}
+
+
+	private void launchIntent(String view, String translation) {
+		if (view != null && view.startsWith("http://")) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
+		} else if (translation != null) {
+			Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
+			search.putExtra(SearchManager.QUERY, translation);
+			startActivity(search);
 		}
 	}
 
@@ -425,13 +430,29 @@ public class Unitconv extends AbstractRecognizerActivity {
 			} else {
 				Time now = new Time();
 				now.setToNow();
-				for (Map<String, String> r : results) {
-					ContentValues values = new ContentValues();
-					values.put(Query.Columns.TIMESTAMP, now.toMillis(false));
-					values.put(Query.Columns.UTTERANCE, "blah blah blah");
-					values.put(Query.Columns.TRANSLATION, r.get("in"));
-					values.put(Query.Columns.EVALUATION, r.get("out"));
-					insert(CONTENT_URI, values);
+				long timestamp = now.toMillis(false);
+				ContentValues values1 = new ContentValues();
+				values1.put(Query.Columns.TIMESTAMP, timestamp);
+				values1.put(Query.Columns.UTTERANCE, "[TODO: utterance]");
+				if (results.size() == 1) {
+					values1.put(Query.Columns.TRANSLATION, results.get(0).get("in"));
+					values1.put(Query.Columns.EVALUATION, results.get(0).get("out"));
+					values1.put(Query.Columns.VIEW, results.get(0).get("view"));
+					values1.put(Query.Columns.MESSAGE, results.get(0).get("message"));
+				} else {
+					values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
+				}
+				insert(QUERY_CONTENT_URI, values1);
+				if (results.size() > 1) {
+					for (Map<String, String> r : results) {
+						ContentValues values2 = new ContentValues();
+						values2.put(Qeval.Columns.TIMESTAMP, timestamp);
+						values2.put(Qeval.Columns.TRANSLATION, r.get("in"));
+						values2.put(Qeval.Columns.EVALUATION, r.get("out"));
+						values2.put(Qeval.Columns.VIEW, r.get("view"));
+						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
+						insert(QEVAL_CONTENT_URI, values2);
+					}
 				}
 			}
 		}
@@ -466,30 +487,13 @@ childTo	The child views (from the child layouts) that should display column in t
 
 		@Override
 		protected Cursor getChildrenCursor(Cursor groupCursor) {
-			// Given the group, we return a cursor for all the children within that group 
-
-			// Return a cursor that points to this contact's phone numbers
-
-			/*
-			Uri.Builder builder = CONTENT_URI.buildUpon();
-			ContentUris.appendId(builder, groupCursor.getLong(GROUP_ID_COLUMN_INDEX));
-			//builder.appendEncodedPath(Query.Columns.TIMESTAMP);
-			Uri evaluationsUri = builder.build();
-			 */
-
-			/*
-			mQueryHandler.startQuery(TOKEN_CHILD, groupCursor.getPosition(), evaluationsUri, 
-					PHONE_NUMBER_PROJECTION, Query.Columns.EVALUATION + "=?", 
-					new String[] { Query.Columns.EVALUATION }, null);
-			 */
-
 			mQueryHandler.startQuery(
 					TOKEN_CHILD,
 					groupCursor.getPosition(),
-					CONTENT_URI,
-					PROJECTION,
-					null,
-					new String[] { Query.Columns.EVALUATION },
+					QEVAL_CONTENT_URI,
+					QEVAL_PROJECTION,
+					Qeval.Columns.TIMESTAMP + "=?",
+					new String[] { "" + groupCursor.getLong(GROUP_TIMESTAMP_COLUMN_INDEX) },
 					null
 			);
 

@@ -16,6 +16,7 @@
 
 package ee.ioc.phon.android.unitconv.provider;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import android.content.ContentProvider;
@@ -29,19 +30,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class QueriesContentProvider extends ContentProvider {
 
 	public static final String QUERIES_TABLE_NAME = "queries";
+	public static final String QEVALS_TABLE_NAME = "qevals";
 
 	private static final String TAG = "QueriesContentProvider";
 
 	private static final String DATABASE_NAME = "unitconv.db";
 
-	private static final int DATABASE_VERSION = 4;
-	
+	private static final int DATABASE_VERSION = 19;
+
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
 	public static final String AUTHORITY = "ee.ioc.phon.android.unitconv.provider.QueriesContentProvider";
@@ -49,9 +50,10 @@ public class QueriesContentProvider extends ContentProvider {
 	private static final UriMatcher sUriMatcher;
 
 	private static final int QUERIES = 1;
-	private static final int QUERY_ID = 2;
+	private static final int QEVALS = 3;
 
-	private static HashMap<String, String> grammarsProjectionMap;
+	private static HashMap<String, String> queriesProjectionMap;
+	private static HashMap<String, String> qevalsProjectionMap;
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -69,24 +71,51 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Query.Columns.TIMESTAMP + " TIMESTAMP,"
 					+ Query.Columns.UTTERANCE + " TEXT,"
 					+ Query.Columns.TRANSLATION + " TEXT,"
-					+ Query.Columns.EVALUATION + " TEXT"
+					+ Query.Columns.EVALUATION + " TEXT,"
+					+ Query.Columns.VIEW + " TEXT,"
+					+ Query.Columns.MESSAGE + " TEXT"
 					+ ");");
-			
+
+			db.execSQL("CREATE TABLE " + QEVALS_TABLE_NAME + " ("
+					+ Qeval.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ Qeval.Columns.TIMESTAMP + " TIMESTAMP,"
+					+ Qeval.Columns.TRANSLATION + " TEXT,"
+					+ Qeval.Columns.EVALUATION + " TEXT,"
+					+ Qeval.Columns.VIEW + " TEXT,"
+					+ Qeval.Columns.MESSAGE + " TEXT"
+					+ ");");
+
+			/*
 			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
 					"'1', " +
-					"'201110141904', " +
+					"'1233', " +
+					"'kaks meetrit jalgades', " +
+					"'2 m IN ft', " +
+					"'6.02'" +
+			");");
+
+			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
+					"'2', " +
+					"'1234', " +
 					"'kaks minutit sekundites', " +
+					"NULL, " +
+					"NULL" +
+			");");
+
+			db.execSQL("INSERT INTO " + QEVALS_TABLE_NAME + " VALUES (" +
+					"'1', " +
+					"'1234', " +
 					"'2 min IN sec', " +
 					"'120'" +
 			");");
-			
-			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
+
+			db.execSQL("INSERT INTO " + QEVALS_TABLE_NAME + " VALUES (" +
 					"'2', " +
-					"'201110141904', " +
-					"'kaks minutit sekundites', " +
+					"'1234', " +
 					"'2 angmin IN angsec', " +
 					"'ang120'" +
 			");");
+			 */
 		}
 
 
@@ -94,6 +123,7 @@ public class QueriesContentProvider extends ContentProvider {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w(TAG, "Upgrading database v" + oldVersion + " -> v" + newVersion + ", which will destroy all old data.");
 			db.execSQL("DROP TABLE IF EXISTS " + QUERIES_TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + QEVALS_TABLE_NAME);
 			onCreate(db);
 		}
 	}
@@ -109,12 +139,8 @@ public class QueriesContentProvider extends ContentProvider {
 			count = db.delete(QUERIES_TABLE_NAME, where, whereArgs);
 			break;
 
-		case QUERY_ID:
-			String grammarId = uri.getPathSegments().get(1);
-			count = db.delete(
-					QUERIES_TABLE_NAME,
-					Query.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
-					whereArgs);
+		case QEVALS:
+			count = db.delete(QUERIES_TABLE_NAME, where, whereArgs);
 			break;
 
 		default:
@@ -131,6 +157,8 @@ public class QueriesContentProvider extends ContentProvider {
 		switch (sUriMatcher.match(uri)) {
 		case QUERIES:
 			return Query.Columns.CONTENT_TYPE;
+		case QEVALS:
+			return Qeval.Columns.CONTENT_TYPE;
 
 		default:
 			throw new IllegalArgumentException(UNKNOWN_URI + uri);
@@ -140,6 +168,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
+		Log.w(TAG, "INSERT: " + uri + ": " + initialValues);
 		ContentValues values;
 		if (initialValues != null) {
 			values = new ContentValues(initialValues);
@@ -160,6 +189,14 @@ public class QueriesContentProvider extends ContentProvider {
 			returnUri = ContentUris.withAppendedId(Query.Columns.CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(returnUri, null);
 			return returnUri;
+		case QEVALS:
+			rowId = db.insert(QEVALS_TABLE_NAME, Qeval.Columns.EVALUATION, values);
+			if (rowId <= 0) {
+				throw new SQLException("Failed to insert row into " + uri);
+			}
+			returnUri = ContentUris.withAppendedId(Qeval.Columns.CONTENT_URI, rowId);
+			getContext().getContentResolver().notifyChange(returnUri, null);
+			return returnUri;
 
 		default:
 			throw new IllegalArgumentException(UNKNOWN_URI + uri);
@@ -176,21 +213,33 @@ public class QueriesContentProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		Log.w(TAG, "QUERY: " + uri);
+		Log.w(TAG, "uri: " + uri);
+		Log.w(TAG, "projection: " + Arrays.toString(projection));
+		Log.w(TAG, "selection: " + selection);
+		Log.w(TAG, "selectionArgs: " + selectionArgs);
+		Log.w(TAG, "sortOrder: " + sortOrder);
+
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		switch (sUriMatcher.match(uri)) {
 		case QUERIES:
 			qb.setTables(QUERIES_TABLE_NAME);
-			qb.setProjectionMap(grammarsProjectionMap);
+			qb.setProjectionMap(queriesProjectionMap);
+			break;
+
+		case QEVALS:
+			qb.setTables(QEVALS_TABLE_NAME);
+			qb.setProjectionMap(qevalsProjectionMap);
 			break;
 
 		default:
 			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
-
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-
+		Log.w(TAG, "Cursor count: " + c.getCount());
+		Log.w(TAG, "Cursor: " + c);
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
@@ -205,13 +254,8 @@ public class QueriesContentProvider extends ContentProvider {
 			count = db.update(QUERIES_TABLE_NAME, values, where, whereArgs);
 			break;
 
-		case QUERY_ID:
-			String grammarId = uri.getPathSegments().get(1);
-			count = db.update(
-					QUERIES_TABLE_NAME,
-					values,
-					Query.Columns._ID + "=" + grammarId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
-					whereArgs);
+		case QEVALS:
+			count = db.update(QEVALS_TABLE_NAME, values, where, whereArgs);
 			break;
 
 		default:
@@ -225,14 +269,23 @@ public class QueriesContentProvider extends ContentProvider {
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME, QUERIES);
-		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME + "/#", QUERY_ID);
+		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME, QEVALS);
 
-		grammarsProjectionMap = new HashMap<String, String>();
-		grammarsProjectionMap.put(Query.Columns._ID, Query.Columns._ID);
-		grammarsProjectionMap.put(Query.Columns.TIMESTAMP, Query.Columns.TIMESTAMP);
-		grammarsProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
-		grammarsProjectionMap.put(Query.Columns.TRANSLATION, Query.Columns.TRANSLATION);
-		grammarsProjectionMap.put(Query.Columns.EVALUATION, Query.Columns.EVALUATION);
+		queriesProjectionMap = new HashMap<String, String>();
+		queriesProjectionMap.put(Query.Columns._ID, Query.Columns._ID);
+		queriesProjectionMap.put(Query.Columns.TIMESTAMP, Query.Columns.TIMESTAMP);
+		queriesProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
+		queriesProjectionMap.put(Query.Columns.TRANSLATION, Query.Columns.TRANSLATION);
+		queriesProjectionMap.put(Query.Columns.EVALUATION, Query.Columns.EVALUATION);
+		queriesProjectionMap.put(Query.Columns.VIEW, Query.Columns.VIEW);
+		queriesProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
 
+		qevalsProjectionMap = new HashMap<String, String>();
+		qevalsProjectionMap.put(Qeval.Columns._ID, Qeval.Columns._ID);
+		qevalsProjectionMap.put(Qeval.Columns.TIMESTAMP, Qeval.Columns.TIMESTAMP);
+		qevalsProjectionMap.put(Qeval.Columns.TRANSLATION, Qeval.Columns.TRANSLATION);
+		qevalsProjectionMap.put(Qeval.Columns.EVALUATION, Qeval.Columns.EVALUATION);
+		qevalsProjectionMap.put(Query.Columns.VIEW, Query.Columns.VIEW);
+		qevalsProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
 	}
 }

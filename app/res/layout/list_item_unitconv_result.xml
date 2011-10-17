@@ -3,34 +3,38 @@
 	android:layout_height="fill_parent"
 	android:padding="6dp">
 
+		<!-- android:text="131,532.12252123456" -->
 		<TextView
-			android:id="@+id/list_item_out"
+			android:id="@+id/list_item_evaluation"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:typeface="monospace"
 			android:textSize="24sp"
-			android:text="131,532.12252123456" />
+		/>
 
+		<!-- android:text="1234567890 m in ft + 1234567890 m in ft" -->
 		<TextView
-			android:id="@+id/list_item_in"
-			android:layout_below="@+id/list_item_out"
+			android:id="@+id/list_item_translation"
+			android:layout_below="@+id/list_item_evaluation"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:typeface="monospace"
 			android:textColor="@color/grey2"
 			android:textSize="16sp"
-			android:text="1234567890 m in ft + 1234567890 m in ft" />
-			
+		/>
+
+		<!-- android:text="Some error occurred: java.org.parse.Text ERROR" -->
 		<TextView
 			android:id="@+id/list_item_message"
-			android:layout_below="@+id/list_item_in"
+			android:layout_below="@+id/list_item_translation"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:typeface="monospace"
 			android:textColor="@color/red"
 			android:textSize="14sp"
-			android:text="Some error occured: java.org.parse.Text ERROR" />
+		/>
 
+		<!-- android:text="http://blah.blah.com" -->
 		<TextView
 			android:id="@+id/list_item_view"
 			android:layout_below="@+id/list_item_message"
@@ -42,6 +46,6 @@
 			android:typeface="monospace"
 			android:textColor="@color/blue"
 			android:textSize="14sp"
-			android:text="http://blah.blah.com" />
+		/>
 
 </RelativeLayout>
