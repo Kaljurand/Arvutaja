@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ListView;
@@ -131,6 +132,19 @@ public class Unitconv extends AbstractRecognizerActivity {
 		});
 
 		mContext = this;
+	}
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		LinearLayout ll = (LinearLayout) findViewById(R.id.llEditor);
+
+		if (mPrefs.getBoolean("keyShowEditor", false)) {
+			ll.setVisibility(View.VISIBLE);
+		} else {
+			ll.setVisibility(View.GONE);
+		}
 	}
 
 
