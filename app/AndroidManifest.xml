@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="ee.ioc.phon.android.unitconv"
-	android:versionCode="50"
-	android:versionName="0.0.50">
-	<application
-		android:icon="@drawable/ic_launcher"
-		android:label="@string/labelApp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ee.ioc.phon.android.unitconv"
+    android:versionCode="101"
+    android:versionName="0.1.01" >
 
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/labelApp" >
         <activity
-			android:name="Unitconv"
-			android:label="@string/labelApp">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
+            android:label="@string/labelApp"
+            android:name=".Unitconv" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
 
-		<activity
-			android:name="Preferences"
-			android:label="@string/labelPreferences">
-		</activity>
-	</application>
-</manifest> 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="@string/labelPreferences"
+            android:name=".Preferences" >
+        </activity>
+
+        <provider
+            android:authorities="ee.ioc.phon.android.unitconv.provider.QueriesContentProvider"
+            android:name=".provider.QueriesContentProvider" />
+    </application>
+
+</manifest>

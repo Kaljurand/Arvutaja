@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.speech.RecognizerIntent;
 import android.widget.Toast;
 
@@ -92,5 +94,17 @@ public abstract class AbstractRecognizerActivity extends Activity {
 
 	protected void toast(String message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+	}
+
+
+	protected void insertUrl(Uri contentUri, String fieldKey, String url) {
+		ContentValues values = new ContentValues();
+		values.put(fieldKey, url);
+		insert(contentUri, values);
+	}
+
+
+	protected void insert(Uri contentUri, ContentValues values) {
+		getContentResolver().insert(contentUri, values);
 	}
 }
