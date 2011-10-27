@@ -6,7 +6,6 @@
     <string name="progressLoadingGrammar">Oodake palun. Laadin grammatikafaili...</string>
     <string name="progressExecuting">Oodake palun. Parsin, lineariseerin, arvutan...</string>
     <string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
-    <string name="error">VIGA</string>
     <string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
     <string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
     <string name="errorResultClientError">VIGA: kliendiviga</string>

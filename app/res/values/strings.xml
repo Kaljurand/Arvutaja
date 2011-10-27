@@ -20,7 +20,6 @@
     <string name="errorResultServerError">ERROR: recognizer server error</string>
     <string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
     <string name="errorRecognizerNotPresent">ERROR: Could not find speech recognition service: %1$s</string>
-    <string name="error">ERROR</string>
     <string name="ambiguous">(ambiguous)</string>
     <string name="menuSettings">Settings</string>
     <string name="titleCategorySettings">Settings</string>

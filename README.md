@@ -43,6 +43,8 @@ Unitconv:
   * kaks sada tuhat viis teist milli kraadi kraadides
   * kaks minutit sekundites (NB! ambiguous with 2 readings)
   * kaks hektarit ruut kilo meetrites
+  * kolm meetrit miilides (ERROR: internal converter does not understad `mile`)
+  * viis norra krooni vanas rahas (ERROR: internal converter does not understad `NOK`)
 
 Exp:
 

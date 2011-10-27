@@ -277,8 +277,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 	private void launchIntent(Cursor cursor, String view, String translation) {
 		String v = cursor.getString(cursor.getColumnIndex(view));
 		String t = cursor.getString(cursor.getColumnIndex(translation));
-		if (v != null && view.startsWith("http://")) {
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
+		if (v != null && v.startsWith("http://")) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(v)));
 		} else if (t != null) {
 			Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
 			search.putExtra(SearchManager.QUERY, t);
@@ -377,7 +377,6 @@ public class Unitconv extends AbstractRecognizerActivity {
 								map.put("in", conv.getIn());
 								map.put("message", e.getMessage());
 							}
-							map.put("out", getString(R.string.error));
 						}
 						translations.add(map);
 					}
@@ -407,7 +406,6 @@ public class Unitconv extends AbstractRecognizerActivity {
 							map.put("in", conv.getIn());
 							map.put("message", e.getMessage());
 						}
-						map.put("out", getString(R.string.error));
 					}
 					translations.add(map);
 				}

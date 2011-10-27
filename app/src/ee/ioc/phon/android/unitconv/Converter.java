@@ -82,7 +82,7 @@ public class Converter {
 	public String getOut() {
 		switch (mExprType) {
 		case MAP:
-			return "Click for map";
+			return "";
 		case UNITCONV:
 			return "" + Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber);
 		case EXPR:
