@@ -38,7 +38,16 @@ made available at http://kaljurand.github.com/Grammars/. So updating to the late
 Tests
 -----
 
+Unitconv:
+
   * kaks sada tuhat viis teist milli kraadi kraadides
-  * kaks minutit sekundites (2 readings)
+  * kaks minutit sekundites (NB! ambiguous with 2 readings)
   * kaks hektarit ruut kilo meetrites
+
+Exp:
+
   * Pii korda miinus kaks jagatud pool teist
+
+Direction:
+
+  * Algus Sõpruse puiestee sada kakskümmend kolm Lõpp Vabaõhumuuseumi tee neli kümmend viis

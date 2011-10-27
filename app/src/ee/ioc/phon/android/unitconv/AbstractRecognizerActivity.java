@@ -16,8 +16,6 @@ package ee.ioc.phon.android.unitconv;
  * limitations under the License.
  */
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

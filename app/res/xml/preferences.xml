@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<PreferenceCategory android:title="@string/titleCategorySettings">
+    <PreferenceCategory android:title="@string/titleCategorySettings" >
 
-		<CheckBoxPreference
-			android:key="keyUseInternalTranslator"
-			android:title="@string/titleUseInternalTranslator"
-			android:summary="@string/summaryUseInternalTranslator"
-			android:defaultValue="false" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="keyUseInternalTranslator"
+            android:summary="@string/summaryUseInternalTranslator"
+            android:title="@string/titleUseInternalTranslator" />
 
-		<CheckBoxPreference
-			android:key="keyShowEditor"
-			android:title="@string/titleShowEditor"
-			android:summary="@string/summaryShowEditor"
-			android:defaultValue="false" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="keyShowEditor"
+            android:summary="@string/summaryShowEditor"
+            android:title="@string/titleShowEditor" />
+    </PreferenceCategory>
 
-	</PreferenceCategory>
 </PreferenceScreen>

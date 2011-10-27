@@ -1,7 +1,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_empty="true" android:drawable="@android:color/transparent"/>
+
+    <item android:drawable="@android:color/transparent" android:state_empty="true"/>
     <!--
-    <item android:state_expanded="true" android:drawable="@color/yellow"/>
-    <item android:drawable="@color/red"/>
+	<item android:state_expanded="true" android:drawable="@drawable/expander_ic_maximized" />
+	<item android:drawable="@drawable/expander_ic_minimized" />
     -->
+
 </selector>

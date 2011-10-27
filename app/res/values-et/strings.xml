@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="labelApp">Arvutaja</string>
 
-	<string name="progressLoadingGrammar">Oodake palun. Laadin grammatikafaili...</string>
-	<string name="progressExecuting">Oodake palun. Parsin, lineariseerin, arvutan...</string>
-	<string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
-	<string name="error">VIGA</string>
+    <string name="labelApp">Arvutaja</string>
+    <string name="labelPreferences">Seaded</string>
+    <string name="progressLoadingGrammar">Oodake palun. Laadin grammatikafaili...</string>
+    <string name="progressExecuting">Oodake palun. Parsin, lineariseerin, arvutan...</string>
+    <string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
+    <string name="error">VIGA</string>
+    <string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
+    <string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
+    <string name="errorResultClientError">VIGA: kliendiviga</string>
+    <string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
+    <string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
+    <string name="errorRecognizerNotPresent">VIGA: Telefonis puudub kõnetuvastusteenus: %1$s</string>
+    <string name="ambiguous">(mitmene)</string>
+    <string name="menuSettings">Seaded</string>
+    <string name="titleCategorySettings">Seaded</string>
+    <string name="titleUseInternalTranslator">Kasuta sisemist tõlki</string>
+    <string name="summaryUseInternalTranslator">Tõlgi telefonis (mitte serveris)</string>
+    <string name="titleShowEditor">Kuva redaktor</string>
+    <string name="summaryShowEditor">Kuva redaktor</string>
 
-	<string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
-	<string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
-	<string name="errorResultClientError">VIGA: kliendiviga</string>
-	<string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
-	<string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>	
-
-	<string name="errorRecognizerNotPresent">VIGA: Telefonis puudub kõnetuvastusteenus: %1$s</string>
 </resources>

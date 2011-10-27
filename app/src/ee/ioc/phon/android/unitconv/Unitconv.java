@@ -51,8 +51,8 @@ import ee.ioc.phon.android.unitconv.provider.Query;
 public class Unitconv extends AbstractRecognizerActivity {
 
 	// Set of non-standard extras that RecognizerIntentActivity supports
-	public static final String EXTRA_GRAMMAR_URL = "EXTRA_GRAMMAR_URL";
-	public static final String EXTRA_GRAMMAR_LANG = "EXTRA_GRAMMAR_LANG";
+	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
+	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
@@ -178,9 +178,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 				Cursor cursor = (Cursor) parent.getItemAtPosition(groupPosition);
-				String view = cursor.getString(cursor.getColumnIndex(Query.Columns.VIEW));
-				String translation = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
-				launchIntent(view, translation);
+				launchIntent(cursor, Query.Columns.VIEW, Query.Columns.TRANSLATION);
 				return false;
 			}
 		});
@@ -191,9 +189,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Cursor cursor = (Cursor) parent.getItemAtPosition(childPosition);
-				String view = cursor.getString(cursor.getColumnIndex(Qeval.Columns.VIEW));
-				String translation = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
-				launchIntent(view, translation);
+				launchIntent(cursor, Qeval.Columns.VIEW, Qeval.Columns.TRANSLATION);
 				return false;
 			}
 		});
@@ -270,7 +266,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 	@Override
 	protected void onSuccess(List<String> matches) {
 		if (matches.isEmpty()) {
-			toast("ERROR: empty list was returned not an error message.");
+			toast("ERROR: empty list was returned, not an error message.");
 		} else {
 			String result = matches.iterator().next();
 			mEt.setText(result);
@@ -278,13 +274,14 @@ public class Unitconv extends AbstractRecognizerActivity {
 		}
 	}
 
-
-	private void launchIntent(String view, String translation) {
-		if (view != null && view.startsWith("http://")) {
+	private void launchIntent(Cursor cursor, String view, String translation) {
+		String v = cursor.getString(cursor.getColumnIndex(view));
+		String t = cursor.getString(cursor.getColumnIndex(translation));
+		if (v != null && view.startsWith("http://")) {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
-		} else if (translation != null) {
+		} else if (t != null) {
 			Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
-			search.putExtra(SearchManager.QUERY, translation);
+			search.putExtra(SearchManager.QUERY, t);
 			startActivity(search);
 		}
 	}
@@ -294,7 +291,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
 		if (! useInternalTranslator) {
-			intent.putExtra(EXTRA_GRAMMAR_LANG, langLinearize);
+			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langLinearize);
 		}
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		return intent;
@@ -440,6 +437,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 					values1.put(Query.Columns.VIEW, results.get(0).get("view"));
 					values1.put(Query.Columns.MESSAGE, results.get(0).get("message"));
 				} else {
+					// TRANSLATION must remain NULL here
 					values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
 				}
 				insert(QUERY_CONTENT_URI, values1);
@@ -467,21 +465,6 @@ public class Unitconv extends AbstractRecognizerActivity {
 				int childLayout, String[] groupFrom, int[] groupTo, String[] childrenFrom,
 				int[] childrenTo) {
 
-			/*
-			 * 
-context	The context where the ExpandableListView associated with this SimpleCursorTreeAdapter is running
-cursor	The database cursor
-groupLayout	The resource identifier of a layout file that defines the views for a group.
-            The layout file should include at least those named views defined in groupTo.
-groupFrom	A list of column names that will be used to display the data for a group.
-groupTo	The group views (from the group layouts) that should display column in the "from" parameter.
-These should all be TextViews or ImageViews.
-The first N views in this list are given the values of the first N columns in the from parameter.
-
-childLayout	The resource identifier of a layout file that defines the views for a child. The layout file should include at least those named views defined in childTo.
-childFrom	A list of column names that will be used to display the data for a child.
-childTo	The child views (from the child layouts) that should display column in the "from" parameter. These should all be TextViews or ImageViews. The first N views in this list are given the values of the first N columns in the from parameter.
-			 */
 			super(context, null, groupLayout, groupFrom, groupTo, childLayout, childrenFrom, childrenTo);
 		}
 
