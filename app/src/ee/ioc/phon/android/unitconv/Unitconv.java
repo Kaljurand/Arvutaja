@@ -31,18 +31,10 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.grammaticalframework.Linearizer;
-import org.grammaticalframework.PGF;
-import org.grammaticalframework.PGFBuilder;
-import org.grammaticalframework.Parser;
-import org.grammaticalframework.parser.ParseState;
-import org.grammaticalframework.Trees.Absyn.Tree;
 
 import ee.ioc.phon.android.unitconv.provider.Qeval;
 import ee.ioc.phon.android.unitconv.provider.Query;
@@ -59,19 +51,15 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 	private SharedPreferences mPrefs;
 
-	private String mLangParse;
-	private String mLangLinearize;
-
 	private ExpandableListView mListView;
 	private EditText mEt;
-	private PGF mPGF;
 	private Intent mIntent;
 	private ImageButton mBMicrophone;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
 
-	private boolean mUseInternalTranslator = true;
+	private boolean mUseInternalTranslator = false;
 
 	private static final String[] QUERY_PROJECTION = new String[] {
 		Query.Columns._ID,
@@ -137,19 +125,12 @@ public class Unitconv extends AbstractRecognizerActivity {
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
 
-		mLangParse = getString(R.string.nameGrammar) + getString(R.string.nameLangParse);
-		mLangLinearize = getString(R.string.nameGrammar) + getString(R.string.nameLangLinearize);
-
 		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
 		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
 		if (getRecognizers(mIntent).size() == 0) {
 			mBMicrophone.setEnabled(false);
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
-		}
-
-		if (mUseInternalTranslator) {
-			new LoadPGFTask().execute();
 		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
@@ -253,9 +234,13 @@ public class Unitconv extends AbstractRecognizerActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-
+		/*
 		case R.id.menuSettings:
 			startActivity(new Intent(this, Preferences.class));
+			return true;
+		 */
+		case R.id.menuAbout:
+			toast(getString(R.string.labelApp));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -298,93 +283,15 @@ public class Unitconv extends AbstractRecognizerActivity {
 	}
 
 
-	private class LoadPGFTask extends AsyncTask<Void, Void, PGF> {
-
-		private ProgressDialog mProgress;
-
-		protected void onPreExecute() {
-			mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressLoadingGrammar), true);
-		}
-
-		protected PGF doInBackground(Void... a) {
-			InputStream is = getResources().openRawResource(R.raw.grammar);
-			try {
-				PGF pgf = PGFBuilder.fromInputStream(is, new String[] {mLangParse, mLangLinearize});
-				return pgf;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		protected void onPostExecute(PGF result) {
-			mPGF = result;
-			if (mProgress != null) {
-				mProgress.dismiss();
-			}
-		}
-	}
-
-
 	private class TranslateTask extends AsyncTask<List<String>, Void, List<Map<String, String>>> {
 
 		private ProgressDialog mProgress;
 
 		protected void onPreExecute() {
-			if (mUseInternalTranslator) {
-				mProgress = ProgressDialog.show(Unitconv.this, "", getString(R.string.progressExecuting), true);
-			}
 		}
 
 		protected List<Map<String, String>> doInBackground(List<String>... s) {
-			if (mUseInternalTranslator) {
-				return getResultsWithInternalTranslator(s[0].get(0));
-			}
 			return getResultsWithExternalTranslator(s);
-		}
-
-
-		private List<Map<String, String>> getResultsWithInternalTranslator(String s) {
-			try {
-				// Creating a Parser object for the P_LANG concrete grammar
-				Parser mParser = new Parser(mPGF, mLangParse);
-				// Simple tokenization
-				String[] tokens = s.split(" ");
-				// Parsing the tokens
-				ParseState mParseState = mParser.parse(tokens);
-				Tree[] trees = (Tree[]) mParseState.getTrees();
-
-				int numberOfTrees = trees.length;
-				List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
-
-				if (numberOfTrees == 0) {
-				} else {
-					// Creating a Linearizer object for the L_LANG concrete grammar
-					// Linearizing all the trees (i.e. the ambiguity)
-					Linearizer mLinearizer = new Linearizer(mPGF, mLangLinearize);
-					for (int i = 0; i < numberOfTrees; i++) {
-						Map<String, String> map = new HashMap<String, String>();
-						Converter conv = null;
-						try {
-							String t = mLinearizer.linearizeString(trees[i]);
-							conv = new Converter(t);
-							map.put("in", conv.getIn());
-							map.put("out", conv.getOut());
-							map.put("view", conv.getView());
-						} catch (Exception e) {
-							if (conv == null) {
-								map.put("in", e.getMessage());
-							} else {
-								map.put("in", conv.getIn());
-								map.put("message", e.getMessage());
-							}
-						}
-						translations.add(map);
-					}
-				}
-				return translations;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
 		}
 
 

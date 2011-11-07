@@ -2,17 +2,13 @@
 <resources>
 
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
-
-    <!-- Calc is only used for internal parsing -->
-    <string name="nameGrammar" translatable="false">Calc</string>
+    <string name="ambiguous" translatable="false">→</string>
     <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.recognizerintent</string>
     <string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.recognizerintent.RecognizerIntentActivity</string>
     <string name="labelApp">Calculator</string>
     <string name="labelPreferences">Preferences</string>
-    <string name="progressLoadingGrammar">Please wait. Loading grammar...</string>
-    <string name="progressExecuting">Please wait. Parsing, linearizing, computing...</string>
     <string name="warningParserInputNotSupported">Input sentence not supported</string>
     <string name="errorResultAudioError">ERROR: audio recording failed</string>
     <string name="errorResultNetworkError">ERROR: something is wrong with the network</string>
@@ -20,8 +16,8 @@
     <string name="errorResultServerError">ERROR: recognizer server error</string>
     <string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
     <string name="errorRecognizerNotPresent">ERROR: Could not find speech recognition service: %1$s</string>
-    <string name="ambiguous">(ambiguous)</string>
     <string name="menuSettings">Settings</string>
+    <string name="menuAbout">About</string>
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseInternalTranslator">Use internal translator</string>
     <string name="summaryUseInternalTranslator">Uncheck to translate on the server</string>

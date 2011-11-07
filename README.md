@@ -52,20 +52,6 @@ raw recognition result into an evaluatable form.
   * http://www.softwaremonkey.org/Code/MathEval
 
 
-Other
------
-
-### Getting the PGF grammar file
-
-The PGF file is not checked in. To compile the app you have to first get the PGF and
-copy it into the app's `res/raw/` directory. The grammars are developed by a separate
-project (http://github.com/Kaljurand/Grammars/), and pre-compiled grammars have been
-made available at http://kaljurand.github.com/Grammars/. So updating to the latest PGF
-(before compiling) is as simple as:
-
-   curl http://kaljurand.github.com/Grammars/grammars/pgf/Calc.pgf > ${APP}/res/raw/grammar.pgf
-
-
 Examples
 --------
 
