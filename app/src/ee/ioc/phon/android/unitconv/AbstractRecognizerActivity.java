@@ -21,15 +21,19 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.speech.RecognizerIntent;
 import android.widget.Toast;
 
 /**
- * <p>This demo shows how to create an input to RecognizerIntent.ACTION_RECOGNIZE_SPEECH
+ * <p>Among other things, this class demonstrates how to
+ * create an input to RecognizerIntent.ACTION_RECOGNIZE_SPEECH
  * and how to respond to its output (list of matched words or an error code). This is
  * an abstract class, the UI part is in the extensions of this class.</p>
  * 
@@ -40,6 +44,14 @@ public abstract class AbstractRecognizerActivity extends Activity {
 	private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
 
 	protected abstract void onSuccess(List<String> matches);
+
+	public String getVersionName() {
+		PackageInfo info = getPackageInfo(this);
+		if (info == null) {
+			return "?.?.?";
+		}
+		return info.versionName;
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,5 +118,14 @@ public abstract class AbstractRecognizerActivity extends Activity {
 
 	protected void insert(Uri contentUri, ContentValues values) {
 		getContentResolver().insert(contentUri, values);
+	}
+
+
+	private static PackageInfo getPackageInfo(Context c) {
+		PackageManager manager = c.getPackageManager();
+		try {
+			return manager.getPackageInfo(c.getPackageName(), 0);
+		} catch (NameNotFoundException e) {}
+		return null;
 	}
 }

@@ -4,6 +4,8 @@
     android:versionCode="200"
     android:versionName="0.2.00" >
 
+    <uses-sdk android:minSdkVersion="4" />
+
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/labelApp" >

@@ -21,8 +21,7 @@ Dependencies
 
 Calculator uses grammar-aware Estonian speech recognition service for Android
 which you have to install separately from
-
-    http://recognizer-intent.googlecode.com
+http://recognizer-intent.googlecode.com
 
 
 Background technologies
@@ -55,9 +54,11 @@ raw recognition result into an evaluatable form.
 Examples
 --------
 
-The language understood by *Calculator* is composed of 3 underlying grammars.
+The language understood by *Calculator* is described by 3 underlying grammars.
+Following is a list of some interesting examples, more can be found at
+http://kaljurand.github.com/Grammars/
 
-Unitconv:
+### Unitconv
 
   * kaks sada tuhat viis teist milli kraadi kraadides
   * kaks minutit sekundites (NB! ambiguous with 2 readings)
@@ -66,13 +67,13 @@ Unitconv:
   * viis norra krooni vanas rahas (ERROR: internal converter does not understad `NOK`)
   * viis norra krooni suures valuutas (NB! ambiguous with ~6 readings)
 
-Exp:
+### Exp
 
   * Pii korda miinus kaks jagatud pool teist
   * miinus üks miinus miinus kaks miinus miinus kolm ... (arbitrarily long query)
   * null astmel miinus üks
 
-Direction:
+### Direction
 
   * Algus Sõpruse puiestee sada kakskümmend kolm Lõpp Vabaõhumuuseumi tee neli kümmend viis
   * Roo (Ambiguous: street in Tallinn vs village in Estonia)

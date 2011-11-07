@@ -240,7 +240,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 			return true;
 		 */
 		case R.id.menuAbout:
-			toast(getString(R.string.labelApp));
+			toast(getString(R.string.labelApp) + " v" + getVersionName());
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
