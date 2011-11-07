@@ -1,19 +1,20 @@
 Calculator
 ==========
 
-_Work in progress_
-
 *Calculator* is a novel
 unit/currency conversion and arithmetical expression evaluator app for Android
 (that also does Estonian address queries).
 
-Features:
+Features
+--------
 
-  * No menus! The query is entered via *Estonian speech*
-  * The *history* of query evaluation results is presented in a persistent list
-  * Support for *vague/ambiguous queries* (e.g. "viis norra krooni suures valuutas")
-  * Clicking on a list item opens a 3rd party app for a 2nd opinion
-    * (this is mostly used for map queries the result of which cannot be presened in the list)
+  * No menus! The query is entered via _Estonian speech_.
+  * The _history_ of query evaluation results is presented in a persistent list.
+  * Support for _vague/ambiguous queries_ (e.g. "viis norra krooni suures valuutas").
+  * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
+    * map queries the result of which cannot be presened in the list;
+    * currency conversion (which the internal evaluator does not support yet);
+    * getting a "2nd opinion" (from e.g. Google Search or WolframAlpha).
 
 
 Dependencies
@@ -61,19 +62,32 @@ http://kaljurand.github.com/Grammars/
 ### Unitconv
 
   * kaks sada tuhat viis teist milli kraadi kraadides
-  * kaks minutit sekundites (NB! ambiguous with 2 readings)
   * kaks hektarit ruut kilo meetrites
   * kolm hektarit aakrites (ERROR: internal converter does not understad `acre`)
-  * viis norra krooni vanas rahas (ERROR: internal converter does not understad `NOK`)
-  * viis norra krooni suures valuutas (NB! ambiguous with ~6 readings)
+  * viis norra krooni vanas rahas (ERROR: internal converter does not understand `NOK`)
+
+#### Examples of ambiguities
+
+  * kaks minutit sekundites (ambiguous with 2 readings)
+  * viis norra krooni suures valuutas (ambiguous with ~6 readings)
 
 ### Exp
 
   * Pii korda miinus kaks jagatud pool teist
   * miinus üks miinus miinus kaks miinus miinus kolm ... (arbitrarily long query)
-  * null astmel miinus üks
+  * null astmel miinus üks (= Infinity)
+  * miinus üks astmel pool (= NaN, the built-in math evaluator does not support complex numbers)
 
 ### Direction
 
+  * Sõpruse puiestee sada kakskümmend kolm
   * Algus Sõpruse puiestee sada kakskümmend kolm Lõpp Vabaõhumuuseumi tee neli kümmend viis
-  * Roo (Ambiguous: street in Tallinn vs village in Estonia)
+  * Tartu
+
+#### Examples of ambiguities
+
+  * Roo (street in Tallinn vs village in Estonia)
+
+### Covered by multiple grammars (i.e. ambiguous)
+
+  * Pii (PI vs village in Estonia)
