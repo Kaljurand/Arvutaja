@@ -35,7 +35,8 @@ public class ArvutajaAppWidgetProvider extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			Intent intent = new Intent(context, Unitconv.class);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+			intent.putExtra(Unitconv.EXTRA_LAUNCH_RECOGNIZER, true);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
 
 			// Get the layout for the App Widget and attach an on-click listener to the button
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);

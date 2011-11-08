@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,9 +43,13 @@ import ee.ioc.phon.android.unitconv.provider.Query;
 
 public class Unitconv extends AbstractRecognizerActivity {
 
+	public static final String EXTRA_LAUNCH_RECOGNIZER = "ee.ioc.phon.android.extra.LAUNCH_RECOGNIZER";
+
 	// Set of non-standard extras that RecognizerIntentActivity supports
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
+
+	private static final String LOG_TAG = Unitconv.class.getName();
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
@@ -58,6 +63,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
+
+	private Bundle mExtras;
 
 	private boolean mUseInternalTranslator = false;
 
@@ -117,6 +124,16 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", false);
+
+		mExtras = getIntent().getExtras();
+		if (mExtras == null) {
+			// For some reason getExtras() can return null, we map it
+			// to an empty Bundle if this occurs.
+			Log.e(LOG_TAG, "getExtras() == null");
+			mExtras = new Bundle();
+		} else {
+			Log.e(LOG_TAG, "getExtras() == " + mExtras.keySet().toString());
+		}
 
 		mEt = (EditText) findViewById(R.id.edittext);
 
@@ -199,6 +216,15 @@ public class Unitconv extends AbstractRecognizerActivity {
 				null,
 				Query.Columns.TIMESTAMP + " DESC"
 		);
+	}
+
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (mExtras.getBoolean(Unitconv.EXTRA_LAUNCH_RECOGNIZER)) {
+			launchRecognizerIntent(mIntent);
+		}
 	}
 
 
