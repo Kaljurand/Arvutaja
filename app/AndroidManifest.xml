@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ee.ioc.phon.android.unitconv"
-    android:versionCode="200"
-    android:versionName="0.2.00" >
+    android:versionCode="211"
+    android:versionName="0.2.11" >
 
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk
+        android:minSdkVersion="4" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -26,6 +27,16 @@
         <provider
             android:authorities="ee.ioc.phon.android.unitconv.provider.QueriesContentProvider"
             android:name=".provider.QueriesContentProvider" />
+
+        <receiver android:name=".provider.ArvutajaAppWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info" />
+        </receiver>
     </application>
 
 </manifest>
