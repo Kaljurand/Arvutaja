@@ -1,16 +1,21 @@
-Calculator
-==========
+Arvutaja
+========
 
-*Calculator* is a novel
-unit/currency conversion and arithmetical expression evaluator app for Android
-(that also does Estonian address queries).
+__Arvutaja__ (= the Estonian word for _Calculator_) is an Android app that
+offers a new way for:
+
+  * converting units and currencies,
+  * evaluating arithmetical expressions,
+  * performing Estonian address queries,
+
+where the query is input via __Estonian speech__.
 
 Features
 --------
 
-  * No menus! The query is entered via _Estonian speech_.
-  * The _history_ of query evaluation results is presented in a persistent list.
-  * Support for _vague/ambiguous queries_ (e.g. "viis norra krooni suures valuutas").
+  * __No menus!__ Just a microphone button.
+  * The __history__ of query evaluation results is presented in a persistent list.
+  * Support for __vague/ambiguous queries__ (e.g. "viis norra krooni suures valuutas").
   * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
     * map queries the result of which cannot be presened in the list;
     * currency conversion (which the internal evaluator does not support yet);
@@ -20,7 +25,7 @@ Features
 Dependencies
 ------------
 
-Calculator uses grammar-aware Estonian speech recognition service for Android
+__Arvutaja__ uses grammar-aware Estonian speech recognition service for Android
 which you have to install separately from
 http://recognizer-intent.googlecode.com
 
@@ -30,7 +35,7 @@ Background technologies
 
 ### Estonian speech recognition
 
-Calculator uses an online grammar-aware Estonian speech recognition server
+__Arvutaja__ uses an online grammar-aware Estonian speech recognition server
 
   * http://bark.phon.ioc.ee/
 
@@ -55,7 +60,7 @@ raw recognition result into an evaluatable form.
 Examples
 --------
 
-The language understood by *Calculator* is described by 3 underlying grammars.
+The language understood by __Arvutaja__ is described by 3 underlying grammars.
 Following is a list of some interesting examples, more can be found at
 http://kaljurand.github.com/Grammars/
 
