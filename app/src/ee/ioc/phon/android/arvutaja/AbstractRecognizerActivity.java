@@ -1,4 +1,4 @@
-package ee.ioc.phon.android.unitconv;
+package ee.ioc.phon.android.arvutaja;
 
 /*
  * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology

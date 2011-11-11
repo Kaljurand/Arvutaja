@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ee.ioc.phon.android.unitconv"
-    android:versionCode="214"
-    android:versionName="0.2.14" >
+    package="ee.ioc.phon.android.arvutaja"
+    android:versionCode="300"
+    android:versionName="0.3.00" >
 
     <uses-sdk android:minSdkVersion="4" />
 
@@ -11,7 +11,7 @@
         android:label="@string/labelApp" >
         <activity
             android:label="@string/labelApp"
-            android:name=".Unitconv" >
+            android:name=".ArvutajaActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +24,7 @@
         </activity>
 
         <provider
-            android:authorities="ee.ioc.phon.android.unitconv.provider.QueriesContentProvider"
+            android:authorities="ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider"
             android:name=".provider.QueriesContentProvider" />
 
         <receiver android:name=".provider.ArvutajaAppWidgetProvider" >

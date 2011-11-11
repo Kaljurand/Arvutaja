@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ee.ioc.phon.android.unitconv.provider;
+package ee.ioc.phon.android.arvutaja.provider;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,13 +39,13 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String TAG = "QueriesContentProvider";
 
-	private static final String DATABASE_NAME = "unitconv.db";
+	private static final String DATABASE_NAME = "arvutaja.db";
 
 	private static final int DATABASE_VERSION = 19;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
-	public static final String AUTHORITY = "ee.ioc.phon.android.unitconv.provider.QueriesContentProvider";
+	public static final String AUTHORITY = "ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider";
 
 	private static final UriMatcher sUriMatcher;
 

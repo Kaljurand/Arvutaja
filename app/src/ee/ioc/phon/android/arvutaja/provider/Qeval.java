@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ee.ioc.phon.android.unitconv.provider;
+package ee.ioc.phon.android.arvutaja.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -33,7 +33,7 @@ public class Qeval {
 				"/" +
 				QueriesContentProvider.QEVALS_TABLE_NAME);
 
-		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.unitconv";
+		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvuataja";
 
 		public static final String TIMESTAMP = "TIMESTAMP";
 		public static final String TRANSLATION = "TRANSLATION";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ee.ioc.phon.android.unitconv.provider;
+package ee.ioc.phon.android.arvutaja.provider;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -22,8 +22,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
-import ee.ioc.phon.android.unitconv.R;
-import ee.ioc.phon.android.unitconv.Unitconv;
+import ee.ioc.phon.android.arvutaja.R;
+import ee.ioc.phon.android.arvutaja.ArvutajaActivity;
 
 public class ArvutajaAppWidgetProvider extends AppWidgetProvider {
 
@@ -34,8 +34,8 @@ public class ArvutajaAppWidgetProvider extends AppWidgetProvider {
 		for (int i=0; i<N; i++) {
 			int appWidgetId = appWidgetIds[i];
 
-			Intent intent = new Intent(context, Unitconv.class);
-			intent.putExtra(Unitconv.EXTRA_LAUNCH_RECOGNIZER, true);
+			Intent intent = new Intent(context, ArvutajaActivity.class);
+			intent.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, true);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
 
 			// Get the layout for the App Widget and attach an on-click listener to the button

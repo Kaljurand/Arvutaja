@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ee.ioc.phon.android.unitconv;
+package ee.ioc.phon.android.arvutaja;
 
 import android.content.Context;
 import android.database.Cursor;

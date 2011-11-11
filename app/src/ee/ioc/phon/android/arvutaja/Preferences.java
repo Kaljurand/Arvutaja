@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ee.ioc.phon.android.unitconv;
+package ee.ioc.phon.android.arvutaja;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

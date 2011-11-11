@@ -1,4 +1,4 @@
-package ee.ioc.phon.android.unitconv;
+package ee.ioc.phon.android.arvutaja;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,11 +37,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ee.ioc.phon.android.unitconv.provider.Qeval;
-import ee.ioc.phon.android.unitconv.provider.Query;
+import ee.ioc.phon.android.arvutaja.provider.Qeval;
+import ee.ioc.phon.android.arvutaja.provider.Query;
 
 
-public class Unitconv extends AbstractRecognizerActivity {
+public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	public static final String EXTRA_LAUNCH_RECOGNIZER = "ee.ioc.phon.android.extra.LAUNCH_RECOGNIZER";
 
@@ -49,7 +49,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
-	private static final String LOG_TAG = Unitconv.class.getName();
+	private static final String LOG_TAG = ArvutajaActivity.class.getName();
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
@@ -195,8 +195,8 @@ public class Unitconv extends AbstractRecognizerActivity {
 
 		mAdapter = new MyExpandableListAdapter(
 				this,
-				R.layout.list_item_unitconv_result,
-				R.layout.list_item_unitconv_result,
+				R.layout.list_item_arvutaja_result,
+				R.layout.list_item_arvutaja_result,
 				new String[] { Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
 				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
 				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
@@ -222,7 +222,7 @@ public class Unitconv extends AbstractRecognizerActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (mExtras.getBoolean(Unitconv.EXTRA_LAUNCH_RECOGNIZER)) {
+		if (mExtras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
 			launchRecognizerIntent(mIntent);
 		}
 	}

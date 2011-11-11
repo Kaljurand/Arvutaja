@@ -1,4 +1,4 @@
-package ee.ioc.phon.android.unitconv;
+package ee.ioc.phon.android.arvutaja;
 
 import javax.measure.unit.Unit;
 
