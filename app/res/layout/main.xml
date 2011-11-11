@@ -38,6 +38,7 @@ the methods referenced this way.
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="right"
+        android:layout_margin="10dp"
         android:background="@color/transparent"
         android:orientation="vertical"
         android:padding="10dp" >
