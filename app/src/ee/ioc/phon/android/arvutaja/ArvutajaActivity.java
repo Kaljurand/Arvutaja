@@ -204,18 +204,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-				Cursor cursor = (Cursor) parent.getItemAtPosition(groupPosition);
+				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getGroup(groupPosition);
 				launchIntent(cursor, Query.Columns.VIEW, Query.Columns.TRANSLATION);
 				return false;
 			}
 		});
 
-
-		// TODO: make this work, it currently does not
 		mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-				Cursor cursor = (Cursor) parent.getItemAtPosition(childPosition);
+				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
 				launchIntent(cursor, Qeval.Columns.VIEW, Qeval.Columns.TRANSLATION);
 				return false;
 			}
@@ -327,36 +325,48 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		final long key;
+		String fname;
+		final Uri uri;
 
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
 		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-			//int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			//int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			toast("TODO: deleting children currently not supported");
-			return true;
+			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
+			key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
+			fname = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
+			uri = QEVAL_CONTENT_URI;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getItemAtPosition(groupPos);
-			final long key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
-			String fname = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
-			switch (item.getItemId()) {
-			case R.id.cmMainDelete:
-				Utils.getYesNoDialog(
-						this,
-						String.format(getString(R.string.confirmDeleteEntry), fname),
-						new Executable() {
-							public void execute() {
-								delete(QUERY_CONTENT_URI, key);
-							}
-						}
-				).show();
-				return true;
-			default:
-				return super.onContextItemSelected(item);
-			}
+			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
+			key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
+			fname = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
+			uri = QUERY_CONTENT_URI;
+		} else {
+			return false;
 		}
-		return false;
+
+		if (fname == null) {
+			fname = getString(R.string.ambiguous);
+		}
+
+		switch (item.getItemId()) {
+		case R.id.cmMainDelete:
+			Utils.getYesNoDialog(
+					this,
+					String.format(getString(R.string.confirmDeleteEntry), fname),
+					new Executable() {
+						public void execute() {
+							delete(uri, key);
+						}
+					}
+			).show();
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
 
 

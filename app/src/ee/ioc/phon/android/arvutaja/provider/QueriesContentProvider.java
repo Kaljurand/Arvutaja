@@ -16,7 +16,6 @@
 
 package ee.ioc.phon.android.arvutaja.provider;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import android.content.ContentProvider;
@@ -53,6 +52,7 @@ public class QueriesContentProvider extends ContentProvider {
 	private static final int QUERIES = 1;
 	private static final int QUERY_ID = 2;
 	private static final int QEVALS = 3;
+	private static final int QEVAL_ID = 4;
 
 	private static HashMap<String, String> queriesProjectionMap;
 	private static HashMap<String, String> qevalsProjectionMap;
@@ -153,6 +153,14 @@ public class QueriesContentProvider extends ContentProvider {
 			count = db.delete(QUERIES_TABLE_NAME, where, whereArgs);
 			break;
 
+		case QEVAL_ID:
+			String qevalId = uri.getPathSegments().get(1);
+			count = db.delete(
+					QEVALS_TABLE_NAME,
+					Qeval.Columns._ID + "=" + qevalId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+					whereArgs);
+			break;
+
 		default:
 			throw new IllegalArgumentException(UNKNOWN_URI + uri);
 		}
@@ -178,7 +186,6 @@ public class QueriesContentProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues initialValues) {
-		Log.w(TAG, "INSERT: " + uri + ": " + initialValues);
 		ContentValues values;
 		if (initialValues != null) {
 			values = new ContentValues(initialValues);
@@ -223,13 +230,14 @@ public class QueriesContentProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		/*
 		Log.w(TAG, "QUERY: " + uri);
 		Log.w(TAG, "uri: " + uri);
 		Log.w(TAG, "projection: " + Arrays.toString(projection));
 		Log.w(TAG, "selection: " + selection);
 		Log.w(TAG, "selectionArgs: " + selectionArgs);
 		Log.w(TAG, "sortOrder: " + sortOrder);
-
+		 */
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		switch (sUriMatcher.match(uri)) {
@@ -281,6 +289,7 @@ public class QueriesContentProvider extends ContentProvider {
 		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME, QUERIES);
 		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME + "/#", QUERY_ID);
 		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME, QEVALS);
+		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME + "/#", QEVAL_ID);
 
 		queriesProjectionMap = new HashMap<String, String>();
 		queriesProjectionMap.put(Query.Columns._ID, Query.Columns._ID);
