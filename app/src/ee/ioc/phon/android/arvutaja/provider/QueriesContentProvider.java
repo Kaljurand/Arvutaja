@@ -41,7 +41,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "arvutaja.db";
 
-	private static final int DATABASE_VERSION = 19;
+	private static final int DATABASE_VERSION = 20;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -71,7 +71,7 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Query.Columns.TIMESTAMP + " TIMESTAMP,"
 					+ Query.Columns.UTTERANCE + " TEXT,"
 					+ Query.Columns.TRANSLATION + " TEXT,"
-					+ Query.Columns.EVALUATION + " TEXT,"
+					+ Query.Columns.EVALUATION + " REAL,"
 					+ Query.Columns.VIEW + " TEXT,"
 					+ Query.Columns.MESSAGE + " TEXT"
 					+ ");");
@@ -80,7 +80,7 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Qeval.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ Qeval.Columns.TIMESTAMP + " TIMESTAMP,"
 					+ Qeval.Columns.TRANSLATION + " TEXT,"
-					+ Qeval.Columns.EVALUATION + " TEXT,"
+					+ Qeval.Columns.EVALUATION + " REAL,"
 					+ Qeval.Columns.VIEW + " TEXT,"
 					+ Qeval.Columns.MESSAGE + " TEXT"
 					+ ");");

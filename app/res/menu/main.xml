@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item
+        android:id="@+id/menuMainSort"
+        android:title="@string/menuMainSort">
+<menu >
+
+            <group android:checkableBehavior="single" >
+
+                <item
+                    android:id="@+id/menuMainSortByTimestamp"
+                    android:title="@string/menuMainSortByTimestamp"/>
+
+                <item
+                    android:id="@+id/menuMainSortByTranslation"
+                    android:title="@string/menuMainSortByTranslation"/>
+
+                <item
+                    android:id="@+id/menuMainSortByEvaluation"
+                    android:title="@string/menuMainSortByEvaluation"/>
+            </group>
+        </menu></item>
+
     <!--
     <item
-        android:id="@+id/menuSettings"
-        android:title="@string/menuSettings"/>
+        android:id="@+id/menuMainSettings"
+        android:title="@string/menuMainSettings"/>
     -->
 
     <item
-        android:id="@+id/menuAbout"
-        android:title="@string/menuAbout"/>
+        android:id="@+id/menuMainAbout"
+        android:title="@string/menuMainAbout"/>
 
 </menu>

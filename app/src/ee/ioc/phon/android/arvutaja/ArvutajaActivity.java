@@ -1,5 +1,21 @@
 package ee.ioc.phon.android.arvutaja;
 
+/*
+ * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -207,15 +223,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
-		mQueryHandler.startQuery(
-				TOKEN_GROUP,
-				null,
-				QUERY_CONTENT_URI,
-				QUERY_PROJECTION,
-				null,
-				null,
-				Query.Columns.TIMESTAMP + " DESC"
-		);
+		startQuery(Query.Columns.TIMESTAMP + " DESC");
 	}
 
 
@@ -260,12 +268,21 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		/*
-		case R.id.menuSettings:
+		case R.id.menuMainSortByTimestamp:
+			startQuery(Query.Columns.TIMESTAMP + " DESC");
+			return true;
+		case R.id.menuMainSortByTranslation:
+			startQuery(Query.Columns.TRANSLATION + " ASC");
+			return true;
+		case R.id.menuMainSortByEvaluation:
+			startQuery(Query.Columns.EVALUATION + " DESC");
+			return true;
+			/*
+		case R.id.menuMainSettings:
 			startActivity(new Intent(this, Preferences.class));
 			return true;
-		 */
-		case R.id.menuAbout:
+			 */
+		case R.id.menuMainAbout:
 			toast(getString(R.string.labelApp) + " v" + getVersionName());
 			return true;
 		default:
@@ -385,6 +402,19 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				}
 			}
 		}
+	}
+
+
+	private void startQuery(String sortOrder) {
+		mQueryHandler.startQuery(
+				TOKEN_GROUP,
+				null,
+				QUERY_CONTENT_URI,
+				QUERY_PROJECTION,
+				null,
+				null,
+				sortOrder
+		);
 	}
 
 

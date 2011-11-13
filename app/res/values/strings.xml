@@ -16,8 +16,12 @@
     <string name="errorResultServerError">ERROR: recognizer server error</string>
     <string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
     <string name="errorRecognizerNotPresent">ERROR: Could not find speech recognition service: %1$s</string>
-    <string name="menuSettings">Settings</string>
-    <string name="menuAbout">About</string>
+    <string name="menuMainSort">Sort ...</string>
+    <string name="menuMainSortByTimestamp">by time</string>
+    <string name="menuMainSortByTranslation">by expression</string>
+    <string name="menuMainSortByEvaluation">by value</string>
+    <string name="menuMainSettings">Settings</string>
+    <string name="menuMainAbout">About</string>
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseInternalTranslator">Use internal translator</string>
     <string name="summaryUseInternalTranslator">Uncheck to translate on the server</string>
