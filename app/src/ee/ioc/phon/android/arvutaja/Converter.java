@@ -50,13 +50,23 @@ public class Converter {
 
 	public Converter(String expr) {
 		if (expr.contains(" IN ")) {
+			// @deprecated
 			mExprType = ExprType.UNITCONV;
 			String[] splits = expr.split(" IN ");
 			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
 			mNumber = Double.parseDouble(numberAsStr);
 			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
 			mOut = splits[1].replaceAll("\\s+", "");
-			mPrettyIn =  mNumber + " " + mIn + " IN " + mOut;
+			mPrettyIn =  "convert " + mNumber + " " + mIn + " to " + mOut;
+		} else if (expr.contains("convert") && expr.contains("to")) {
+			mExprType = ExprType.UNITCONV;
+			expr = expr.replace("convert ", "");
+			String[] splits = expr.split(" to ");
+			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
+			mNumber = Double.parseDouble(numberAsStr);
+			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
+			mOut = splits[1].replaceAll("\\s+", "");
+			mPrettyIn =  "convert " + mNumber + " " + mIn + " to " + mOut;
 		} else if (expr.contains(",")) {
 			mExprType = ExprType.MAP;
 			// Remove space between digits
@@ -77,9 +87,9 @@ public class Converter {
 
 
 	public String getView() {
+		String query = mPrettyIn;
 		switch (mExprType) {
 		case MAP:
-			String query = mPrettyIn;
 			if (query.contains("FROM")) {
 				query = query.replaceFirst("FROM", "saddr=");
 				query = query.replaceFirst("TO", "&daddr=");
@@ -87,6 +97,8 @@ public class Converter {
 			} else {
 				return "http://maps.google.com/maps?daddr=" + query;
 			}
+		case UNITCONV:
+			return "http://www.wolframalpha.com/input/?i=" + query;
 		}
 		return null;
 	}
