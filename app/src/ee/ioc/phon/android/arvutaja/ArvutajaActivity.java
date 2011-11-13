@@ -21,12 +21,14 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
@@ -34,6 +36,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
@@ -143,7 +146,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mExtras = getIntent().getExtras();
 		if (mExtras == null) {
-			// For some reason getExtras() can return null, we map it
+			// Sometimes getExtras() returns null, we map it
 			// to an empty Bundle if this occurs.
 			Log.e(LOG_TAG, "getExtras() == null");
 			mExtras = new Bundle();
@@ -221,6 +224,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mListView.setAdapter(mAdapter);
 
+		registerForContextMenu(mListView);
+
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
 		startQuery(Query.Columns.TIMESTAMP + " DESC");
@@ -288,6 +293,49 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.cm_main, menu);
+	}
+
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+			//int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+			//int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+			toast("TODO: deleting children currently not supported");
+			return true;
+		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+			Cursor cursor = (Cursor) mListView.getItemAtPosition(groupPos);
+			final long key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
+			String fname = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
+			switch (item.getItemId()) {
+			case R.id.cmMainDelete:
+				Utils.getYesNoDialog(
+						this,
+						String.format(getString(R.string.confirmDeleteEntry), fname),
+						new Executable() {
+							public void execute() {
+								delete(QUERY_CONTENT_URI, key);
+							}
+						}
+				).show();
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+			}
+		}
+		return false;
 	}
 
 
@@ -420,7 +468,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	public class MyExpandableListAdapter extends SimpleCursorTreeAdapter {
 
-		// Note that the constructor does not take a Cursor. This is done to avoid querying the 
+		// Note that the constructor does not take a Cursor. This is done to avoid querying the
 		// database on the main thread.
 		public MyExpandableListAdapter(Context context, int groupLayout,
 				int childLayout, String[] groupFrom, int[] groupTo, String[] childrenFrom,

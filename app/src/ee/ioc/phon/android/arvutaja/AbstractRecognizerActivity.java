@@ -20,13 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.speech.RecognizerIntent;
 import android.widget.Toast;
@@ -46,11 +44,7 @@ public abstract class AbstractRecognizerActivity extends Activity {
 	protected abstract void onSuccess(List<String> matches);
 
 	public String getVersionName() {
-		PackageInfo info = getPackageInfo(this);
-		if (info == null) {
-			return "?.?.?";
-		}
-		return info.versionName;
+		return Utils.getVersionName(this);
 	}
 
 	@Override
@@ -121,11 +115,8 @@ public abstract class AbstractRecognizerActivity extends Activity {
 	}
 
 
-	private static PackageInfo getPackageInfo(Context c) {
-		PackageManager manager = c.getPackageManager();
-		try {
-			return manager.getPackageInfo(c.getPackageName(), 0);
-		} catch (NameNotFoundException e) {}
-		return null;
+	protected void delete(Uri contentUri, long key) {
+		Uri uri = ContentUris.withAppendedId(contentUri, key);
+		getContentResolver().delete(uri, null, null);
 	}
 }

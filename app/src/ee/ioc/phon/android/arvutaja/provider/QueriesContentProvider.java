@@ -30,6 +30,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class QueriesContentProvider extends ContentProvider {
@@ -41,7 +42,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "arvutaja.db";
 
-	private static final int DATABASE_VERSION = 20;
+	private static final int DATABASE_VERSION = 21;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -50,6 +51,7 @@ public class QueriesContentProvider extends ContentProvider {
 	private static final UriMatcher sUriMatcher;
 
 	private static final int QUERIES = 1;
+	private static final int QUERY_ID = 2;
 	private static final int QEVALS = 3;
 
 	private static HashMap<String, String> queriesProjectionMap;
@@ -137,6 +139,14 @@ public class QueriesContentProvider extends ContentProvider {
 		switch (sUriMatcher.match(uri)) {
 		case QUERIES:
 			count = db.delete(QUERIES_TABLE_NAME, where, whereArgs);
+			break;
+
+		case QUERY_ID:
+			String queryId = uri.getPathSegments().get(1);
+			count = db.delete(
+					QUERIES_TABLE_NAME,
+					Query.Columns._ID + "=" + queryId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+					whereArgs);
 			break;
 
 		case QEVALS:
@@ -269,6 +279,7 @@ public class QueriesContentProvider extends ContentProvider {
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME, QUERIES);
+		sUriMatcher.addURI(AUTHORITY, QUERIES_TABLE_NAME + "/#", QUERY_ID);
 		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME, QEVALS);
 
 		queriesProjectionMap = new HashMap<String, String>();
