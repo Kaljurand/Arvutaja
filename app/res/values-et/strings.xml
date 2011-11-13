@@ -9,7 +9,7 @@
     <string name="errorResultClientError">VIGA: kliendiviga</string>
     <string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
     <string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
-    <string name="errorRecognizerNotPresent">VIGA: Telefonis puudub kõnetuvastusteenus: %1$s</string>
+    <string name="errorRecognizerNotPresent">Telefonis puudub kõnetuvastusteenus: %1$s. Suundun allalaadimislehele.</string>
     <string name="menuMainSort">Sorteeri ...</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>

@@ -70,6 +70,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
+	private static final String SPEAK_DOWNLOAD_URL = "http://code.google.com/p/recognizer-intent/downloads/list";
+
 	private static final String LOG_TAG = ArvutajaActivity.class.getName();
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
@@ -156,8 +158,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			Log.e(LOG_TAG, "getExtras() == " + mExtras.keySet().toString());
 		}
 
-		mEt = (EditText) findViewById(R.id.edittext);
-
 		mBMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
 
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
@@ -166,14 +166,21 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
 		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
+
+		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 		if (getRecognizers(mIntent).size() == 0) {
-			mBMicrophone.setEnabled(false);
+			mLlMicrophone.setVisibility(View.GONE);
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(SPEAK_DOWNLOAD_URL)));
+			finish();
+		} else {
+			mLlMicrophone.setVisibility(View.VISIBLE);
 		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
+		mEt = (EditText) findViewById(R.id.edittext);
 		mEt.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -214,8 +221,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
-
-		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 		mListView.setOnScrollListener(new OnScrollListener() {
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			}
