@@ -60,13 +60,13 @@ public class Converter {
 			mPrettyIn =  "convert " + mNumber + " " + mIn + " to " + mOut;
 		} else if (expr.contains("convert") && expr.contains("to")) {
 			mExprType = ExprType.UNITCONV;
+			mPrettyIn = expr;
 			expr = expr.replace("convert ", "");
 			String[] splits = expr.split(" to ");
 			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
 			mNumber = Double.parseDouble(numberAsStr);
 			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
 			mOut = splits[1].replaceAll("\\s+", "");
-			mPrettyIn =  "convert " + mNumber + " " + mIn + " to " + mOut;
 		} else if (expr.contains(",")) {
 			mExprType = ExprType.MAP;
 			// Remove space between digits

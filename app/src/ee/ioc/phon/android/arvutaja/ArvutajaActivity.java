@@ -30,12 +30,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -189,6 +191,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
+		mListView.setFastScrollEnabled(true);
 		mListView.setClickable(true);
 
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -211,6 +214,19 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
+
+		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
+		mListView.setOnScrollListener(new OnScrollListener() {
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+			}
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+					mLlMicrophone.setVisibility(View.VISIBLE);
+				} else {
+					mLlMicrophone.setVisibility(View.GONE);
+				}
+			}
+		});
 
 		mAdapter = new MyExpandableListAdapter(
 				this,
