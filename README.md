@@ -41,12 +41,12 @@ __Arvutaja__ uses an online grammar-aware Estonian speech recognition server
 
 ### GF-based speech recognition
 
-GF is used by the server to guide speech recognition and to transform the
+Grammatical Framework (GF) is used by the server to guide speech recognition
+and to transform the
 raw recognition result into an evaluatable form.
 
   * GF: http://www.grammaticalframework.org/
-  * Estonian grammars: http://kaljurand.github.com/Grammars/
-  * GF on Android tutorial: http://www.grammaticalframework.org/android/tutorial/
+  * Estonian GF grammars: http://kaljurand.github.com/Grammars/
 
 ### Unit conversion
 
@@ -66,6 +66,7 @@ http://kaljurand.github.com/Grammars/
 
 ### Unitconv
 
+  * sada meetrit sekundis kilomeetrites tunnis
   * kaks sada tuhat viis teist milli kraadi kraadides
   * kaks hektarit ruut kilo meetrites
   * kolm hektarit aakrites (ERROR: internal converter does not understad `acre`)
