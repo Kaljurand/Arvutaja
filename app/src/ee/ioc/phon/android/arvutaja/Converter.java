@@ -105,6 +105,9 @@ public class Converter {
 
 
 	/**
+	 * <p>Evaluates the expression and returns the result as a String.
+	 * This method can throw various exceptions.</p>
+	 *
 	 * @return evaluation of the expression that was given to the constructor
 	 */
 	public String getOut() {

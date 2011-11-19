@@ -425,14 +425,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					Converter conv = null;
 					try {
 						conv = new Converter(lin);
-						map.put("in", conv.getIn());
 						map.put("out", conv.getOut());
+						map.put("in", conv.getIn());
 						map.put("view", conv.getView());
 					} catch (Exception e) {
+						// We end up here probably because getOut() threw an exception
 						if (conv == null) {
 							map.put("in", e.getMessage());
 						} else {
 							map.put("in", conv.getIn());
+							map.put("view", conv.getView());
 							map.put("message", e.getMessage());
 						}
 					}

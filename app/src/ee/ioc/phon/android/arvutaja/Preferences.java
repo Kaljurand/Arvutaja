@@ -20,9 +20,6 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 /**
- * <p>Preferences activity. Updates some preference-summaries automatically,
- * if the user changes a preference.</p>
- * 
  * @author Kaarel Kaljurand
  */
 public class Preferences extends PreferenceActivity {
