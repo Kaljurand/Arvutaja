@@ -115,10 +115,10 @@ public class Converter {
 		case MAP:
 			return "";
 		case UNITCONV:
-			return "" + Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber);
+			return Double.toString(Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber));
 		case EXPR:
 			MathEval math = new MathEval();
-			return "" + math.evaluate(mPrettyIn);
+			return Double.toString(math.evaluate(mPrettyIn));
 		}
 		return null;
 	}
