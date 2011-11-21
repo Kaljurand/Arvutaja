@@ -422,21 +422,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
 				for (String lin : s[0]) {
 					Map<String, String> map = new HashMap<String, String>();
-					Converter conv = null;
+					map.put("in", lin);
+					Converter conv = new Converter(lin);
+					map.put("view", conv.getView());
 					try {
-						conv = new Converter(lin);
 						map.put("out", conv.getOut());
-						map.put("in", conv.getIn());
-						map.put("view", conv.getView());
 					} catch (Exception e) {
-						// We end up here probably because getOut() threw an exception
-						if (conv == null) {
-							map.put("in", e.getMessage());
-						} else {
-							map.put("in", conv.getIn());
-							map.put("view", conv.getView());
-							map.put("message", e.getMessage());
-						}
+						map.put("message", e.getMessage());
 					}
 					translations.add(map);
 				}

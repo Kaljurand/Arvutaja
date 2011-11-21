@@ -26,8 +26,10 @@ import javax.measure.unit.Unit;
  * <p>Different kinds of input expressions are supported:</p>
  * 
  * <ul>
- * <li>1 2 m IN ft</li>
- * <li>( 1 2 + 3 4 ) * 1 2 3</li>
+ * <li>convert 12 m to ft</li>
+ * <li>convert 5.5 USD to EUR</li>
+ * <li>( 12 + - 34 ) * 123</li>
+ * <li>Estonia puiestee 123 , Tallinn</li>
  * </ul>
  * 
  * TODO: make this code not ugly
@@ -42,63 +44,33 @@ public class Converter {
 	};
 
 	private final ExprType mExprType;
-	private final String mPrettyIn;
-
-	private double mNumber;
-	private String mIn;
-	private String mOut;
+	private final String mExpr;
 
 	public Converter(String expr) {
-		if (expr.contains(" IN ")) {
-			// @deprecated
+		mExpr = expr;
+		if (mExpr.contains("convert ") && mExpr.contains(" to ")) {
 			mExprType = ExprType.UNITCONV;
-			String[] splits = expr.split(" IN ");
-			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
-			mNumber = Double.parseDouble(numberAsStr);
-			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
-			mOut = splits[1].replaceAll("\\s+", "");
-			mPrettyIn =  "convert " + mNumber + " " + mIn + " to " + mOut;
-		} else if (expr.contains("convert") && expr.contains("to")) {
-			mExprType = ExprType.UNITCONV;
-			mPrettyIn = expr;
-			expr = expr.replace("convert ", "");
-			String[] splits = expr.split(" to ");
-			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
-			mNumber = Double.parseDouble(numberAsStr);
-			mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
-			mOut = splits[1].replaceAll("\\s+", "");
 		} else if (expr.contains(",")) {
 			mExprType = ExprType.MAP;
-			// Remove space between digits
-			mPrettyIn = expr.replaceAll("(\\d)\\s+", "$1");
 		} else {
 			mExprType = ExprType.EXPR;
-			mPrettyIn = expr.replaceAll("\\s+", "");
 		}
 	}
 
 
-	/**
-	 * @return pretty-printed version of the expression that was given to the constructor
-	 */
-	public String getIn() {
-		return mPrettyIn;
-	}
-
-
 	public String getView() {
-		String query = mPrettyIn;
 		switch (mExprType) {
 		case MAP:
-			if (query.contains("FROM")) {
+			if (mExpr.contains("FROM")) {
+				String query = new String(mExpr);
 				query = query.replaceFirst("FROM", "saddr=");
 				query = query.replaceFirst("TO", "&daddr=");
 				return "http://maps.google.com/maps?" + query;
 			} else {
-				return "http://maps.google.com/maps?daddr=" + query;
+				return "http://maps.google.com/maps?daddr=" + mExpr;
 			}
 		case UNITCONV:
-			return "http://www.wolframalpha.com/input/?i=" + query;
+			return "http://www.wolframalpha.com/input/?i=" + mExpr;
 		}
 		return null;
 	}
@@ -115,10 +87,17 @@ public class Converter {
 		case MAP:
 			return "";
 		case UNITCONV:
+			String query = new String(mExpr);
+			query = query.replace("convert ", "");
+			String[] splits = query.split(" to ");
+			String numberAsStr = splits[0].replaceFirst("[^0-9\\. ].*", "").replaceAll("[^0-9\\.]", "");
+			double mNumber = Double.parseDouble(numberAsStr);
+			String mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
+			String mOut = splits[1].replaceAll("\\s+", "");
 			return Double.toString(Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber));
 		case EXPR:
 			MathEval math = new MathEval();
-			return Double.toString(math.evaluate(mPrettyIn));
+			return Double.toString(math.evaluate(mExpr));
 		}
 		return null;
 	}
