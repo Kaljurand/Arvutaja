@@ -97,7 +97,8 @@ public class Converter {
 			return Double.toString(Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber));
 		case EXPR:
 			MathEval math = new MathEval();
-			return Double.toString(math.evaluate(mExpr));
+			// We remove all the space characters otherwise MathEval's tokenizer can fail
+			return Double.toString(math.evaluate(mExpr.replaceAll("\\s+", "")));
 		}
 		return null;
 	}
