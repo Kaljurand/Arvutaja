@@ -301,11 +301,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		case R.id.menuMainSortByEvaluation:
 			startQuery(Query.Columns.EVALUATION + " DESC");
 			return true;
-			/*
 		case R.id.menuMainSettings:
 			startActivity(new Intent(this, Preferences.class));
 			return true;
-			 */
 		case R.id.menuMainAbout:
 			toast(getString(R.string.labelApp) + " v" + getVersionName());
 			return true;
@@ -381,14 +379,20 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 	}
 
+
 	private void launchIntent(Cursor cursor, String view, String translation) {
 		String v = cursor.getString(cursor.getColumnIndex(view));
 		String t = cursor.getString(cursor.getColumnIndex(translation));
-		if (v != null && v.startsWith("http://")) {
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(v)));
-		} else if (t != null) {
+		launchIntent(v, t);
+	}
+
+
+	private void launchIntent(String view, String translation) {
+		if (view != null && view.startsWith("http://")) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
+		} else if (translation != null) {
 			Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
-			search.putExtra(SearchManager.QUERY, t);
+			search.putExtra(SearchManager.QUERY, translation);
 			startActivity(search);
 		}
 	}
@@ -472,6 +476,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
 						insert(QEVAL_CONTENT_URI, values2);
 					}
+				}
+
+				if (results.size() == 1 && mPrefs.getBoolean("keyUseExternalEvaluator", false)) {
+					launchIntent(results.get(0).get("view"), results.get(0).get("in"));
 				}
 			}
 		}

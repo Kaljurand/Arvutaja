@@ -22,11 +22,9 @@
             </group>
         </menu></item>
 
-    <!--
     <item
         android:id="@+id/menuMainSettings"
         android:title="@string/menuMainSettings"/>
-    -->
 
     <item
         android:id="@+id/menuMainAbout"

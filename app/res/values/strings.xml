@@ -24,6 +24,8 @@
     <string name="menuMainAbout">About</string>
     <string name="cmMainDelete">Delete</string>
     <string name="titleCategorySettings">Settings</string>
+    <string name="titleUseExternalEvaluator">Launch external viewer</string>
+    <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>
     <string name="titleUseInternalTranslator">Use internal translator</string>
     <string name="summaryUseInternalTranslator">Uncheck to translate on the server</string>
     <string name="titleShowEditor">Show editor</string>

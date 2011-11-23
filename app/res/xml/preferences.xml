@@ -5,6 +5,13 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="keyUseExternalEvaluator"
+            android:summary="@string/summaryUseExternalEvaluator"
+            android:title="@string/titleUseExternalEvaluator" />
+
+        <!--
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="keyUseInternalTranslator"
             android:summary="@string/summaryUseInternalTranslator"
             android:title="@string/titleUseInternalTranslator" />
@@ -14,6 +21,7 @@
             android:key="keyShowEditor"
             android:summary="@string/summaryShowEditor"
             android:title="@string/titleShowEditor" />
+        -->
     </PreferenceCategory>
 
 </PreferenceScreen>

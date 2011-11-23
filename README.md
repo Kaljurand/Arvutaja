@@ -13,7 +13,8 @@ where the query is input via __Estonian speech__.
 Features
 --------
 
-  * __No menus!__ Just a microphone button.
+  * __No complex menus!__ Just a microphone button.
+  * __Tap once!__ Tapping the widget launches the recognizer, which records the speech, turns it into text, which gets evaluated, with no additional taps needed to see the result.
   * The __history__ of query evaluation results is presented in a persistent list.
   * Support for __vague/ambiguous queries__ (e.g. "viis norra krooni suures valuutas").
   * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
