@@ -78,12 +78,14 @@ http://kaljurand.github.com/Grammars/
   * kaks minutit sekundites (ambiguous with 2 readings)
   * viis norra krooni suures valuutas (ambiguous with ~6 readings)
 
-### Exp
+### Expr
 
   * Pii korda miinus kaks jagatud pool teist
   * miinus üks miinus miinus kaks miinus miinus kolm ... (arbitrarily long query)
   * null astmel miinus üks (= Infinity)
   * miinus üks astmel pool (= NaN, the built-in math evaluator does not support complex numbers)
+    * Note: Google and WolframAlpha interpret "-1^0.5" as "-(1^0.5)"
+    * Note: WolframAlpha interprets "minus one to the power of half" as "(-1)^0.5"
 
 ### Direction
 
