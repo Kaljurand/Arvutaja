@@ -3,8 +3,10 @@
 
     <item
         android:id="@+id/menuMainSort"
+        android:icon="@drawable/ic_menu_sort_by_size"
         android:title="@string/menuMainSort">
-<menu >
+
+        <menu >
 
             <group android:checkableBehavior="single" >
 
@@ -20,14 +22,17 @@
                     android:id="@+id/menuMainSortByEvaluation"
                     android:title="@string/menuMainSortByEvaluation"/>
             </group>
-        </menu></item>
+        </menu>
+    </item>
 
     <item
         android:id="@+id/menuMainSettings"
+        android:icon="@drawable/ic_menu_preferences"
         android:title="@string/menuMainSettings"/>
 
     <item
         android:id="@+id/menuMainAbout"
+        android:icon="@drawable/ic_menu_help"
         android:title="@string/menuMainAbout"/>
 
 </menu>
