@@ -71,6 +71,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
 	private static final String SPEAK_DOWNLOAD_URL = "http://code.google.com/p/recognizer-intent/downloads/list";
+	private static final String ARVUTAJA_HELP_URL = "http://kaljurand.github.com/Arvutaja/";
 
 	private static final String LOG_TAG = ArvutajaActivity.class.getName();
 
@@ -305,7 +306,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			startActivity(new Intent(this, Preferences.class));
 			return true;
 		case R.id.menuMainAbout:
-			toast(getString(R.string.labelApp) + " v" + getVersionName());
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ARVUTAJA_HELP_URL)));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
