@@ -5,8 +5,8 @@
     <string name="ambiguous" translatable="false">→</string>
     <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
-    <string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.recognizerintent</string>
-    <string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.recognizerintent.RecognizerIntentActivity</string>
+    <string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.speak</string>
+    <string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
     <string name="labelApp">Calculator</string>
     <string name="labelPreferences">Preferences</string>
     <string name="warningParserInputNotSupported">Input sentence not supported</string>
