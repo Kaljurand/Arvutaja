@@ -85,7 +85,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private ExpandableListView mListView;
 	private EditText mEt;
 	private Intent mIntent;
-	private ImageButton mBMicrophone;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
@@ -161,8 +160,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			Log.e(LOG_TAG, "getExtras() == " + mExtras.keySet().toString());
 		}
 
-		mBMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
-
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
 
@@ -192,12 +189,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					new TranslateTask().execute(inputs);
 				}
 				return true;
-			}
-		});
-
-		mBMicrophone.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				launchRecognizerIntent(mIntent);
 			}
 		});
 
@@ -273,6 +264,18 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		} else {
 			ll.setVisibility(View.GONE);
 		}
+
+		// We assume that the microphone button triggers an activity that "pauses" Arvutaja.
+		// 1. The button appears when Arvutaja is fully in focus.
+		// 2. As soon as the button is tapped it becomes disabled.
+		// 3. It becomes enabled again when Arvutaja gets the focus back.
+		ImageButton mic = (ImageButton) findViewById(R.id.buttonMicrophone);
+		mic.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				v.setOnClickListener(null);
+				launchRecognizerIntent(mIntent);
+			}
+		});
 	}
 
 
