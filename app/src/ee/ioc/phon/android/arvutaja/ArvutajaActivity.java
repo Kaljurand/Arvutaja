@@ -80,6 +80,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private SharedPreferences mPrefs;
 
+	private static String mCurrentSortOrder;
+
 	private ExpandableListView mListView;
 	private EditText mEt;
 	private Intent mIntent;
@@ -248,7 +250,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
-		startQuery(Query.Columns.TIMESTAMP + " DESC");
+		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), Query.Columns.TIMESTAMP + " DESC"));
 	}
 
 
@@ -271,6 +273,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		} else {
 			ll.setVisibility(View.GONE);
 		}
+	}
+
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		SharedPreferences.Editor editor = mPrefs.edit();
+		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
+		editor.commit();
 	}
 
 
@@ -488,6 +499,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private void startQuery(String sortOrder) {
+		mCurrentSortOrder = sortOrder;
 		mQueryHandler.startQuery(
 				TOKEN_GROUP,
 				null,
