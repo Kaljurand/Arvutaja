@@ -22,24 +22,19 @@ import android.speech.RecognizerIntent;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.TextView.OnEditorActionListener;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -83,7 +78,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static String mCurrentSortOrder;
 
 	private ExpandableListView mListView;
-	private EditText mEt;
 	private Intent mIntent;
 
 	private MyExpandableListAdapter mAdapter;
@@ -180,18 +174,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mListView = (ExpandableListView) findViewById(R.id.list);
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
-		mEt = (EditText) findViewById(R.id.edittext);
-		mEt.setOnEditorActionListener(new OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_GO) {
-					List<String> inputs = new ArrayList<String>();
-					inputs.add(mEt.getText().toString());
-					new TranslateTask().execute(inputs);
-				}
-				return true;
-			}
-		});
-
 		mListView.setFastScrollEnabled(true);
 		mListView.setClickable(true);
 
@@ -257,14 +239,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		LinearLayout ll = (LinearLayout) findViewById(R.id.llEditor);
-
-		if (mPrefs.getBoolean("keyShowEditor", false)) {
-			ll.setVisibility(View.VISIBLE);
-		} else {
-			ll.setVisibility(View.GONE);
-		}
-
 		// We assume that the microphone button triggers an activity that "pauses" Arvutaja.
 		// 1. The button appears when Arvutaja is fully in focus.
 		// 2. As soon as the button is tapped it becomes disabled.
@@ -385,13 +359,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	@Override
 	protected void onSuccess(List<String> matches) {
-		if (matches.isEmpty()) {
-			toast("ERROR: empty list was returned, not an error message.");
-		} else {
-			String result = matches.iterator().next();
-			mEt.setText(result);
-			new TranslateTask().execute(matches);
-		}
+		new TranslateTask().execute(matches);
 	}
 
 

@@ -17,7 +17,7 @@
     <string name="errorResultServerError">ERROR: recognizer server error</string>
     <string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
     <string name="errorRecognizerNotPresent">Could not find speech recognition service: %1$s. Redirecting to the download page.</string>
-    <string name="menuMainSort">Sort ...</string>
+    <string name="menuMainSort">Sort …</string>
     <string name="menuMainSortByTimestamp">by time</string>
     <string name="menuMainSortByTranslation">by expression</string>
     <string name="menuMainSortByEvaluation">by value</string>
@@ -32,6 +32,7 @@
     <string name="titleShowEditor">Show editor</string>
     <string name="summaryShowEditor">Show editor</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
+    <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonYes">Yes</string>
     <string name="buttonNo">No</string>
     <string name="buttonOk">OK</string>

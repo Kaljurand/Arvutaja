@@ -10,7 +10,7 @@
     <string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
     <string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
     <string name="errorRecognizerNotPresent">Telefonis puudub kõnetuvastusteenus: %1$s. Suundun allalaadimislehele.</string>
-    <string name="menuMainSort">Sorteeri ...</string>
+    <string name="menuMainSort">Sorteeri …</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>
     <string name="menuMainSortByEvaluation">väärtuse järgi</string>
@@ -25,6 +25,7 @@
     <string name="titleShowEditor">Kuva redaktor</string>
     <string name="summaryShowEditor">Kuva redaktor</string>
     <string name="confirmDeleteEntry">Tahate kindlasti kustutada \"%1$s\"?</string>
+    <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
     <string name="buttonYes">Jah</string>
     <string name="buttonNo">Ei</string>
     <string name="buttonOk">OK</string>
