@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="urlArvutajaHelp" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
+    <string name="urlSpeakDownload" translatable="false">https://market.android.com/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
     <string name="ambiguous" translatable="false">→</string>
     <string name="nameLangParse" translatable="false">Est</string>

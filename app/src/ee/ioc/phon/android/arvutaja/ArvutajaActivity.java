@@ -65,9 +65,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
-	private static final String SPEAK_DOWNLOAD_URL = "http://code.google.com/p/recognizer-intent/downloads/list";
-	private static final String ARVUTAJA_HELP_URL = "http://kaljurand.github.com/Arvutaja/";
-
 	private static final String LOG_TAG = ArvutajaActivity.class.getName();
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
@@ -165,7 +162,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (getRecognizers(mIntent).size() == 0) {
 			mLlMicrophone.setVisibility(View.GONE);
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(SPEAK_DOWNLOAD_URL)));
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlSpeakDownload))));
 			finish();
 		} else {
 			mLlMicrophone.setVisibility(View.VISIBLE);
@@ -294,7 +291,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			startActivity(new Intent(this, Preferences.class));
 			return true;
 		case R.id.menuMainAbout:
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ARVUTAJA_HELP_URL)));
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlArvutajaHelp))));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
