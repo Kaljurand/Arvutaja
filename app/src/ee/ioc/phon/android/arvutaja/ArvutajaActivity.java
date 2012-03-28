@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -53,8 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ee.ioc.phon.android.arvutaja.command.Alarm;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
+import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
 
@@ -180,7 +179,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getGroup(groupPosition);
-				launchIntent(cursor, Query.Columns.VIEW, Query.Columns.TRANSLATION);
+				launchIntent(cursor, Query.Columns.TRANSLATION);
 				return false;
 			}
 		});
@@ -189,7 +188,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
-				launchIntent(cursor, Qeval.Columns.VIEW, Qeval.Columns.TRANSLATION);
+				launchIntent(cursor, Qeval.Columns.TRANSLATION);
 				return false;
 			}
 		});
@@ -362,33 +361,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private void launchIntent(Cursor cursor, String view, String translation) {
-		String v = cursor.getString(cursor.getColumnIndex(view));
-		String t = cursor.getString(cursor.getColumnIndex(translation));
-		launchIntent(v, t);
+	private void launchIntent(Cursor cursor, String translation) {
+		launchIntent(cursor.getString(cursor.getColumnIndex(translation)));
 	}
 
 
-	private void launchIntent(String view, String translation) {
-		if (view != null && view.startsWith("http://")) {
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
-		} else if (translation != null) {
-			try {
-				startActivity(getIntent(translation));
-			} catch (CommandParseException e) {
-				toast(getString(R.string.errorCommandNotSupported));
-			}
+	private void launchIntent(String command) {
+		try {
+			startActivity(CommandParser.getIntent(this, command));
+		} catch (CommandParseException e) {
+			toast(getString(R.string.errorCommandNotSupported));
 		}
-	}
-
-
-	private Intent getIntent(String command) throws CommandParseException {
-		if (command.startsWith("alarm ")) {
-			return new Alarm().getIntent(this, command);
-		}
-		Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-		intent.putExtra(SearchManager.QUERY, command);
-		return intent;
 	}
 
 
@@ -422,7 +405,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("in", lin);
 					Converter conv = new Converter(lin);
-					map.put("view", conv.getView());
 					try {
 						map.put("out", conv.getOut());
 					} catch (Exception e) {
@@ -453,7 +435,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				if (results.size() == 1) {
 					values1.put(Query.Columns.TRANSLATION, results.get(0).get("in"));
 					values1.put(Query.Columns.EVALUATION, results.get(0).get("out"));
-					values1.put(Query.Columns.VIEW, results.get(0).get("view"));
 					values1.put(Query.Columns.MESSAGE, results.get(0).get("message"));
 				} else {
 					// TRANSLATION must remain NULL here
@@ -466,14 +447,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						values2.put(Qeval.Columns.TIMESTAMP, timestamp);
 						values2.put(Qeval.Columns.TRANSLATION, r.get("in"));
 						values2.put(Qeval.Columns.EVALUATION, r.get("out"));
-						values2.put(Qeval.Columns.VIEW, r.get("view"));
 						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
 						insert(QEVAL_CONTENT_URI, values2);
 					}
 				}
 
 				if (results.size() == 1 && mPrefs.getBoolean("keyUseExternalEvaluator", false)) {
-					launchIntent(results.get(0).get("view"), results.get(0).get("in"));
+					launchIntent(results.get(0).get("in"));
 				}
 			}
 		}

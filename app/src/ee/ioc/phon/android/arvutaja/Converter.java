@@ -39,7 +39,7 @@ public class Converter {
 
 	public enum ExprType {
 		ALARM,
-		MAP,
+		DIRECTION,
 		UNITCONV,
 		EXPR
 	};
@@ -54,30 +54,10 @@ public class Converter {
 		} else if (mExpr.contains("convert ") && mExpr.contains(" to ")) {
 			mExprType = ExprType.UNITCONV;
 		} else if (expr.contains(",")) {
-			mExprType = ExprType.MAP;
+			mExprType = ExprType.DIRECTION;
 		} else {
 			mExprType = ExprType.EXPR;
 		}
-	}
-
-
-	public String getView() {
-		switch (mExprType) {
-		case ALARM:
-			return "";
-		case MAP:
-			if (mExpr.contains("FROM")) {
-				String query = new String(mExpr);
-				query = query.replaceFirst("FROM", "saddr=");
-				query = query.replaceFirst("TO", "&daddr=");
-				return "http://maps.google.com/maps?" + query;
-			} else {
-				return "http://maps.google.com/maps?daddr=" + mExpr;
-			}
-		case UNITCONV:
-			return "http://www.wolframalpha.com/input/?i=" + mExpr;
-		}
-		return null;
 	}
 
 
@@ -91,7 +71,7 @@ public class Converter {
 		switch (mExprType) {
 		case ALARM:
 			return "";
-		case MAP:
+		case DIRECTION:
 			return "";
 		case UNITCONV:
 			String query = new String(mExpr);
