@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import javax.measure.unit.Unit;
 public class Converter {
 
 	public enum ExprType {
+		ALARM,
 		MAP,
 		UNITCONV,
 		EXPR
@@ -48,7 +49,9 @@ public class Converter {
 
 	public Converter(String expr) {
 		mExpr = expr;
-		if (mExpr.contains("convert ") && mExpr.contains(" to ")) {
+		if (mExpr.startsWith("alarm")) {
+			mExprType = ExprType.ALARM;
+		} else if (mExpr.contains("convert ") && mExpr.contains(" to ")) {
 			mExprType = ExprType.UNITCONV;
 		} else if (expr.contains(",")) {
 			mExprType = ExprType.MAP;
@@ -60,6 +63,8 @@ public class Converter {
 
 	public String getView() {
 		switch (mExprType) {
+		case ALARM:
+			return "";
 		case MAP:
 			if (mExpr.contains("FROM")) {
 				String query = new String(mExpr);
@@ -84,6 +89,8 @@ public class Converter {
 	 */
 	public String getOut() {
 		switch (mExprType) {
+		case ALARM:
+			return "";
 		case MAP:
 			return "";
 		case UNITCONV:

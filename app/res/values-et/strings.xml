@@ -10,6 +10,7 @@
     <string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
     <string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
     <string name="errorRecognizerNotPresent">Telefonis puudub kõnetuvastusteenus: %1$s. Suundun allalaadimislehele.</string>
+    <string name="errorCommandNotSupported">VIGA: ei tunne sellist käsku</string>
     <string name="menuMainSort">Sorteeri …</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>
@@ -30,5 +31,6 @@
     <string name="buttonNo">Ei</string>
     <string name="buttonOk">OK</string>
     <string name="buttonCancel">Loobu</string>
+    <string name="alarmExtraMessage">Arvutaja pandud</string>
 
 </resources>

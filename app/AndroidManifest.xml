@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ee.ioc.phon.android.arvutaja"
-    android:versionCode="317"
-    android:versionName="0.3.17" >
+    android:versionCode="400"
+    android:versionName="0.4.00" >
 
-    <uses-sdk android:minSdkVersion="4" />
+    <!-- API level 9: AlarmClock -->
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="15" />
+
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/labelApp" >
         <activity
-            android:label="@string/labelApp"
-            android:name=".ArvutajaActivity" >
-            <intent-filter >
+            android:name=".ArvutajaActivity"
+            android:label="@string/labelApp" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:label="@string/labelPreferences"
-            android:name=".Preferences" >
+            android:name=".Preferences"
+            android:label="@string/labelPreferences" >
         </activity>
 
         <provider
-            android:authorities="ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider"
-            android:name=".provider.QueriesContentProvider" />
+            android:name=".provider.QueriesContentProvider"
+            android:authorities="ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider" />
 
         <receiver android:name=".provider.ArvutajaAppWidgetProvider" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 

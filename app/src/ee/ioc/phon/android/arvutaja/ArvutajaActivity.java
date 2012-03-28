@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ee.ioc.phon.android.arvutaja.command.Alarm;
+import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
 
@@ -212,7 +214,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
 				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
 				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message }
-		);
+				);
 
 		mListView.setAdapter(mAdapter);
 
@@ -346,7 +348,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 							delete(uri, key);
 						}
 					}
-			).show();
+					).show();
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -371,10 +373,22 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (view != null && view.startsWith("http://")) {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(view)));
 		} else if (translation != null) {
-			Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
-			search.putExtra(SearchManager.QUERY, translation);
-			startActivity(search);
+			try {
+				startActivity(getIntent(translation));
+			} catch (CommandParseException e) {
+				toast(getString(R.string.errorCommandNotSupported));
+			}
 		}
+	}
+
+
+	private Intent getIntent(String command) throws CommandParseException {
+		if (command.startsWith("alarm ")) {
+			return new Alarm().getIntent(this, command);
+		}
+		Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+		intent.putExtra(SearchManager.QUERY, command);
+		return intent;
 	}
 
 
@@ -476,7 +490,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				null,
 				null,
 				sortOrder
-		);
+				);
 	}
 
 
@@ -501,7 +515,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					Qeval.Columns.TIMESTAMP + "=?",
 					new String[] { "" + groupCursor.getLong(GROUP_TIMESTAMP_COLUMN_INDEX) },
 					null
-			);
+					);
 
 			return null;
 		}
