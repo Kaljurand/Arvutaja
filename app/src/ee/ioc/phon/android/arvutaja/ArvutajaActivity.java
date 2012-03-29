@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.format.Time;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -35,7 +36,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.TextView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
@@ -52,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
@@ -160,7 +164,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		if (getRecognizers(mIntent).size() == 0) {
+		if (getIntentActivities(mIntent).size() == 0) {
 			mLlMicrophone.setVisibility(View.GONE);
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlSpeakDownload))));
@@ -366,9 +370,18 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private void launchIntent(String command) {
+	private void launchIntent(String commandAsString) {
 		try {
-			startActivity(CommandParser.getIntent(this, command));
+			Command command = CommandParser.getCommand(this, commandAsString);
+			Intent intent = command.getIntent();
+			if (getIntentActivities(intent).size() == 0) {
+				AlertDialog d = Utils.getDialog(this, command.getSuggestion());
+				d.show();
+				// Make the textview clickable. Must be called after show()
+				((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+			} else {
+				startActivity(intent);
+			}
 		} catch (CommandParseException e) {
 			toast(getString(R.string.errorCommandNotSupported));
 		}

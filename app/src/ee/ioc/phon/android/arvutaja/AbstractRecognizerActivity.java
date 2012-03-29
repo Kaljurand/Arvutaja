@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,12 +81,7 @@ public abstract class AbstractRecognizerActivity extends Activity {
 	}
 
 
-	protected List<ResolveInfo> getRecognizers() {
-		return getRecognizers(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH));
-	}
-
-
-	protected List<ResolveInfo> getRecognizers(Intent intent) {
+	protected List<ResolveInfo> getIntentActivities(Intent intent) {
 		PackageManager pm = getPackageManager();
 		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
 		return activities;

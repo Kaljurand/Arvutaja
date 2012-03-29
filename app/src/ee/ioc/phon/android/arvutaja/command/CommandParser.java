@@ -1,26 +1,22 @@
 package ee.ioc.phon.android.arvutaja.command;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 
 public class CommandParser {
 
-	public static Intent getIntent(Context context, String command) throws CommandParseException {
+	public static Command getCommand(Context context, String command) throws CommandParseException {
 		if (command == null) {
 			throw new CommandParseException();
 		}
 
 		if (command.startsWith("alarm ")) {
-			return new Alarm().getIntent(context, command);
+			return new Alarm(command, context);
 		} else if (command.contains("convert ") && command.contains(" to ")) {
-			return new Unitconv().getIntent(context, command);
+			return new Unitconv(command);
 		} else if (command.contains(",")) {
-			return new Direction().getIntent(context, command);
+			return new Direction(command);
 		}
-		Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-		intent.putExtra(SearchManager.QUERY, command);
-		return intent;
+		return new WebSearch(command);
 	}
 
 }

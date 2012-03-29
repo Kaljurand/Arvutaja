@@ -1,16 +1,21 @@
 package ee.ioc.phon.android.arvutaja.command;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class Direction implements Command {
+public class Direction extends AbstractCommand {
+
+	private final String mCommand;
+
+	public Direction(String command) {
+		mCommand = command;
+	}
 
 	@Override
-	public Intent getIntent(Context context, String command) throws CommandParseException {
-		String uriAsString = "http://maps.google.com/maps?daddr=" + command;
-		if (command.contains("FROM")) {
-			String query = new String(command);
+	public Intent getIntent() throws CommandParseException {
+		String uriAsString = "http://maps.google.com/maps?daddr=" + mCommand;
+		if (mCommand.contains("FROM")) {
+			String query = new String(mCommand);
 			query = query.replaceFirst("FROM", "saddr=");
 			query = query.replaceFirst("TO", "&daddr=");
 			uriAsString = "http://maps.google.com/maps?" + query;

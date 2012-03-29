@@ -24,6 +24,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.util.Linkify;
 import android.util.Log;
 
 
@@ -75,6 +77,16 @@ public class Utils {
 			}
 		});
 		return builder.create();
+	}
+
+
+	public static AlertDialog getDialog(Context context, String msg) {
+		final SpannableString s = new SpannableString(msg);
+		Linkify.addLinks(s, Linkify.ALL);
+		return new AlertDialog.Builder(context)
+		.setPositiveButton(context.getString(R.string.buttonOk), null)
+		.setMessage(s)
+		.create();
 	}
 
 

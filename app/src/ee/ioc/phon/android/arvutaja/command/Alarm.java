@@ -20,16 +20,24 @@ import android.provider.AlarmClock;
  *
  * @author Kaarel Kaljurand
  */
-public class Alarm implements Command {
+public class Alarm extends AbstractCommand {
 
 	public static final Pattern p1 = Pattern.compile("alarm ([0-9]+) : ([0-9]+)");
 	public static final Pattern p2 = Pattern.compile("alarm in ([0-9]+) minutes");
 	public static final Pattern p3 = Pattern.compile("alarm in ([0-9]+) hours and ([0-9]+) minutes");
 
-	public Intent getIntent(Context context, String command) throws CommandParseException {
+	private final String mCommand;
+	private final Context mContext;
+
+	public Alarm(String command, Context context) {
+		mCommand = command;
+		mContext = context;
+	}
+
+	public Intent getIntent() throws CommandParseException {
 		Calendar cal;
 		try {
-			cal = getCalendar(command);
+			cal = getCalendar(mCommand);
 		} catch (Exception e) {
 			throw new CommandParseException();
 		}
@@ -37,13 +45,18 @@ public class Alarm implements Command {
 		Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
 		intent.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
 		intent.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
-		intent.putExtra(AlarmClock.EXTRA_MESSAGE, context.getString(R.string.alarmExtraMessage));
+		intent.putExtra(AlarmClock.EXTRA_MESSAGE, mContext.getString(R.string.alarmExtraMessage));
 
 		// API Level 11
 		// AlarmClock.EXTRA_SKIP_UI
 		String skipUi = "android.intent.extra.alarm.SKIP_UI";
 		intent.putExtra(skipUi, true);
 		return intent;
+	}
+
+
+	public String getSuggestion() {
+		return "Cannot find an alarm app to perform this command. Install e.g. https://play.google.com/store/apps/details?id=com.vp.alarmClockPlusDock";
 	}
 
 
