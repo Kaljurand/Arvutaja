@@ -3,7 +3,6 @@ package ee.ioc.phon.android.arvutaja.command;
 import javax.measure.unit.Unit;
 
 import android.content.Intent;
-import android.net.Uri;
 
 /**
  * <p>Examples of supported expressions:</p>
@@ -20,8 +19,7 @@ public class Unitconv extends DefaultCommand {
 
 	@Override
 	public Intent getIntent() throws CommandParseException {
-		String uriAsString = "http://www.wolframalpha.com/input/?i=" + getCommand();
-		return new Intent(Intent.ACTION_VIEW, Uri.parse(uriAsString));
+		return getActionView("http://www.wolframalpha.com/input/?i=", getCommand());
 	}
 
 	public String getOut() {

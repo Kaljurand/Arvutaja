@@ -1,5 +1,8 @@
 package ee.ioc.phon.android.arvutaja.command;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.Intent;
 import android.net.Uri;
 
@@ -8,9 +11,13 @@ import android.net.Uri;
  * <ul>
  * <li>Estonia puiestee 123 , Tallinn</li>
  * <li>Rakvere</li>
+ * <li>FROM Estonia puiestee 123 , Tallinn TO Rakvere</li>
  * </ul>
  */
 public class Direction extends DefaultCommand {
+
+	public static final Pattern p = Pattern.compile("FROM (.+) TO (.+)");
+	public static final String MAPS_GOOGLE_COM = "http://maps.google.com/maps?";
 
 	public Direction(String command) {
 		super(command);
@@ -18,15 +25,15 @@ public class Direction extends DefaultCommand {
 
 	@Override
 	public Intent getIntent() throws CommandParseException {
-		String uriAsString = "http://maps.google.com/maps?daddr=" + getCommand();
-		if (getCommand().contains("FROM")) {
-			String query = new String(getCommand());
-			query = query.replaceFirst("FROM", "saddr=");
-			query = query.replaceFirst("TO", "&daddr=");
-			uriAsString = "http://maps.google.com/maps?" + query;
+		Matcher m = p.matcher(getCommand());
+		String fromTo;
+		if (m.matches()) {
+			fromTo = "saddr=" + Uri.encode(m.group(1)) + "&daddr=" + Uri.encode(m.group(2));	
+		} else {
+			fromTo = "daddr=" + Uri.encode(getCommand());
 		}
 
-		return new Intent(Intent.ACTION_VIEW, Uri.parse(uriAsString));
+		return new Intent(Intent.ACTION_VIEW, Uri.parse(MAPS_GOOGLE_COM + fromTo));
 	}
 
 	public static boolean isCommand(String command) {

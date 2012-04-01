@@ -14,7 +14,7 @@ public class Dial extends DefaultCommand {
 	@Override
 	public Intent getIntent() throws CommandParseException {
 		String number = getCommand().replaceFirst(PREFIX, "");
-		Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number));
+		Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(number)));
 		return intent;
 	}
 

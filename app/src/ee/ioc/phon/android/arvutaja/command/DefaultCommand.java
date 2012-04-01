@@ -34,4 +34,7 @@ public class DefaultCommand implements Command {
 		return "";
 	}
 
+	protected static Intent getActionView(String urlPrefix, String urlSuffix) {
+		return new Intent(Intent.ACTION_VIEW, Uri.parse(urlPrefix + Uri.encode(urlSuffix)));
+	}
 }

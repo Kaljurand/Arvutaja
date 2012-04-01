@@ -9,12 +9,14 @@
 // This file was downloaded on 2011-10-06 from
 // http://www.softwaremonkey.org/Code/src/MathEval.java
 // (see more: http://www.softwaremonkey.org/Code/MathEval)
-// Only the package name was changed.
+// Changes:
+// - package name was changed
+// - removed: import java.math.*
+// - commented out: calls to "nextUp" and "getExponent"
+// - new Double(x) -> Double.valueOf(x)
 
 package ee.ioc.phon.android.arvutaja.command;
 
-// Commented out (Eclipse said that it is not used, Kaarel 2011-10-06)
-//import java.math.*;
 import java.util.*;
 
 /**
@@ -122,7 +124,7 @@ public double getConstant(String nam) {
 
 /** Set a named constant (constants names are not case-sensitive).  Constants are like variables but are not cleared by clear(). Variables of the same name have precedence over constants. */
 public MathEval setConstant(String nam, double val) {
-    return setConstant(nam,new Double(val));
+    return setConstant(nam,Double.valueOf(val));
     }
 
 /** Set a named constant (constants names are not case-sensitive).  Constants are like variables but are not cleared by clear(). Variables of the same name have precedence over constants. */
@@ -144,7 +146,7 @@ public double getVariable(String nam) {
 
 /** Set a named variable (variables names are not case-sensitive). */
 public MathEval setVariable(String nam, double val) {
-    return setVariable(nam,new Double(val));
+    return setVariable(nam,Double.valueOf(val));
     }
 
 /** Set a named variable (variables names are not case-sensitive). */

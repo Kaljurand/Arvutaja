@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,11 +65,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	public static final String EXTRA_LAUNCH_RECOGNIZER = "ee.ioc.phon.android.extra.LAUNCH_RECOGNIZER";
 
-	// Set of non-standard extras that RecognizerIntentActivity supports
+	// Set of non-standard extras that K6nele supports
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
-
-	private static final String LOG_TAG = ArvutajaActivity.class.getName();
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
@@ -80,12 +77,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static String mCurrentSortOrder;
 
 	private ExpandableListView mListView;
-	private Intent mIntent;
+	private Intent mIntentRecognizer;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
-
-	private Bundle mExtras;
 
 	private boolean mUseInternalTranslator = false;
 
@@ -146,31 +141,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", false);
 
-		mExtras = getIntent().getExtras();
-		if (mExtras == null) {
-			// Sometimes getExtras() returns null, we map it
-			// to an empty Bundle if this occurs.
-			mExtras = new Bundle();
-		} else {
-			Log.e(LOG_TAG, "getExtras() == " + mExtras.keySet().toString());
-		}
-
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
 
-		mIntent = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
-		mIntent.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
-
+		mIntentRecognizer = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
+		mIntentRecognizer.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
 		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		if (getIntentActivities(mIntent).size() == 0) {
-			mLlMicrophone.setVisibility(View.GONE);
-			// TODO: use the "go to store" dialog instead
-			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlSpeakDownload))));
-			finish();
+		if (getIntentActivities(mIntentRecognizer).size() == 0) {
+			mIntentRecognizer = null;
+			mLlMicrophone.setEnabled(false);
+			AlertDialog d = Utils.getGoToStoreDialog(
+					this,
+					String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
+					Uri.parse(getString(R.string.urlSpeakDownload))
+					);
+			d.show();
 		} else {
 			mLlMicrophone.setVisibility(View.VISIBLE);
+			mLlMicrophone.setEnabled(true);
 		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
@@ -232,8 +221,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (mExtras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
-			launchRecognizerIntent(mIntent);
+		Intent intentArvutaja = getIntent();
+		Bundle extras = intentArvutaja.getExtras();
+		if (mIntentRecognizer != null && extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+			// We disable the extra so that it would not fire on orientation change.
+			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
+			setIntent(intentArvutaja);
+			launchRecognizerIntent(mIntentRecognizer);
 		}
 	}
 
@@ -249,7 +243,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mic.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				v.setOnClickListener(null);
-				launchRecognizerIntent(mIntent);
+				if (mIntentRecognizer != null) {
+					launchRecognizerIntent(mIntentRecognizer);
+				}
 			}
 		});
 	}

@@ -9,7 +9,7 @@
     <string name="errorResultClientError">VIGA: kliendiviga</string>
     <string name="errorResultServerError">VIGA: kõnetuvastusserveri viga</string>
     <string name="errorResultNoMatch">VIGA: sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
-    <string name="errorRecognizerNotPresent">Telefonis puudub kõnetuvastusteenus: %1$s. Suundun allalaadimislehele.</string>
+    <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun installeerige see Play poest.</string>
     <string name="errorCommandNotSupported">VIGA: ei tunne sellist käsku</string>
     <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks. Installeerige see Play poest.</string>
     <string name="menuMainSort">Sorteeri …</string>
