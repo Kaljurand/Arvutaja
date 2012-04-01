@@ -1,5 +1,6 @@
 package ee.ioc.phon.android.arvutaja.command;
 
+import ee.ioc.phon.android.arvutaja.R;
 import android.content.Context;
 
 public class CommandParser {
@@ -9,14 +10,25 @@ public class CommandParser {
 			throw new CommandParseException();
 		}
 
-		if (command.startsWith("alarm ")) {
-			return new Alarm(command, context);
-		} else if (command.contains("convert ") && command.contains(" to ")) {
+		if (Alarm.isCommand(command))
+			return new Alarm(command, context.getString(R.string.alarmExtraMessage));
+
+		if (Dial.isCommand(command))
+			return new Dial(command);
+
+		if (Expr.isCommand(command))
+			return new Expr(command);
+
+		if (Search.isCommand(command))
+			return new Search(command);
+
+		if (Unitconv.isCommand(command))
 			return new Unitconv(command);
-		} else if (command.contains(",")) {
+
+		if (Direction.isCommand(command))
 			return new Direction(command);
-		}
-		return new WebSearch(command);
+
+		return new DefaultCommand(command);
 	}
 
 }

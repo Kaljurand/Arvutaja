@@ -11,7 +11,7 @@
 // (see more: http://www.softwaremonkey.org/Code/MathEval)
 // Only the package name was changed.
 
-package ee.ioc.phon.android.arvutaja;
+package ee.ioc.phon.android.arvutaja.command;
 
 // Commented out (Eclipse said that it is not used, Kaarel 2011-10-06)
 //import java.math.*;

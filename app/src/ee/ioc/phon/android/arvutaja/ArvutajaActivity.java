@@ -150,7 +150,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (mExtras == null) {
 			// Sometimes getExtras() returns null, we map it
 			// to an empty Bundle if this occurs.
-			Log.e(LOG_TAG, "getExtras() == null");
 			mExtras = new Bundle();
 		} else {
 			Log.e(LOG_TAG, "getExtras() == " + mExtras.keySet().toString());
@@ -425,9 +424,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				for (String lin : s[0]) {
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("in", lin);
-					Converter conv = new Converter(lin);
 					try {
-						map.put("out", conv.getOut());
+						map.put("out", CommandParser.getCommand(getApplicationContext(), lin).getOut());
 					} catch (Exception e) {
 						map.put("message", e.getMessage());
 					}

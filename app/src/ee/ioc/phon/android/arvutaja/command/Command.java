@@ -15,4 +15,14 @@ public interface Command {
 	 * @return suggestion for an activity
 	 */
 	Uri getSuggestion();
+
+	String getCommand();
+
+	/**
+	 * <p>Evaluates the expression and returns the result as a String.
+	 * This method can throw various exceptions.</p>
+	 *
+	 * @return evaluation of the expression that was given to the constructor
+	 */
+	String getOut();
 }
