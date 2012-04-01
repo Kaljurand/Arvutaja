@@ -1,6 +1,7 @@
 package ee.ioc.phon.android.arvutaja.command;
 
 import android.content.Intent;
+import android.net.Uri;
 
 public interface Command {
 
@@ -13,5 +14,5 @@ public interface Command {
 	 *
 	 * @return suggestion for an activity
 	 */
-	String getSuggestion();
+	Uri getSuggestion();
 }

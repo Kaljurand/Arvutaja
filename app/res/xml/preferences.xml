@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/titleCategorySettings" >
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="keyUseExternalEvaluator"
+        android:summary="@string/summaryUseExternalEvaluator"
+        android:title="@string/titleUseExternalEvaluator" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="keyUseExternalEvaluator"
-            android:summary="@string/summaryUseExternalEvaluator"
-            android:title="@string/titleUseExternalEvaluator" />
-
-        <!--
+    <!--
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="keyUseInternalTranslator"
@@ -21,7 +19,6 @@
             android:key="keyShowEditor"
             android:summary="@string/summaryShowEditor"
             android:title="@string/titleShowEditor" />
-        -->
-    </PreferenceCategory>
+    -->
 
 </PreferenceScreen>

@@ -166,6 +166,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 		if (getIntentActivities(mIntent).size() == 0) {
 			mLlMicrophone.setVisibility(View.GONE);
+			// TODO: use the "go to store" dialog instead
 			toast(String.format(getString(R.string.errorRecognizerNotPresent), nameRecognizerCls));
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlSpeakDownload))));
 			finish();
@@ -366,7 +367,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private void launchIntent(Cursor cursor, String translation) {
-		launchIntent(cursor.getString(cursor.getColumnIndex(translation)));
+		String commandAsString = cursor.getString(cursor.getColumnIndex(translation));
+		if (commandAsString != null) {
+			launchIntent(commandAsString);
+		}
 	}
 
 
@@ -375,7 +379,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			Command command = CommandParser.getCommand(this, commandAsString);
 			Intent intent = command.getIntent();
 			if (getIntentActivities(intent).size() == 0) {
-				AlertDialog d = Utils.getDialog(this, command.getSuggestion());
+				AlertDialog d = Utils.getGoToStoreDialog(
+						this,
+						getString(R.string.errorIntentActivityNotPresent),
+						command.getSuggestion()
+						);
 				d.show();
 				// Make the textview clickable. Must be called after show()
 				((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
@@ -465,6 +473,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					}
 				}
 
+				// If the transcription is not ambiguous, and the user prefers to
+				// evaluate using an external activity, then we launch it via an intent.
 				if (results.size() == 1 && mPrefs.getBoolean("keyUseExternalEvaluator", false)) {
 					launchIntent(results.get(0).get("in"));
 				}

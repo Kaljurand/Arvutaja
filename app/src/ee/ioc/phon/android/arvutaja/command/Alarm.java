@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import ee.ioc.phon.android.arvutaja.R;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.AlarmClock;
 
 /**
@@ -55,8 +56,8 @@ public class Alarm extends AbstractCommand {
 	}
 
 
-	public String getSuggestion() {
-		return "Cannot find an alarm app to perform this command. Install e.g. https://play.google.com/store/apps/details?id=com.vp.alarmClockPlusDock";
+	public Uri getSuggestion() {
+		return Uri.parse("https://play.google.com/store/apps/details?id=com.vp.alarmClockPlusDock");
 	}
 
 

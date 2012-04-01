@@ -1,5 +1,5 @@
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package ee.ioc.phon.android.arvutaja;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -80,11 +81,20 @@ public class Utils {
 	}
 
 
-	public static AlertDialog getDialog(Context context, String msg) {
+	public static AlertDialog getGoToStoreDialog(final Context context, String msg, final Uri uri) {
 		final SpannableString s = new SpannableString(msg);
 		Linkify.addLinks(s, Linkify.ALL);
 		return new AlertDialog.Builder(context)
-		.setPositiveButton(context.getString(R.string.buttonOk), null)
+		.setPositiveButton(context.getString(R.string.buttonGoToStore), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			}
+		})
+		.setNegativeButton(context.getString(R.string.buttonCancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		})
 		.setMessage(s)
 		.create();
 	}
