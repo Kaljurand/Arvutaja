@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ee.ioc.phon.android.arvutaja"
-    android:versionCode="400"
-    android:versionName="0.4.00" >
+    android:installLocation="auto"
+    android:versionCode="402"
+    android:versionName="0.4.02" >
 
     <!-- API level 9: AlarmClock -->
     <uses-sdk
