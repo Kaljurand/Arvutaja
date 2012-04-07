@@ -4,9 +4,10 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ee.ioc.phon.android.arvutaja.provider.AlarmClock;
+
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.AlarmClock;
 
 /**
  * <p>Alarm expressions have the form:</p>
@@ -46,11 +47,7 @@ public class Alarm extends DefaultCommand {
 		intent.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
 		intent.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
 		intent.putExtra(AlarmClock.EXTRA_MESSAGE, mExtraMessage);
-
-		// API Level 11
-		// AlarmClock.EXTRA_SKIP_UI
-		String skipUi = "android.intent.extra.alarm.SKIP_UI";
-		intent.putExtra(skipUi, true);
+		intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
 		return intent;
 	}
 

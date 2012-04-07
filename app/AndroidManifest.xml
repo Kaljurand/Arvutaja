@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ee.ioc.phon.android.arvutaja"
-    android:installLocation="auto"
-    android:versionCode="402"
-    android:versionName="0.4.02" >
+    android:versionCode="403"
+    android:versionName="0.4.03" >
 
-    <!-- API level 9: AlarmClock -->
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="4"
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
