@@ -19,6 +19,7 @@
     <string name="menuMainSettings">Seaded</string>
     <string name="menuMainAbout">Info</string>
     <string name="cmMainDelete">Kustuta</string>
+    <string name="cmMainShowError">Näita veateadet</string>
     <string name="titleCategorySettings">Seaded</string>
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>

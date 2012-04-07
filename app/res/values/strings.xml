@@ -29,6 +29,7 @@
     <string name="menuMainSettings">Settings</string>
     <string name="menuMainAbout">About</string>
     <string name="cmMainDelete">Delete</string>
+    <string name="cmMainShowError">Show error message</string>
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseExternalEvaluator">Launch external viewer</string>
     <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>

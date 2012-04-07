@@ -4,5 +4,8 @@
     <item
         android:id="@+id/cmMainDelete"
         android:title="@string/cmMainDelete"/>
+    <item
+        android:id="@+id/cmMainShowError"
+        android:title="@string/cmMainShowError"/>
 
 </menu>
