@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
-  <title>Kaljurand/Arvutaja @ GitHub</title>
+  <title>Arvutaja</title>
 
   <style type="text/css">
     body {
@@ -41,32 +41,53 @@
 
 <h1>Arvutaja</h1>
 
-<div class="description">a unit/currency conversion and arithmetical expression evaluator app (that also does Estonian address queries). Input is via Estonian speech, but you don't need to know all the 14 cases to use the app...</div>
+<div class="description">vajutage mikrofoninupule, sisestage eestikeelse
+kõne abil avaldis, ja vajutage transkriptsioonile, et selle väärtustust näha.
+(Mõned avaldised arvutatakse kohe välja.)
+Näiteks:</div>
 
 <table>
 <tr>
 <td>
 <img style="display: block"
-src="images/SC20111126-142752.png"/>
+src="images/Screenshot_2012-04-08-13-46-21.png"/>
 </td>
 <td>
-<div style="font-size: 120%; margin-left: 2em">
-<p>/miinus üks astmel pool/</p>
+<div style="font-size: 100%; margin-left: 2em">
+<p>/üheksasada üheksakümmend üheksa miljardit
+üheksasada üheksakümmend üheksa miljonit
+üheksasada üheksakümmend üheksa tuhat
+üheksasada üheksakümmend üheksa astmel pool/</p>
+<p>/ärata mind kell seitse kolmkümmend üks/</p>
 <p>/algus sõpruse puiestee kakssada neliteist lõpp lossi plats kaks/</p>
 <p>/Pii pluss üks miinus kaks korda kolm jagatud neli astmel viis/</p>
 <p>/kolmkümmend kaks koma viis fahrenheiti kraadides/</p>
-<p>/sada miili ruut tunnis meetrites ruut sekundis/</p>
+<p>/sada koma üks miili ruut tunnis meetrites ruut sekundis/</p>
 <p>/kaksteist tuhat kolmsada nelikümmend viis norra krooni eurodes/</p>
 </div>
 </td>
 </tr>
 </table>
 
+<p>Hetkel toetatud avaldised:</p>
+<ul>
+<li>aritmeetilised tehted arvudega vahemikus
+-10<sup>12</sup> kuni 10<sup>12</sup> (sh paljud komaga arvud),
+nelja põhitehte ja astendamisega;</li>
+<li>mõõtühikute teisendamine umbes 50 põhiühikuga;</li>
+<li>valuutade teisendamine umbes 15 valuutaga;</li>
+<li>Eesti aadresside päringud 4300 Eesti kohanime ja 1500 Tallinna
+tänavanimega;</li>
+<li>äratuskella/taimeri seadmine.</li>
+</ul>
+<p>Avaldiste sõnavara, süntaktilist struktuuri ja tähendust
+kirjeldab formaalselt
+<a href="http://kaljurand.github.com/Grammars/">Action-grammatika</a>.
+Kõnetuvastust viib läbi <a href="https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak">Kõnele</a>.</p>
+
 <div style="margin-top: 2em">
-<a href="http://market.android.com/details?id=ee.ioc.phon.android.arvutaja"><img src="http://www.android.com/images/brand/45_avail_market_logo2.png"
-alt="Available in Android Market"
-title="Available in Android Market"
-/></a>
+<a href="https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja"><img alt="Android app on Google Play" src="http://www.android.com/images/brand/android_app_on_play_logo_small.png"/>
+</a>
 </div>
 </div>
 
