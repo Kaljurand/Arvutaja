@@ -14,5 +14,11 @@
     <color name="buttonPressed2">#ffcc00</color>
     <color name="buttonFocused1">#ffcc00</color>
     <color name="buttonFocused2">#ffcc00</color>
+    <color name="buttonRecordingNormal1">#ff0000</color> <!-- top -->
+    <color name="buttonRecordingNormal2">#990000</color> <!-- bottom -->
+    <color name="buttonRecordingPressed1">#990000</color>
+    <color name="buttonRecordingPressed2">#ff0000</color>
+    <color name="buttonRecordingFocused1">#ff0000</color>
+    <color name="buttonRecordingFocused2">#ff0000</color>
 
 </resources>

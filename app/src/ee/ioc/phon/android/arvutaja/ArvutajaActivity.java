@@ -18,7 +18,9 @@ package ee.ioc.phon.android.arvutaja;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.view.ContextMenu;
@@ -45,7 +47,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
@@ -69,18 +73,27 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
+	private enum State { INIT, RECORDING, LISTENING, TRANSCRIBING, ERROR };
+
+	private State mState = State.INIT;
+
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
 
+	private Resources mRes;
 	private SharedPreferences mPrefs;
 
 	private static String mCurrentSortOrder;
 
+	private List<Drawable> mVolumeLevels;
+	private ImageButton mButtonMicrophone;
 	private ExpandableListView mListView;
 	private Intent mIntentRecognizer;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
+
+	private SpeechRecognizer mSr;
 
 	private boolean mUseInternalTranslator = false;
 
@@ -147,10 +160,21 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mIntentRecognizer = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
 		mIntentRecognizer.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
-		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		if (getIntentActivities(mIntentRecognizer).size() == 0) {
+		mButtonMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
+
+		mRes = getResources();
+		mVolumeLevels = new ArrayList<Drawable>();
+		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_0));
+		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_1));
+		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_2));
+		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_3));
+
+		final LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
+		// TODO: improve the way we find out if K6nele is present
+		// Some queries will work also with Google's recognizer without grammar application
+		if (SpeechRecognizer.isRecognitionAvailable(this) && getIntentActivities(mIntentRecognizer).size() == 0) {
 			mIntentRecognizer = null;
-			mLlMicrophone.setEnabled(false);
+			llMicrophone.setEnabled(false);
 			AlertDialog d = Utils.getGoToStoreDialog(
 					this,
 					String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
@@ -158,8 +182,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					);
 			d.show();
 		} else {
-			mLlMicrophone.setVisibility(View.VISIBLE);
-			mLlMicrophone.setEnabled(true);
+			mSr = SpeechRecognizer.createSpeechRecognizer(this);
+			llMicrophone.setVisibility(View.VISIBLE);
+			llMicrophone.setEnabled(true);
 		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
@@ -191,9 +216,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-					mLlMicrophone.setVisibility(View.VISIBLE);
+					llMicrophone.setVisibility(View.VISIBLE);
 				} else {
-					mLlMicrophone.setVisibility(View.GONE);
+					llMicrophone.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -227,7 +252,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			// We disable the extra so that it would not fire on orientation change.
 			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
 			setIntent(intentArvutaja);
-			launchRecognizerIntent(mIntentRecognizer);
+
+			launchSpeechRecognizer();
 		}
 	}
 
@@ -235,16 +261,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// We assume that the microphone button triggers an activity that "pauses" Arvutaja.
-		// 1. The button appears when Arvutaja is fully in focus.
-		// 2. As soon as the button is tapped it becomes disabled.
-		// 3. It becomes enabled again when Arvutaja gets the focus back.
-		ImageButton mic = (ImageButton) findViewById(R.id.buttonMicrophone);
-		mic.setOnClickListener(new View.OnClickListener() {
+		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				v.setOnClickListener(null);
-				if (mIntentRecognizer != null) {
-					launchRecognizerIntent(mIntentRecognizer);
+				if (mState == State.INIT || mState == State.ERROR) {
+					launchSpeechRecognizer();
+				}
+				else if (mState == State.LISTENING) {
+					mSr.stopListening();
+				} else {
+					// TODO: bad state to press the button
 				}
 			}
 		});
@@ -254,6 +279,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
+		// TODO: cancel recognition
+		mSr.cancel();
+
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
 		editor.commit();
@@ -263,6 +291,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if (mSr != null) {
+			mSr.destroy();
+			mSr = null;
+		}
 		mAdapter.changeCursor(null);
 		mAdapter = null;
 	}
@@ -515,6 +547,103 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				null,
 				sortOrder
 				);
+	}
+
+
+	private void launchSpeechRecognizer() {
+
+		mSr.setRecognitionListener(new RecognitionListener() {
+
+			private int mVolumeLevel;
+
+			@Override
+			public void onBeginningOfSpeech() {
+				// TODO start "speak now..." animation
+				mState = State.LISTENING;
+				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_recording_0));
+			}
+
+			@Override
+			public void onBufferReceived(byte[] buffer) {
+				// TODO show buffer waveform
+			}
+
+			@Override
+			public void onEndOfSpeech() {
+				// TODO stop "recording..." animation
+				mState = State.TRANSCRIBING;
+				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_transcribing));
+			}
+
+			@Override
+			public void onError(int error) {
+				mState = State.ERROR;
+				switch (error) {
+				case SpeechRecognizer.ERROR_AUDIO:
+					toast(getString(R.string.errorResultAudioError));
+					break;
+				case SpeechRecognizer.ERROR_CLIENT:
+					toast(getString(R.string.errorResultClientError));
+					break;
+				case SpeechRecognizer.ERROR_NETWORK:
+					toast(getString(R.string.errorResultNetworkError));
+					break;
+				case SpeechRecognizer.ERROR_SERVER:
+					toast(getString(R.string.errorResultServerError));
+					break;
+				case SpeechRecognizer.ERROR_NO_MATCH:
+					toast(getString(R.string.errorResultNoMatch));
+					break;
+					// TODO: cover all errors
+				default: // TODO
+					break;
+				}
+				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic));
+			}
+
+			@Override
+			public void onEvent(int eventType, Bundle params) {
+				// TODO ???
+			}
+
+			@Override
+			public void onPartialResults(Bundle partialResults) {
+				// ignore
+			}
+
+			@Override
+			public void onReadyForSpeech(Bundle params) {
+				mState = State.RECORDING;
+				// TODO ???
+			}
+
+			@Override
+			public void onResults(Bundle results) {
+				ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+				// TODO: confidence scores support is only in API 14
+				mState = State.INIT;
+				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic));
+				onSuccess(matches);
+			}
+
+			@Override
+			public void onRmsChanged(float rmsdB) {
+				// TODO: take these from some configuration
+				float min = 15.f;
+				float max = 30.f;
+
+				final int maxLevel = mVolumeLevels.size() - 1;
+
+				int index = (int) ((rmsdB - min) / (max - min) * maxLevel);
+				final int volumeLevel = Math.min(Math.max(0, index), maxLevel);
+
+				if (volumeLevel != mVolumeLevel) {
+					mButtonMicrophone.setBackgroundDrawable(mVolumeLevels.get(volumeLevel));
+					mVolumeLevel = volumeLevel;
+				}
+			}
+		});
+		mSr.startListening(mIntentRecognizer);
 	}
 
 
