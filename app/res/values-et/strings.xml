@@ -2,7 +2,7 @@
 <resources>
 
     <string name="labelApp">Arvutaja</string>
-    <string name="labelPreferences">Seaded</string>
+    <string name="labelSettings">Seaded</string>
     <string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
     <string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
     <string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
@@ -23,10 +23,6 @@
     <string name="titleCategorySettings">Seaded</string>
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
-    <string name="titleUseInternalTranslator">Kasuta sisemist tõlki</string>
-    <string name="summaryUseInternalTranslator">Tõlgi telefonis (mitte serveris)</string>
-    <string name="titleShowEditor">Kuva redaktor</string>
-    <string name="summaryShowEditor">Kuva redaktor</string>
     <string name="confirmDeleteEntry">Tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
     <string name="buttonYes">Jah</string>

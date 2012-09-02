@@ -28,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
@@ -39,6 +38,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
@@ -95,8 +95,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private SpeechRecognizer mSr;
 
-	private boolean mUseInternalTranslator = false;
-
 	private static final String[] QUERY_PROJECTION = new String[] {
 		Query.Columns._ID,
 		Query.Columns.TIMESTAMP,
@@ -148,21 +146,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", false);
+		mRes = getResources();
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
 		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
 
-		mIntentRecognizer = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
+		mIntentRecognizer = createRecognizerIntent(
+				mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
+				getString(R.string.defaultGrammar),
+				getString(R.string.nameLangLinearize));
 		mIntentRecognizer.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
 
 		mButtonMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
 
-		mRes = getResources();
+		ActionBar actionBar = getActionBar();
+		actionBar.setHomeButtonEnabled(true);
+
 		mVolumeLevels = new ArrayList<Drawable>();
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_0));
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_1));
@@ -321,10 +323,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			startQuery(Query.Columns.EVALUATION + " DESC");
 			return true;
 		case R.id.menuMainSettings:
-			startActivity(new Intent(this, Preferences.class));
-			return true;
-		case R.id.menuMainAbout:
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlArvutajaHelp))));
+			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -448,13 +447,12 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private static Intent createRecognizerIntent(String grammar, String langLinearize, boolean useInternalTranslator) {
+	private static Intent createRecognizerIntent(String langSource, String grammar, String langTarget) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
-		if (! useInternalTranslator) {
-			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langLinearize);
-		}
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
+		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
+		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
 		return intent;
 	}
 
@@ -528,8 +526,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 				// If the transcription is not ambiguous, and the user prefers to
 				// evaluate using an external activity, then we launch it via an intent.
-				if (results.size() == 1 && mPrefs.getBoolean("keyUseExternalEvaluator", false)) {
-					launchIntent(results.get(0).get("in"));
+
+				if (results.size() == 1) {
+					boolean launchExternalEvaluator = mPrefs.getBoolean(
+							getString(R.string.keyUseExternalEvaluator),
+							mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
+
+					if (launchExternalEvaluator) {
+						launchIntent(results.get(0).get("in"));
+					}
 				}
 			}
 		}

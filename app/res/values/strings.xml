@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="keyLanguage" translatable="false">keyLanguage</string>
+    <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="urlArvutajaHelp" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
     <string name="urlSpeakDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
@@ -12,7 +14,7 @@
     <string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
     <string name="labelApp">Arvutaja</string>
     <string name="prefCurrentSortOrder" translatable="false">CurrentSortOrder</string>
-    <string name="labelPreferences">Preferences</string>
+    <string name="labelSettings">Settings</string>
     <string name="warningParserInputNotSupported">Input sentence not supported</string>
     <string name="errorResultAudioError">ERROR: audio recording failed</string>
     <string name="errorResultNetworkError">ERROR: something is wrong with the network</string>
@@ -33,10 +35,9 @@
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseExternalEvaluator">Launch external viewer</string>
     <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>
-    <string name="titleUseInternalTranslator">Use internal translator</string>
-    <string name="summaryUseInternalTranslator">Uncheck to translate on the server</string>
-    <string name="titleShowEditor">Show editor</string>
-    <string name="summaryShowEditor">Show editor</string>
+    <string name="titleLanguage">Language</string>
+    <string name="dialogTitleLanguage">Select language</string>
+    <string name="titleAbout">About Arvutaja</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonYes">Yes</string>
@@ -45,5 +46,17 @@
     <string name="buttonCancel">Cancel</string>
     <string name="buttonGoToStore">Go to Play Store</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
+
+    <string-array name="entriesLanguage">
+        <item>Estonian</item>
+        <item>English</item>
+    </string-array>
+
+    <string name="defaultLanguage">Estonian</string>
+
+    <string-array name="valuesLanguage" translatable="false">
+        <item>et</item>
+        <item>en</item>
+    </string-array>
 
 </resources>

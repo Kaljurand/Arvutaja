@@ -4,35 +4,26 @@
     <item
         android:id="@+id/menuMainSort"
         android:icon="@drawable/ic_menu_sort_by_size"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/menuMainSort">
-
-        <menu >
-
+        <menu>
             <group android:checkableBehavior="single" >
-
                 <item
                     android:id="@+id/menuMainSortByTimestamp"
                     android:title="@string/menuMainSortByTimestamp"/>
-
                 <item
                     android:id="@+id/menuMainSortByTranslation"
                     android:title="@string/menuMainSortByTranslation"/>
-
                 <item
                     android:id="@+id/menuMainSortByEvaluation"
                     android:title="@string/menuMainSortByEvaluation"/>
             </group>
         </menu>
     </item>
-
     <item
         android:id="@+id/menuMainSettings"
         android:icon="@drawable/ic_menu_preferences"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/menuMainSettings"/>
-
-    <item
-        android:id="@+id/menuMainAbout"
-        android:icon="@drawable/ic_menu_help"
-        android:title="@string/menuMainAbout"/>
 
 </menu>

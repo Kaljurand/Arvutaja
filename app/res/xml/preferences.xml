@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <ListPreference
+        android:defaultValue="@string/defaultLanguage"
+        android:dialogTitle="@string/dialogTitleLanguage"
+        android:entries="@array/entriesLanguage"
+        android:entryValues="@array/valuesLanguage"
+        android:key="@string/keyLanguage"
+        android:title="@string/titleLanguage" >
+    </ListPreference>
+
     <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="keyUseExternalEvaluator"
+        android:defaultValue="@bool/defaultUseExternalEvaluator"
+        android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
         android:title="@string/titleUseExternalEvaluator" />
 
-    <!--
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="keyUseInternalTranslator"
-            android:summary="@string/summaryUseInternalTranslator"
-            android:title="@string/titleUseInternalTranslator" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="keyShowEditor"
-            android:summary="@string/summaryShowEditor"
-            android:title="@string/titleShowEditor" />
-    -->
+    <Preference android:title="@string/titleAbout" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="@string/urlArvutajaHelp" />
+    </Preference>
 
 </PreferenceScreen>
