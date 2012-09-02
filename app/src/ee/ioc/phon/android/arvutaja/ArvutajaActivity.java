@@ -88,7 +88,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private List<Drawable> mVolumeLevels;
 	private ImageButton mButtonMicrophone;
 	private ExpandableListView mListView;
-	private Intent mIntentRecognizer;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
@@ -151,15 +150,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mRes = getResources();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
-		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
-
-		mIntentRecognizer = createRecognizerIntent(
-				mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
-				getString(R.string.defaultGrammar),
-				getString(R.string.nameLangLinearize));
-		mIntentRecognizer.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
-
 		mButtonMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
 
 		ActionBar actionBar = getActionBar();
@@ -170,24 +160,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_1));
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_2));
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_3));
-
-		final LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		// TODO: improve the way we find out if K6nele is present
-		// Some queries will work also with Google's recognizer without grammar application
-		if (SpeechRecognizer.isRecognitionAvailable(this) && getIntentActivities(mIntentRecognizer).size() == 0) {
-			mIntentRecognizer = null;
-			llMicrophone.setEnabled(false);
-			AlertDialog d = Utils.getGoToStoreDialog(
-					this,
-					String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
-					Uri.parse(getString(R.string.urlSpeakDownload))
-					);
-			d.show();
-		} else {
-			mSr = SpeechRecognizer.createSpeechRecognizer(this);
-			llMicrophone.setVisibility(View.VISIBLE);
-			llMicrophone.setEnabled(true);
-		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
@@ -217,6 +189,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			}
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
 					llMicrophone.setVisibility(View.VISIBLE);
 				} else {
@@ -248,14 +221,29 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		Intent intentArvutaja = getIntent();
-		Bundle extras = intentArvutaja.getExtras();
-		if (mIntentRecognizer != null && extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
-			// We disable the extra so that it would not fire on orientation change.
-			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
-			setIntent(intentArvutaja);
 
-			launchSpeechRecognizer();
+		if (SpeechRecognizer.isRecognitionAvailable(this)) {
+			Intent intentRecognizer = createRecognizerIntent(
+					mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
+					getString(R.string.defaultGrammar),
+					getString(R.string.nameLangLinearize));
+
+			if (mPrefs.getBoolean(getString(R.string.keyUseK6nele), mRes.getBoolean(R.bool.defaultUseK6nele))) {
+				String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
+				String nameRecognizerCls = getString(R.string.nameRecognizerCls);
+				ComponentName componentName = new ComponentName(nameRecognizerPkg, nameRecognizerCls);
+				intentRecognizer.setComponent(componentName);
+				if (getIntentActivities(intentRecognizer).size() == 0) {
+					goToStore();
+				} else {
+					// TODO: fix
+					setUpRecognizer(intentRecognizer, componentName);
+				}
+			} else {
+				setUpRecognizer(intentRecognizer, null);
+			}
+		} else {
+			goToStore();
 		}
 	}
 
@@ -263,26 +251,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				if (mState == State.INIT || mState == State.ERROR) {
-					launchSpeechRecognizer();
-				}
-				else if (mState == State.LISTENING) {
-					mSr.stopListening();
-				} else {
-					// TODO: bad state to press the button
-				}
-			}
-		});
 	}
 
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		// TODO: cancel recognition
-		mSr.cancel();
+
+		if (mSr != null) {
+			mSr.cancel();
+		}
 
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
@@ -447,8 +425,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private static Intent createRecognizerIntent(String langSource, String grammar, String langTarget) {
+	private Intent createRecognizerIntent(String langSource, String grammar, String langTarget) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
@@ -555,7 +534,51 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private void launchSpeechRecognizer() {
+	private void setUpRecognizer(final Intent intentRecognizer, ComponentName componentName) {
+		if (componentName == null) {
+			mSr = SpeechRecognizer.createSpeechRecognizer(this);
+		} else {
+			mSr = SpeechRecognizer.createSpeechRecognizer(this, componentName);
+		}
+		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				if (mState == State.INIT || mState == State.ERROR) {
+					launchSpeechRecognizer(intentRecognizer);
+				}
+				else if (mState == State.LISTENING) {
+					mSr.stopListening();
+				} else {
+					// TODO: bad state to press the button
+				}
+			}
+		});
+
+		LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
+		llMicrophone.setVisibility(View.VISIBLE);
+		llMicrophone.setEnabled(true);
+
+		Intent intentArvutaja = getIntent();
+		Bundle extras = intentArvutaja.getExtras();
+		if (extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+			// We disable the extra so that it would not fire on orientation change.
+			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
+			setIntent(intentArvutaja);
+			launchSpeechRecognizer(intentRecognizer);
+		}
+	}
+
+
+	private void goToStore() {
+		AlertDialog d = Utils.getGoToStoreDialog(
+				this,
+				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
+				Uri.parse(getString(R.string.urlSpeakDownload))
+				);
+		d.show();
+	}
+
+
+	private void launchSpeechRecognizer(Intent intentRecognizer) {
 
 		mSr.setRecognitionListener(new RecognitionListener() {
 
@@ -648,7 +671,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				}
 			}
 		});
-		mSr.startListening(mIntentRecognizer);
+		mSr.startListening(intentRecognizer);
 	}
 
 

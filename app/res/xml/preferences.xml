@@ -11,6 +11,12 @@
     </ListPreference>
 
     <CheckBoxPreference
+        android:defaultValue="@bool/defaultUseK6nele"
+        android:key="@string/keyUseK6nele"
+        android:summary="@string/summaryUseK6nele"
+        android:title="@string/titleUseK6nele" />
+
+    <CheckBoxPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"

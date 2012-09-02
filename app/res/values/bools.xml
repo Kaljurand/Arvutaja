@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <bool name="defaultUseK6nele">true</bool>
     <bool name="defaultUseExternalEvaluator">false</bool>
 
 </resources>

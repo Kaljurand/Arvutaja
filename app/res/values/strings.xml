@@ -2,6 +2,7 @@
 <resources>
 
     <string name="keyLanguage" translatable="false">keyLanguage</string>
+    <string name="keyUseK6nele" translatable="false">keyUseK6nele</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="urlArvutajaHelp" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
     <string name="urlSpeakDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
@@ -33,6 +34,8 @@
     <string name="cmMainDelete">Delete</string>
     <string name="cmMainShowError">Show error message</string>
     <string name="titleCategorySettings">Settings</string>
+    <string name="titleUseK6nele">Use Kõnele</string>
+    <string name="summaryUseK6nele">Use Kõnele (which supports grammars), otherwise use the default recognizer</string>
     <string name="titleUseExternalEvaluator">Launch external viewer</string>
     <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>
     <string name="titleLanguage">Language</string>
@@ -50,6 +53,7 @@
     <string-array name="entriesLanguage">
         <item>Estonian</item>
         <item>English</item>
+        <item>German</item>
     </string-array>
 
     <string name="defaultLanguage">Estonian</string>
@@ -57,6 +61,7 @@
     <string-array name="valuesLanguage" translatable="false">
         <item>et</item>
         <item>en</item>
+        <item>de</item>
     </string-array>
 
 </resources>
