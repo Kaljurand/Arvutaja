@@ -23,6 +23,8 @@
     <string name="titleCategorySettings">Seaded</string>
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
+    <string name="titleAudioCues">Helisignaalid</string>
+    <string name="summaryAudioCues">Anna lindistamise algusest ja lõpust märku lühikese helisignaaliga</string>
     <string name="confirmDeleteEntry">Tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
     <string name="buttonYes">Jah</string>

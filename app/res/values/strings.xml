@@ -4,6 +4,7 @@
     <string name="keyLanguage" translatable="false">keyLanguage</string>
     <string name="keyUseK6nele" translatable="false">keyUseK6nele</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
+    <string name="keyAudioCues" translatable="false">keyAudioCues</string>
     <string name="urlArvutajaHelp" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
     <string name="urlSpeakDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
@@ -11,10 +12,13 @@
     <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizer" translatable="false">Kõnele</string>
-    <string name="nameRecognizerPkg" translatable="false">ee.ioc.phon.android.speak</string>
-    <string name="nameRecognizerCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
+    <string name="nameK6nelePkg" translatable="false">ee.ioc.phon.android.speak</string>
+    <string name="nameK6neleCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
+    <string name="nameK6neleService" translatable="false">ee.ioc.phon.android.speak.SpeechRecognitionService</string>
     <string name="labelApp">Arvutaja</string>
     <string name="prefCurrentSortOrder" translatable="false">CurrentSortOrder</string>
+    <string name="prefCurrentSelected" translatable="false">CurrentSelected</string>
+    <string name="labelExamples">Examples</string>
     <string name="labelSettings">Settings</string>
     <string name="warningParserInputNotSupported">Input sentence not supported</string>
     <string name="errorResultAudioError">ERROR: audio recording failed</string>
@@ -29,18 +33,21 @@
     <string name="menuMainSortByTimestamp">by time</string>
     <string name="menuMainSortByTranslation">by expression</string>
     <string name="menuMainSortByEvaluation">by value</string>
+    <string name="menuMainExamples">Examples</string>
     <string name="menuMainSettings">Settings</string>
-    <string name="menuMainAbout">About</string>
     <string name="cmMainDelete">Delete</string>
     <string name="cmMainShowError">Show error message</string>
+    <string name="titleCategoryAbout">About</string>
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseK6nele">Use Kõnele</string>
     <string name="summaryUseK6nele">Use Kõnele (which supports grammars), otherwise use the default recognizer</string>
     <string name="titleUseExternalEvaluator">Launch external viewer</string>
     <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>
-    <string name="titleLanguage">Language</string>
+    <string name="titleLanguage">Input language</string>
     <string name="dialogTitleLanguage">Select language</string>
-    <string name="titleAbout">About Arvutaja</string>
+    <string name="titleAudioCues">Play audio cues</string>
+    <string name="summaryAudioCues">Beep before and after recording</string>
+    <string name="titleAboutHelp">Help page</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonYes">Yes</string>
@@ -49,6 +56,8 @@
     <string name="buttonCancel">Cancel</string>
     <string name="buttonGoToStore">Go to Play Store</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
+    <string name="fileExamples">file:///android_asset/examples/en_US.html</string>
+    <string name="numberOfInputs">%1$d inputs</string>
 
     <string-array name="entriesLanguage">
         <item>Estonian</item>
@@ -56,7 +65,7 @@
         <item>German</item>
     </string-array>
 
-    <string name="defaultLanguage">Estonian</string>
+    <string name="defaultLanguage" translatable="false">et</string>
 
     <string-array name="valuesLanguage" translatable="false">
         <item>et</item>

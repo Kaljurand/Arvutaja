@@ -3,5 +3,6 @@
 
     <bool name="defaultUseK6nele">true</bool>
     <bool name="defaultUseExternalEvaluator">false</bool>
+    <bool name="defaultAudioCues">true</bool>
 
 </resources>

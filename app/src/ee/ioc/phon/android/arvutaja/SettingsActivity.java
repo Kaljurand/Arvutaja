@@ -16,20 +16,17 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.view.MenuItem;
 
-public class SettingsActivity extends Activity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends SubActivity implements OnSharedPreferenceChangeListener {
 
 	private SettingsFragment mSettingsFragment;
 	private SharedPreferences mPrefs;
-	private String keyLanguage;
+	private String mKeyLanguage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +34,21 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
 
 		mSettingsFragment = new SettingsFragment();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		keyLanguage = getString(R.string.keyLanguage);
+		mKeyLanguage = getString(R.string.keyLanguage);
 
 		// Display the fragment as the main content.
 		getFragmentManager().beginTransaction().replace(android.R.id.content, mSettingsFragment).commit();
 
 		// TODO: we want to set the summary on creation, but for some reason the findPreference
-		// return null
-		Preference pref = mSettingsFragment.findPreference(keyLanguage);
+		// returns null
+		Preference pref = mSettingsFragment.findPreference(mKeyLanguage);
 		if (pref != null) {
-			pref.setSummary(mPrefs.getString(keyLanguage, ""));
+			pref.setSummary(mPrefs.getString(mKeyLanguage, getString(R.string.defaultLanguage)));
 		}
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		if (key.equals(keyLanguage)) {
+		if (key.equals(mKeyLanguage)) {
 			Preference pref = mSettingsFragment.findPreference(key);
 			pref.setSummary(prefs.getString(key, ""));
 		}
@@ -70,20 +65,6 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
 	protected void onPause() {
 		super.onPause();
 		mPrefs.unregisterOnSharedPreferenceChangeListener(this);
-	}
-
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent intent = new Intent(this, ArvutajaActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 }

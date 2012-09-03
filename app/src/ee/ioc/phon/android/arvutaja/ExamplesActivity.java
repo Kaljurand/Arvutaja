@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2012, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,17 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-public interface Executable {
-	void execute();
+import android.os.Bundle;
+import android.webkit.WebView;
+
+public class ExamplesActivity extends SubActivity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		WebView webview = new WebView(this);
+		setContentView(webview);
+		webview.loadUrl(getString(R.string.fileExamples));
+	}
+
 }

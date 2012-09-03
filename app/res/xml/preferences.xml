@@ -15,17 +15,23 @@
         android:key="@string/keyUseK6nele"
         android:summary="@string/summaryUseK6nele"
         android:title="@string/titleUseK6nele" />
-
     <CheckBoxPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
         android:title="@string/titleUseExternalEvaluator" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/defaultAudioCues"
+        android:key="@string/keyAudioCues"
+        android:summary="@string/summaryAudioCues"
+        android:title="@string/titleAudioCues" />
 
-    <Preference android:title="@string/titleAbout" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="@string/urlArvutajaHelp" />
-    </Preference>
+    <PreferenceCategory android:title="@string/titleCategoryAbout" >
+        <Preference android:title="@string/titleAboutHelp" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlArvutajaHelp" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>

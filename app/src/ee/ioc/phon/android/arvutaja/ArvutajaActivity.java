@@ -24,18 +24,18 @@ import android.speech.SpeechRecognizer;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
 
 import android.app.ActionBar;
@@ -92,6 +92,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
 
+	private AudioCue mAudioCue;
+
+	private ActionBar mActionBar;
+
 	private SpeechRecognizer mSr;
 
 	private static final String[] QUERY_PROJECTION = new String[] {
@@ -119,7 +123,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static final int TOKEN_GROUP = 0;
 	private static final int TOKEN_CHILD = 1;
 
-	private static final class QueryHandler extends AsyncQueryHandler {
+	private final class QueryHandler extends AsyncQueryHandler {
 		private CursorTreeAdapter mAdapter;
 
 		public QueryHandler(Context context, CursorTreeAdapter adapter) {
@@ -139,6 +143,22 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				mAdapter.setChildrenCursor(groupPosition, cursor);
 				break;
 			}
+			updateUi();
+		}
+
+		protected void onDeleteComplete(int token, Object cookie, int result) {
+			updateUi();
+		}
+
+		protected void onInsertComplete(int token, Object cookie, Uri uri) {
+			updateUi();
+		}
+
+		// TODO: this is not always called when needed
+		private void updateUi() {
+			if (mActionBar != null) {
+				mActionBar.setSubtitle(String.format(getString(R.string.numberOfInputs), mAdapter.getGroupCount()));
+			}
 		}
 	}
 
@@ -152,9 +172,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mButtonMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setHomeButtonEnabled(true);
-
 		mVolumeLevels = new ArrayList<Drawable>();
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_0));
 		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_1));
@@ -163,9 +180,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
-
 		mListView.setFastScrollEnabled(true);
-		mListView.setClickable(true);
 
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
@@ -212,15 +227,28 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		registerForContextMenu(mListView);
 
+		mActionBar = getActionBar();
+		mActionBar.setHomeButtonEnabled(false);
+
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
 		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), Query.Columns.TIMESTAMP + " DESC"));
 	}
 
 
+	/**
+	 * We initialize the speech recognizer here, assuming that the configuration
+	 * changed after onStop. That is why onStop destroys the recognizer.
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
+
+		if (mPrefs.getBoolean(getString(R.string.keyAudioCues), mRes.getBoolean(R.bool.defaultAudioCues))) {
+			mAudioCue = new AudioCue(this);
+		} else {
+			mAudioCue = null;
+		}
 
 		if (SpeechRecognizer.isRecognitionAvailable(this)) {
 			Intent intentRecognizer = createRecognizerIntent(
@@ -229,18 +257,23 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					getString(R.string.nameLangLinearize));
 
 			if (mPrefs.getBoolean(getString(R.string.keyUseK6nele), mRes.getBoolean(R.bool.defaultUseK6nele))) {
-				String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
-				String nameRecognizerCls = getString(R.string.nameRecognizerCls);
-				ComponentName componentName = new ComponentName(nameRecognizerPkg, nameRecognizerCls);
+				// Set the component only for search
+				String nameK6nelePkg = getString(R.string.nameK6nelePkg);
+				ComponentName componentName = new ComponentName(nameK6nelePkg, getString(R.string.nameK6neleCls));
 				intentRecognizer.setComponent(componentName);
 				if (getIntentActivities(intentRecognizer).size() == 0) {
 					goToStore();
 				} else {
-					// TODO: fix
-					setUpRecognizer(intentRecognizer, componentName);
+					ComponentName serviceName = new ComponentName(nameK6nelePkg, getString(R.string.nameK6neleService));
+					mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceName);
+					if (mSr == null) {
+					} else {
+						setUpRecognizerGui(mSr, intentRecognizer);
+					}
 				}
 			} else {
-				setUpRecognizer(intentRecognizer, null);
+				mSr = SpeechRecognizer.createSpeechRecognizer(this);
+				setUpRecognizerGui(mSr, intentRecognizer);
 			}
 		} else {
 			goToStore();
@@ -259,7 +292,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		super.onStop();
 
 		if (mSr != null) {
-			mSr.cancel();
+			mSr.cancel(); // TODO: do we need this, we do destroy anyway?
+			mSr.destroy();
 		}
 
 		SharedPreferences.Editor editor = mPrefs.edit();
@@ -292,13 +326,19 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuMainSortByTimestamp:
+			item.setChecked(true);
 			startQuery(Query.Columns.TIMESTAMP + " DESC");
 			return true;
 		case R.id.menuMainSortByTranslation:
+			item.setChecked(true);
 			startQuery(Query.Columns.TRANSLATION + " ASC");
 			return true;
 		case R.id.menuMainSortByEvaluation:
+			item.setChecked(true);
 			startQuery(Query.Columns.EVALUATION + " DESC");
+			return true;
+		case R.id.menuMainExamples:
+			startActivity(new Intent(this, ExamplesActivity.class));
 			return true;
 		case R.id.menuMainSettings:
 			startActivity(new Intent(this, SettingsActivity.class));
@@ -315,20 +355,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.cm_main, menu);
 
-		String message = null;
+		Cursor cursor = null;
+		String column = null;
+
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
 		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
-			message = cursor.getString(cursor.getColumnIndex(Qeval.Columns.MESSAGE));
+			cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
+			column = Qeval.Columns.MESSAGE;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
-			message = cursor.getString(cursor.getColumnIndex(Query.Columns.MESSAGE));
+			cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
+			column = Query.Columns.MESSAGE;
+		} else {
+			return;
 		}
 
+		String message = cursor.getString(cursor.getColumnIndex(column));
 		if (message == null || message.length() == 0) {
 			MenuItem menuItem = menu.findItem(R.id.cmMainShowError);
 			menuItem.setEnabled(false);
@@ -534,19 +579,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private void setUpRecognizer(final Intent intentRecognizer, ComponentName componentName) {
-		if (componentName == null) {
-			mSr = SpeechRecognizer.createSpeechRecognizer(this);
-		} else {
-			mSr = SpeechRecognizer.createSpeechRecognizer(this, componentName);
-		}
+	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
 		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				if (mState == State.INIT || mState == State.ERROR) {
-					launchSpeechRecognizer(intentRecognizer);
+					if (mAudioCue != null) {
+						mAudioCue.playStartSoundAndSleep();
+					}
+					startListening(sr, intentRecognizer);
 				}
 				else if (mState == State.LISTENING) {
-					mSr.stopListening();
+					sr.stopListening();
 				} else {
 					// TODO: bad state to press the button
 				}
@@ -563,7 +606,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			// We disable the extra so that it would not fire on orientation change.
 			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
 			setIntent(intentArvutaja);
-			launchSpeechRecognizer(intentRecognizer);
+			startListening(sr, intentRecognizer);
 		}
 	}
 
@@ -578,34 +621,37 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private void launchSpeechRecognizer(Intent intentRecognizer) {
+	private void startListening(final SpeechRecognizer sr, Intent intentRecognizer) {
 
-		mSr.setRecognitionListener(new RecognitionListener() {
+		sr.setRecognitionListener(new RecognitionListener() {
 
 			private int mVolumeLevel;
 
 			@Override
 			public void onBeginningOfSpeech() {
-				// TODO start "speak now..." animation
 				mState = State.LISTENING;
-				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_recording_0));
 			}
 
 			@Override
 			public void onBufferReceived(byte[] buffer) {
-				// TODO show buffer waveform
+				// TODO maybe show buffer waveform
 			}
 
 			@Override
 			public void onEndOfSpeech() {
-				// TODO stop "recording..." animation
 				mState = State.TRANSCRIBING;
 				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_transcribing));
+				if (mAudioCue != null) {
+					mAudioCue.playStopSound();
+				}
 			}
 
 			@Override
 			public void onError(int error) {
 				mState = State.ERROR;
+				if (mAudioCue != null) {
+					mAudioCue.playErrorSound();
+				}
 				switch (error) {
 				case SpeechRecognizer.ERROR_AUDIO:
 					toast(getString(R.string.errorResultAudioError));
@@ -616,14 +662,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				case SpeechRecognizer.ERROR_NETWORK:
 					toast(getString(R.string.errorResultNetworkError));
 					break;
+				case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+					toast(getString(R.string.errorResultNetworkError));
+					break;
 				case SpeechRecognizer.ERROR_SERVER:
+					toast(getString(R.string.errorResultServerError));
+					break;
+				case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
 					toast(getString(R.string.errorResultServerError));
 					break;
 				case SpeechRecognizer.ERROR_NO_MATCH:
 					toast(getString(R.string.errorResultNoMatch));
 					break;
-					// TODO: cover all errors
-				default: // TODO
+				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+					toast(getString(R.string.errorResultNoMatch));
+					break;
+				case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+					// This is programmer error.
+					break;
+				default:
 					break;
 				}
 				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic));
@@ -642,7 +699,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public void onReadyForSpeech(Bundle params) {
 				mState = State.RECORDING;
-				// TODO ???
+				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_recording_0));
 			}
 
 			@Override
@@ -671,7 +728,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				}
 			}
 		});
-		mSr.startListening(intentRecognizer);
+		sr.startListening(intentRecognizer);
 	}
 
 

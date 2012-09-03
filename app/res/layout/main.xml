@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-Note: do not use android:onClick here, because ProGuard might remove
-the methods referenced this way.
--->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -29,8 +25,8 @@ the methods referenced this way.
 
         <ImageButton
             android:id="@+id/buttonMicrophone"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_margin="2dp"
             android:background="@drawable/button_mic"
