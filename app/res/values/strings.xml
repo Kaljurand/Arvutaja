@@ -3,12 +3,16 @@
 
     <string name="keyLanguage" translatable="false">keyLanguage</string>
     <string name="keyUseK6nele" translatable="false">keyUseK6nele</string>
+    <string name="keyMaxOneResult" translatable="false">keyMaxOneResult</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="keyAudioCues" translatable="false">keyAudioCues</string>
-    <string name="urlArvutajaHelp" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
-    <string name="urlSpeakDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
+    <string name="urlArvutajaProject" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
+    <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.com/Grammars/</string>
+    <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
+    <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
-    <string name="ambiguous" translatable="false">→</string>
+    <string name="REMOVE_ambiguous" translatable="false">→</string>
+    <string name="ambiguous" translatable="false">...</string>
     <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizer" translatable="false">Kõnele</string>
@@ -40,14 +44,21 @@
     <string name="titleCategoryAbout">About</string>
     <string name="titleCategorySettings">Settings</string>
     <string name="titleUseK6nele">Use Kõnele</string>
-    <string name="summaryUseK6nele">Use Kõnele (which supports grammars), otherwise use the default recognizer</string>
-    <string name="titleUseExternalEvaluator">Launch external viewer</string>
-    <string name="summaryUseExternalEvaluator">Launch the external viewer (Google Maps, WolframAlpha) right after recognition</string>
+    <string name="summaryUseK6nele">Use the Kõnele speech recognizer (which supports Estonian+grammars), otherwise use the system default</string>
+    <string name="titleMaxOneResult">Max 1 result</string>
+    <string name="summaryMaxOneResult">Show only a single recognition result</string>
+    <string name="titleUseExternalEvaluator">Autoview</string>
+    <string name="summaryUseExternalEvaluator">Automatically view the result in an external app (e.g. Google Maps, WolframAlpha)</string>
     <string name="titleLanguage">Input language</string>
     <string name="dialogTitleLanguage">Select language</string>
     <string name="titleAudioCues">Play audio cues</string>
     <string name="summaryAudioCues">Beep before and after recording</string>
-    <string name="titleAboutHelp">Help page</string>
+    <string name="titleArvutajaProject">project Arvutaja</string>
+    <string name="summaryArvutajaProject">(producer of this app)</string>
+    <string name="titleGrammarsProject">project Grammars</string>
+    <string name="summaryGrammarsProject">Speech recognition grammars in Grammatical Framework</string>
+    <string name="titleK6neleProject">project Kõnele</string>
+    <string name="summaryK6neleProject">Grammar-aware Estonian-supporting speech recognition service for Android</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonYes">Yes</string>

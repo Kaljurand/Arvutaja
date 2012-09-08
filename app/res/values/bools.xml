@@ -2,6 +2,7 @@
 <resources>
 
     <bool name="defaultUseK6nele">true</bool>
+    <bool name="defaultMaxOneResult">false</bool>
     <bool name="defaultUseExternalEvaluator">false</bool>
     <bool name="defaultAudioCues">true</bool>
 

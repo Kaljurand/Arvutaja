@@ -16,7 +16,7 @@ import android.net.Uri;
  */
 public class Direction extends DefaultCommand {
 
-	public static final Pattern p = Pattern.compile("FROM (.+) TO (.+)");
+	public static final Pattern p = Pattern.compile("[fF][rR][oO][mM] (.+) [tT][oO] (.+)");
 	public static final String MAPS_GOOGLE_COM = "http://maps.google.com/maps?";
 
 	public Direction(String command) {
@@ -37,7 +37,7 @@ public class Direction extends DefaultCommand {
 	}
 
 	public static boolean isCommand(String command) {
-		return command.contains(",");
+		return command.contains(",") || p.matcher(command).matches();
 	}
 
 }

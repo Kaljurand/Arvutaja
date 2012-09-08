@@ -33,7 +33,6 @@ import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.TextView;
@@ -49,7 +48,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
@@ -58,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ee.ioc.phon.android.arvutaja.Constants.State;
 import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
@@ -73,8 +72,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
-	private enum State { INIT, RECORDING, LISTENING, TRANSCRIBING, ERROR };
-
 	private State mState = State.INIT;
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
@@ -85,8 +82,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private static String mCurrentSortOrder;
 
-	private List<Drawable> mVolumeLevels;
-	private ImageButton mButtonMicrophone;
+	private MicButton mButtonMicrophone;
 	private ExpandableListView mListView;
 
 	private MyExpandableListAdapter mAdapter;
@@ -170,13 +166,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mRes = getResources();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		mButtonMicrophone = (ImageButton) findViewById(R.id.buttonMicrophone);
+		mButtonMicrophone = (MicButton) findViewById(R.id.buttonMicrophone);
 
-		mVolumeLevels = new ArrayList<Drawable>();
-		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_0));
-		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_1));
-		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_2));
-		mVolumeLevels.add(mRes.getDrawable(R.drawable.button_mic_recording_3));
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
@@ -204,11 +195,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			}
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-					llMicrophone.setVisibility(View.VISIBLE);
+					mButtonMicrophone.fadeIn();
 				} else {
-					llMicrophone.setVisibility(View.GONE);
+					mButtonMicrophone.fadeOut();
 				}
 			}
 		});
@@ -475,6 +465,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
+		if (mPrefs.getBoolean(getString(R.string.keyMaxOneResult), mRes.getBoolean(R.bool.defaultMaxOneResult))) { 
+			intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		}
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
 		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
 		return intent;
@@ -615,7 +608,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		AlertDialog d = Utils.getGoToStoreDialog(
 				this,
 				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
-				Uri.parse(getString(R.string.urlSpeakDownload))
+				Uri.parse(getString(R.string.urlK6neleDownload))
 				);
 		d.show();
 	}
@@ -624,8 +617,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private void startListening(final SpeechRecognizer sr, Intent intentRecognizer) {
 
 		sr.setRecognitionListener(new RecognitionListener() {
-
-			private int mVolumeLevel;
 
 			@Override
 			public void onBeginningOfSpeech() {
@@ -640,7 +631,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public void onEndOfSpeech() {
 				mState = State.TRANSCRIBING;
-				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_transcribing));
+				mButtonMicrophone.setState(mState);
 				if (mAudioCue != null) {
 					mAudioCue.playStopSound();
 				}
@@ -649,6 +640,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public void onError(int error) {
 				mState = State.ERROR;
+				mButtonMicrophone.setState(mState);
 				if (mAudioCue != null) {
 					mAudioCue.playErrorSound();
 				}
@@ -683,7 +675,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				default:
 					break;
 				}
-				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic));
 			}
 
 			@Override
@@ -699,7 +690,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public void onReadyForSpeech(Bundle params) {
 				mState = State.RECORDING;
-				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic_recording_0));
+				mButtonMicrophone.setState(mState);
 			}
 
 			@Override
@@ -707,25 +698,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 				// TODO: confidence scores support is only in API 14
 				mState = State.INIT;
-				mButtonMicrophone.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_mic));
+				mButtonMicrophone.setState(mState);
 				onSuccess(matches);
 			}
 
 			@Override
 			public void onRmsChanged(float rmsdB) {
-				// TODO: take these from some configuration
-				float min = 15.f;
-				float max = 30.f;
-
-				final int maxLevel = mVolumeLevels.size() - 1;
-
-				int index = (int) ((rmsdB - min) / (max - min) * maxLevel);
-				final int volumeLevel = Math.min(Math.max(0, index), maxLevel);
-
-				if (volumeLevel != mVolumeLevel) {
-					mButtonMicrophone.setBackgroundDrawable(mVolumeLevels.get(volumeLevel));
-					mVolumeLevel = volumeLevel;
-				}
+				mButtonMicrophone.setVolumeLevel(rmsdB);
 			}
 		});
 		sr.startListening(intentRecognizer);

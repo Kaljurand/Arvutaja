@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- 1 = top,lighter; 2 = bottom,darker -->
     <color name="transparent">#00000000</color>
     <color name="very_transparent">#11404040</color>
     <color name="semi_transparent">#ee404040</color>
     <color name="grey2">#808080</color>
     <color name="red">#cc0000</color>
-    <color name="blue">#0000cc</color>
+    <color name="blue">#0099cc</color>
     <color name="buttonStroke">#aa404040</color>
-    <color name="buttonNormal1">#ffcc00</color> <!-- top -->
-    <color name="buttonNormal2">#996600</color> <!-- bottom -->
+    <color name="buttonNormal1">#ffcc00</color>
+    <color name="buttonNormal2">#996600</color>
     <color name="buttonPressed1">#996600</color>
     <color name="buttonPressed2">#ffcc00</color>
     <color name="buttonFocused1">#ffcc00</color>
     <color name="buttonFocused2">#ffcc00</color>
-    <color name="buttonRecordingNormal1">#cc0000</color> <!-- top -->
-    <color name="buttonRecordingNormal2">#990000</color> <!-- bottom -->
+    <color name="buttonRecordingNormal1">#ff4444</color>
+    <color name="buttonRecordingNormal2">#cc0000</color>
+    <color name="buttonTranscribingNormal1">#c58be2</color>
+    <color name="buttonTranscribingNormal2">#9933cc</color>
 
 </resources>

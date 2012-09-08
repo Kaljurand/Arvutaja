@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!--
+    TODO: we should query the selected recognizer for the
+    default values and populate this list accordingly.
+    -->
     <ListPreference
         android:defaultValue="@string/defaultLanguage"
         android:dialogTitle="@string/dialogTitleLanguage"
@@ -16,6 +20,11 @@
         android:summary="@string/summaryUseK6nele"
         android:title="@string/titleUseK6nele" />
     <CheckBoxPreference
+        android:defaultValue="@bool/defaultMaxOneResult"
+        android:key="@string/keyMaxOneResult"
+        android:summary="@string/summaryMaxOneResult"
+        android:title="@string/titleMaxOneResult" />
+    <CheckBoxPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
@@ -27,10 +36,26 @@
         android:title="@string/titleAudioCues" />
 
     <PreferenceCategory android:title="@string/titleCategoryAbout" >
-        <Preference android:title="@string/titleAboutHelp" >
+        <Preference
+            android:summary="@string/summaryArvutajaProject"
+            android:title="@string/titleArvutajaProject" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="@string/urlArvutajaHelp" />
+                android:data="@string/urlArvutajaProject" />
+        </Preference>
+        <Preference
+            android:summary="@string/summaryGrammarsProject"
+            android:title="@string/titleGrammarsProject" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlGrammarsProject" />
+        </Preference>
+        <Preference
+            android:summary="@string/summaryK6neleProject"
+            android:title="@string/titleK6neleProject" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlK6neleProject" />
         </Preference>
     </PreferenceCategory>
 
