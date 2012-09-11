@@ -17,7 +17,7 @@
     <string name="menuMainSortByTranslation">avaldise järgi</string>
     <string name="menuMainSortByEvaluation">väärtuse järgi</string>
     <string name="menuMainSettings">Seaded</string>
-    <string name="menuMainAbout">Info</string>
+    <string name="menuMainExamples">Näited</string>
     <string name="cmMainDelete">Kustuta</string>
     <string name="cmMainShowError">Näita veateadet</string>
     <string name="titleCategorySettings">Seaded</string>

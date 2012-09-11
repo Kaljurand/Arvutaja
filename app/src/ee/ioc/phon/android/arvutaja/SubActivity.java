@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class SubActivity extends Activity {
 
@@ -40,6 +41,10 @@ public class SubActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	protected void toast(String message) {
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 	}
 
 }

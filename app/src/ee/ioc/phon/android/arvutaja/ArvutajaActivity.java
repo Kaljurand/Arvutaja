@@ -240,32 +240,32 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			mAudioCue = null;
 		}
 
+		//TODO: rethink this logic
 		if (SpeechRecognizer.isRecognitionAvailable(this)) {
 			Intent intentRecognizer = createRecognizerIntent(
 					mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
 					getString(R.string.defaultGrammar),
 					getString(R.string.nameLangLinearize));
 
-			if (mPrefs.getBoolean(getString(R.string.keyUseK6nele), mRes.getBoolean(R.bool.defaultUseK6nele))) {
-				// Set the component only for search
-				String nameK6nelePkg = getString(R.string.nameK6nelePkg);
-				ComponentName componentName = new ComponentName(nameK6nelePkg, getString(R.string.nameK6neleCls));
-				intentRecognizer.setComponent(componentName);
-				if (getIntentActivities(intentRecognizer).size() == 0) {
-					goToStore();
-				} else {
-					ComponentName serviceName = new ComponentName(nameK6nelePkg, getString(R.string.nameK6neleService));
-					mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceName);
-					if (mSr == null) {
-					} else {
-						setUpRecognizerGui(mSr, intentRecognizer);
-					}
-				}
+			ComponentName serviceName = null;
+			String pkg = mPrefs.getString(getString(R.string.keyService), null);
+			String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
+			if (pkg == null || cls == null) {
+				serviceName = new ComponentName(
+						getString(R.string.nameK6nelePkg),
+						getString(R.string.nameK6neleService));	
 			} else {
-				mSr = SpeechRecognizer.createSpeechRecognizer(this);
+				serviceName = new ComponentName(pkg, cls);
+			}
+			Log.i("Starting service: " + serviceName);
+			mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceName);
+			if (mSr == null) {
+				toast(getString(R.string.errorNoDefaultRecognizer));
+			} else {
 				setUpRecognizerGui(mSr, intentRecognizer);
 			}
 		} else {
+			// TODO: this won't happen very often...
 			goToStore();
 		}
 	}

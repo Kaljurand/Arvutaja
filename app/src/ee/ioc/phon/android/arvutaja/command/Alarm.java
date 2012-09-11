@@ -47,7 +47,8 @@ public class Alarm extends DefaultCommand {
 		intent.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
 		intent.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
 		intent.putExtra(AlarmClock.EXTRA_MESSAGE, mExtraMessage);
-		intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+		// It might be confusing for the user if the UI was skipped
+		// intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
 		return intent;
 	}
 
