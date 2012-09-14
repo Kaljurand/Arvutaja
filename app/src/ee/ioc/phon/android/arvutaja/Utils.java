@@ -20,11 +20,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -60,6 +62,18 @@ public class Utils {
 	}
 
 
+	public static AlertDialog getOkDialog(final Context context, String msg) {
+		final SpannableString s = new SpannableString(msg);
+		Linkify.addLinks(s, Linkify.ALL);
+		return new AlertDialog.Builder(context)
+		.setPositiveButton(context.getString(R.string.buttonOk), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		})
+		.setMessage(s)
+		.create();
+	}
 
 
 	public static AlertDialog getYesNoDialog(Context context, String confirmationMessage, final Executable ex) {
@@ -97,6 +111,34 @@ public class Utils {
 		})
 		.setMessage(s)
 		.create();
+	}
+
+
+	public static AlertDialog getGoToStoreDialogWithThreeButtons(final Context context, String msg, final Uri uri) {
+		final SpannableString s = new SpannableString(msg);
+		Linkify.addLinks(s, Linkify.ALL);
+		return new AlertDialog.Builder(context)
+		.setPositiveButton(context.getString(R.string.buttonGoToStore), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			}
+		})
+		.setNegativeButton(context.getString(R.string.buttonNever), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean(context.getString(R.string.prefFirstTime), false);
+				editor.commit();
+				dialog.cancel();
+			}
+		})
+		.setNeutralButton(context.getString(R.string.buttonLater), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}})
+			.setMessage(s)
+			.create();
 	}
 
 

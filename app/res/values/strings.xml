@@ -11,7 +11,6 @@
     <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
-    <string name="REMOVE_ambiguous" translatable="false">→</string>
     <string name="ambiguous" translatable="false">...</string>
     <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
@@ -21,8 +20,8 @@
     <string name="nameK6neleService" translatable="false">ee.ioc.phon.android.speak.SpeechRecognitionService</string>
     <string name="labelApp">Arvutaja</string>
     <string name="prefCurrentSortOrder" translatable="false">CurrentSortOrder</string>
-    <string name="prefCurrentSelected" translatable="false">CurrentSelected</string>
     <string name="prefRecognizerServiceCls" translatable="false">prefRecognizerServiceCls</string>
+    <string name="prefFirstTime" translatable="false">prefFirstTime</string>
     <string name="labelExamples">Examples</string>
     <string name="labelSettings">Settings</string>
     <string name="warningParserInputNotSupported">Input sentence not supported</string>
@@ -31,7 +30,7 @@
     <string name="errorResultClientError">ERROR: general client error</string>
     <string name="errorResultServerError">ERROR: recognizer server error</string>
     <string name="errorResultNoMatch">ERROR: no match was found for the recorded speech. Please try again!</string>
-    <string name="errorRecognizerNotPresent">Arvutaja requires the speech recognition service %1$s. Please install it from the Play Store first.</string>
+    <string name="errorRecognizerNotPresent">Arvutaja works best with the speech recognition service %1$s. Please install it from the Play Store.</string>
     <string name="errorCommandNotSupported">ERROR: command not supported</string>
     <string name="errorIntentActivityNotPresent">There is no app to perform this task. Install it from Play Store first.</string>
     <string name="errorNoDefaultRecognizer">Speech recognizer not installed or no default recognizer set</string>
@@ -58,7 +57,7 @@
     <string name="titleAudioCues">Play audio cues</string>
     <string name="summaryAudioCues">Beep before and after recording</string>
     <string name="titleArvutajaProject">project Arvutaja</string>
-    <string name="summaryArvutajaProject">(producer of this app)</string>
+    <string name="summaryArvutajaProject">(maker of this app)</string>
     <string name="titleGrammarsProject">project Grammars</string>
     <string name="summaryGrammarsProject">Speech recognition grammars in Grammatical Framework</string>
     <string name="titleK6neleProject">project Kõnele</string>
@@ -70,27 +69,20 @@
     <string name="buttonOk">OK</string>
     <string name="buttonCancel">Cancel</string>
     <string name="buttonGoToStore">Go to Play Store</string>
+    <string name="buttonNever">Never</string>
+    <string name="buttonLater">Later</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
     <string name="fileExamples">file:///android_asset/examples/en_US.html</string>
     <string name="numberOfInputs">%1$d inputs</string>
+    <string name="msgFoundK6nele">Using Kõnele as the speech recognizer. You can override it in the Arvutaja-settings, but keep in mind that Arvutaja works best only with Kõnele.</string>
 
     <!-- TODO: get rid of the following, because these are picked up dynamically -->
-    <string-array name="entriesService">
-        <item>Kõnele</item>
-    </string-array>
-    <string-array name="valuesService" translatable="false">
-        <item>ee.ioc.phon.android.speak</item>
-    </string-array>
+    <string-array name="entriesService" translatable="false"></string-array>
+    <string-array name="valuesService" translatable="false"></string-array>
+    <string-array name="entriesLanguage" translatable="false"></string-array>
 
-    <!-- <string name="defaultService" translatable="false">ee.ioc.phon.android.speak</string> -->
-    <string-array name="entriesLanguage">
-        <item>English</item>
-    </string-array>
+    <string name="defaultLanguage" translatable="false">en-US</string>
 
-    <string name="defaultLanguage" translatable="false">en_US</string>
-
-    <string-array name="valuesLanguage" translatable="false">
-        <item>en_US</item>
-    </string-array>
+    <string-array name="valuesLanguage" translatable="false"></string-array>
 
 </resources>

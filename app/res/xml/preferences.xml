@@ -9,7 +9,6 @@
         android:title="@string/titleService" >
     </ListPreference>
     <ListPreference
-        android:defaultValue="@string/defaultLanguage"
         android:dialogTitle="@string/dialogTitleLanguage"
         android:entries="@array/entriesLanguage"
         android:entryValues="@array/valuesLanguage"

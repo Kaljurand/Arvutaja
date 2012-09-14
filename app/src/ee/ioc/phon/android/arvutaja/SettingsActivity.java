@@ -159,6 +159,9 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 	private void updateSupportedLanguages(String packageName) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
 		intent.setPackage(packageName);
+		// This is needed to include newly installed apps or stopped apps
+		// as receivers of the broadcast.
+		intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
 		updateSupportedLanguages(intent);
 	}
 

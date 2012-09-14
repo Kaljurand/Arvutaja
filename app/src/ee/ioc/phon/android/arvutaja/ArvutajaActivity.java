@@ -19,6 +19,7 @@ package ee.ioc.phon.android.arvutaja;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
+import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.format.Time;
@@ -46,6 +47,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -240,33 +242,42 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			mAudioCue = null;
 		}
 
-		//TODO: rethink this logic
-		if (SpeechRecognizer.isRecognitionAvailable(this)) {
-			Intent intentRecognizer = createRecognizerIntent(
-					mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
-					getString(R.string.defaultGrammar),
-					getString(R.string.nameLangLinearize));
-
-			ComponentName serviceName = null;
-			String pkg = mPrefs.getString(getString(R.string.keyService), null);
-			String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
-			if (pkg == null || cls == null) {
-				serviceName = new ComponentName(
-						getString(R.string.nameK6nelePkg),
-						getString(R.string.nameK6neleService));	
+		if (mPrefs.getBoolean(getString(R.string.prefFirstTime), true)) {
+			if (isK6neleInstalled()) {
+				SharedPreferences.Editor editor = mPrefs.edit();
+				editor.putString(getString(R.string.keyService), getString(R.string.nameK6nelePkg));
+				editor.putString(getString(R.string.prefRecognizerServiceCls), getString(R.string.nameK6neleService));
+				editor.putBoolean(getString(R.string.prefFirstTime), false);
+				editor.commit();
+				AlertDialog d = Utils.getOkDialog(
+						this,
+						getString(R.string.msgFoundK6nele)
+						);
+				d.show();
 			} else {
-				serviceName = new ComponentName(pkg, cls);
+				// This can have 3 outcomes: K6nele gets installed, "Later" is pressed, "Never" is pressed.
+				// In the latter case we set prefFirstTime = false, so that this dialog is not shown again.
+				goToStore();
 			}
-			Log.i("Starting service: " + serviceName);
-			mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceName);
+		}
+
+		ComponentName serviceComponent = getServiceComponent();
+
+		if (serviceComponent == null) {
+			toast(getString(R.string.errorNoDefaultRecognizer));
+			goToStore();
+		} else {
+			Log.i("Starting service: " + serviceComponent);
+			mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceComponent);
 			if (mSr == null) {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
+				Intent intentRecognizer = createRecognizerIntent(
+						mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
+						getString(R.string.defaultGrammar),
+						getString(R.string.nameLangLinearize));
 				setUpRecognizerGui(mSr, intentRecognizer);
 			}
-		} else {
-			// TODO: this won't happen very often...
-			goToStore();
 		}
 	}
 
@@ -605,12 +616,57 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private void goToStore() {
-		AlertDialog d = Utils.getGoToStoreDialog(
+		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
 				this,
 				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
 				Uri.parse(getString(R.string.urlK6neleDownload))
 				);
 		d.show();
+	}
+
+
+	/**
+	 * This is one way to find out if K6nele is installed.
+	 * Alternatively we could query the service.
+	 */
+	private boolean isK6neleInstalled() {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.setComponent(getK6neleComponent());
+		return (getIntentActivities(intent).size() > 0);
+	}
+
+
+	private ComponentName getK6neleComponent() {
+		return new ComponentName(
+				getString(R.string.nameK6nelePkg),
+				getString(R.string.nameK6neleCls));
+	}
+
+
+	/**
+	 * Look up the default recognizer service in the preferences.
+	 * If the default have not been set then set the first available
+	 * recognizer as the default. If no recognizer is installed then
+	 * return null.
+	 */
+	private ComponentName getServiceComponent() {
+		String pkg = mPrefs.getString(getString(R.string.keyService), null);
+		String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
+		if (pkg == null || cls == null) {
+			List<ResolveInfo> services = getPackageManager().queryIntentServices(
+					new Intent(RecognitionService.SERVICE_INTERFACE), 0);
+			if (services.isEmpty()) {
+				return null;
+			}
+			ResolveInfo ri = services.iterator().next();
+			pkg = ri.serviceInfo.packageName;
+			cls = ri.serviceInfo.name;
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putString(getString(R.string.keyService), pkg);
+			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
+			editor.commit();
+		}
+		return new ComponentName(pkg, cls);
 	}
 
 
