@@ -1,4 +1,4 @@
-.intro { border-top: 1px solid silver; border-bottom: 1px solid silver; padding: .5em .5em .5em .5em; background-color: #ffe }
+.intro { font-size: 110%; padding: 0.2em; background-color: #ffe }
 h1, h2, h3 { font-family: sans-serif; border-bottom: 1px solid silver }
 h2 { margin-top: 2em }
 td { border-bottom: 1px solid silver }

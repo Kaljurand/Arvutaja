@@ -36,9 +36,12 @@
 
         <provider
             android:name=".provider.QueriesContentProvider"
-            android:authorities="ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider" />
+            android:authorities="ee.ioc.phon.android.arvutaja.provider.QueriesContentProvider"
+            android:exported="false" />
 
-        <receiver android:name=".provider.ArvutajaAppWidgetProvider" >
+        <receiver
+            android:name=".provider.ArvutajaAppWidgetProvider"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
