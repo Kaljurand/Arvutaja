@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.util.Linkify;
-import android.util.Log;
 
 
 /**
@@ -156,7 +155,7 @@ public class Utils {
 		try {
 			return manager.getPackageInfo(c.getPackageName(), 0);
 		} catch (NameNotFoundException e) {
-			Log.e(Utils.class.getName(), "Couldn't find package information in PackageManager", e);
+			Log.e("Couldn't find package information in PackageManager: " + e);
 		}
 		return null;
 	}

@@ -15,7 +15,7 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/labelApp"
-        android:theme="@android:style/Theme.Holo.Light" >
+        android:theme="@style/BlackTheme" >
         <activity
             android:name=".ArvutajaActivity"
             android:label="@string/labelApp" >

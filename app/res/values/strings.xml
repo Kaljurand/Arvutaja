@@ -12,14 +12,14 @@
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
     <string name="ambiguous" translatable="false">...</string>
-    <string name="nameLangParse" translatable="false">Est</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizer" translatable="false">Kõnele</string>
     <string name="nameK6nelePkg" translatable="false">ee.ioc.phon.android.speak</string>
     <string name="nameK6neleCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
     <string name="nameK6neleService" translatable="false">ee.ioc.phon.android.speak.SpeechRecognitionService</string>
     <string name="labelApp">Arvutaja</string>
-    <string name="prefCurrentSortOrder" translatable="false">CurrentSortOrder</string>
+    <string name="prefCurrentSortOrder" translatable="false">prefCurrentSortOrder</string>
+    <string name="prefCurrentSortOrderMenu" translatable="false">prefCurrentSortOrderMenu</string>
     <string name="prefRecognizerServiceCls" translatable="false">prefRecognizerServiceCls</string>
     <string name="prefFirstTime" translatable="false">prefFirstTime</string>
     <string name="labelExamples">Examples</string>
@@ -43,9 +43,6 @@
     <string name="cmMainDelete">Delete</string>
     <string name="cmMainShowError">Show error message</string>
     <string name="titleCategoryLinks">Links</string>
-    <string name="titleCategorySettings">Settings</string>
-    <string name="titleUseK6nele">Use Kõnele</string>
-    <string name="summaryUseK6nele">Use the Kõnele speech recognizer (which supports Estonian+grammars), otherwise use the system default</string>
     <string name="titleMaxOneResult">Max 1 result</string>
     <string name="summaryMaxOneResult">Show only a single recognition result</string>
     <string name="titleUseExternalEvaluator">Autoview</string>
@@ -73,7 +70,6 @@
     <string name="buttonLater">Later</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
     <string name="fileExamples">file:///android_asset/examples/en_US.html</string>
-    <string name="numberOfInputs">%1$d inputs</string>
     <string name="msgFoundK6nele">Using Kõnele as the speech recognizer. You can override it in the Arvutaja-settings, but keep in mind that Arvutaja works best only with Kõnele.</string>
 
     <!-- TODO: get rid of the following, because these are picked up dynamically -->
@@ -84,5 +80,11 @@
     <string name="defaultLanguage" translatable="false">en-US</string>
 
     <string-array name="valuesLanguage" translatable="false"></string-array>
+
+    <plurals name="numberOfInputs">
+        <item quantity="zero">no inputs</item> <!-- zero is ignored in English -->
+        <item quantity="one">1 input</item>
+        <item quantity="other">%d inputs</item>
+    </plurals>
 
 </resources>

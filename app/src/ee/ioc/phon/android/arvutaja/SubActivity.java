@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class SubActivity extends Activity {
+public abstract class SubActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

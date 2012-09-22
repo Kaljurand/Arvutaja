@@ -43,6 +43,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
+
+	private static final String SORT_ORDER_TIMESTAMP = Query.Columns.TIMESTAMP + " DESC";
+	private static final String SORT_ORDER_TRANSLATION = Query.Columns.TRANSLATION + " ASC";
+	private static final String SORT_ORDER_EVALUATION = Query.Columns.EVALUATION + " DESC";
 
 	private Resources mRes;
 	private SharedPreferences mPrefs;
@@ -121,6 +126,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static final int TOKEN_GROUP = 0;
 	private static final int TOKEN_CHILD = 1;
 
+
 	private final class QueryHandler extends AsyncQueryHandler {
 		private CursorTreeAdapter mAdapter;
 
@@ -152,10 +158,20 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			updateUi();
 		}
 
-		// TODO: this is not always called when needed
+		public void insert(Uri contentUri, ContentValues values) {
+			startInsert(1, null, contentUri, values);
+		}
+
+		public void delete(Uri contentUri, long key) {
+			Uri uri = ContentUris.withAppendedId(contentUri, key);
+			startDelete(1, null, uri, null, null);
+		}
+
 		private void updateUi() {
 			if (mActionBar != null) {
-				mActionBar.setSubtitle(String.format(getString(R.string.numberOfInputs), mAdapter.getGroupCount()));
+				int count = mAdapter.getGroupCount();
+				mActionBar.setSubtitle(
+						mRes.getQuantityString(R.plurals.numberOfInputs, count, count));
 			}
 		}
 	}
@@ -172,8 +188,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
+
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
-		mListView.setFastScrollEnabled(true);
 
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
@@ -207,8 +223,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mAdapter = new MyExpandableListAdapter(
 				this,
-				R.layout.list_item_arvutaja_result,
-				R.layout.list_item_arvutaja_result,
+				R.layout.list_item_group,
+				R.layout.list_item_child,
 				new String[] { Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
 				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
 				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
@@ -224,7 +240,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
-		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), Query.Columns.TIMESTAMP + " DESC"));
+		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), SORT_ORDER_TIMESTAMP));
 	}
 
 
@@ -319,6 +335,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
+
+		// Indicate the current sort order by checking the corresponding radio button
+		int id = mPrefs.getInt(getString(R.string.prefCurrentSortOrderMenu), R.id.menuMainSortByTimestamp);
+		MenuItem menuItem = menu.findItem(id);
+		menuItem.setChecked(true);
 		return true;
 	}
 
@@ -327,16 +348,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuMainSortByTimestamp:
-			item.setChecked(true);
-			startQuery(Query.Columns.TIMESTAMP + " DESC");
+			sort(item, SORT_ORDER_TIMESTAMP);
 			return true;
 		case R.id.menuMainSortByTranslation:
-			item.setChecked(true);
-			startQuery(Query.Columns.TRANSLATION + " ASC");
+			sort(item, SORT_ORDER_TRANSLATION);
 			return true;
 		case R.id.menuMainSortByEvaluation:
-			item.setChecked(true);
-			startQuery(Query.Columns.EVALUATION + " DESC");
+			sort(item, SORT_ORDER_EVALUATION);
 			return true;
 		case R.id.menuMainExamples:
 			startActivity(new Intent(this, ExamplesActivity.class));
@@ -347,6 +365,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+
+	private void sort(MenuItem item, String sortOrder) {
+		startQuery(sortOrder);
+		item.setChecked(true);
+		// Save the ID of the selected item.
+		// TODO: ideally this should be done in onDestory
+		SharedPreferences.Editor editor = mPrefs.edit();
+		editor.putInt(getString(R.string.prefCurrentSortOrderMenu), item.getItemId());
+		editor.commit();
 	}
 
 
@@ -421,7 +450,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					String.format(getString(R.string.confirmDeleteEntry), fname),
 					new Executable() {
 						public void execute() {
-							delete(uri, key);
+							mQueryHandler.delete(uri, key);
 						}
 					}
 					).show();
@@ -531,7 +560,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				long timestamp = now.toMillis(false);
 				ContentValues values1 = new ContentValues();
 				values1.put(Query.Columns.TIMESTAMP, timestamp);
-				values1.put(Query.Columns.UTTERANCE, "[TODO: utterance]");
+				values1.put(Query.Columns.UTTERANCE, ""); // TODO
 				if (results.size() == 1) {
 					values1.put(Query.Columns.TRANSLATION, results.get(0).get("in"));
 					values1.put(Query.Columns.EVALUATION, results.get(0).get("out"));
@@ -540,15 +569,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					// TRANSLATION must remain NULL here
 					values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
 				}
-				insert(QUERY_CONTENT_URI, values1);
+				mQueryHandler.insert(QUERY_CONTENT_URI, values1);
 				if (results.size() > 1) {
 					for (Map<String, String> r : results) {
 						ContentValues values2 = new ContentValues();
-						values2.put(Qeval.Columns.TIMESTAMP, timestamp);
+						values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
 						values2.put(Qeval.Columns.TRANSLATION, r.get("in"));
 						values2.put(Qeval.Columns.EVALUATION, r.get("out"));
 						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
-						insert(QEVAL_CONTENT_URI, values2);
+						mQueryHandler.insert(QEVAL_CONTENT_URI, values2);
 					}
 				}
 

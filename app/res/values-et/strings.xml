@@ -3,6 +3,7 @@
 
     <string name="labelApp">Arvutaja</string>
     <string name="labelSettings">Seaded</string>
+    <string name="labelExamples">Näited</string>
     <string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
     <string name="errorResultAudioError">VIGA: lindistamine luhtus</string>
     <string name="errorResultNetworkError">VIGA: puudub võrguühendus kõnetuvastusserveriga</string>
@@ -12,6 +13,7 @@
     <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun installeerige see Play poest.</string>
     <string name="errorCommandNotSupported">VIGA: ei tunne sellist käsku</string>
     <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks. Installeerige see Play poest.</string>
+    <string name="errorNoDefaultRecognizer">VIGA: kõnetuvastaja pole installeeritud või seadistatud</string>
     <string name="menuMainSort">Sorteeri …</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>
@@ -20,11 +22,22 @@
     <string name="menuMainExamples">Näited</string>
     <string name="cmMainDelete">Kustuta</string>
     <string name="cmMainShowError">Näita veateadet</string>
-    <string name="titleCategorySettings">Seaded</string>
+    <string name="titleService">Kõnetuvastaja</string>
+    <string name="dialogTitleService">Valige kõnetuvastaja</string>
+    <string name="titleLanguage">Sisendkeel</string>
+    <string name="dialogTitleLanguage">Valige sisendkeel</string>
+    <string name="titleMaxOneResult">Ainult 1 vastus</string>
+    <string name="summaryMaxOneResult">Näita ainult ühte tuvastustulemust</string>
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
     <string name="titleAudioCues">Helisignaalid</string>
     <string name="summaryAudioCues">Anna lindistamise algusest ja lõpust märku lühikese helisignaaliga</string>
+    <string name="titleArvutajaProject">Arvutaja projekt</string>
+    <string name="summaryArvutajaProject">(selle rakenduse looja)</string>
+    <string name="titleGrammarsProject">Grammatikate projekt</string>
+    <string name="summaryGrammarsProject">Kõnetuvastusgrammatikad GF-raamistikus</string>
+    <string name="titleK6neleProject">Kõnele projekt</string>
+    <string name="summaryK6neleProject">Grammatikateadlik ja eesti keelt toetav kõnetuvastusteenus Androidil</string>
     <string name="confirmDeleteEntry">Tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
     <string name="buttonYes">Jah</string>
@@ -32,6 +45,17 @@
     <string name="buttonOk">OK</string>
     <string name="buttonCancel">Loobu</string>
     <string name="buttonGoToStore">Ava Play pood</string>
+    <string name="buttonNever">Ei iial</string>
+    <string name="buttonLater">Hiljem</string>
     <string name="alarmExtraMessage">Arvutaja pandud</string>
+    <string name="titleCategoryLinks">Viited</string>
+    <string name="fileExamples">file:///android_asset/examples/et.html</string>
+    <string name="msgFoundK6nele">Kasutan kõnetuvastuseks rakendust Kõnele.
+        Seda valikut on võimalik soovi korral Arvutaja-seadetes muuta.</string>
+
+    <plurals name="numberOfInputs">
+        <item quantity="one">1 sisend</item>
+        <item quantity="other">%d sisendit</item>
+    </plurals>
 
 </resources>

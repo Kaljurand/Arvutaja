@@ -7,6 +7,7 @@ offers a new way for:
   * converting units and currencies,
   * evaluating arithmetical expressions,
   * performing Estonian address queries,
+  * setting the alarm clock / timer,
 
 where the query is input via __Estonian speech__.
 
@@ -38,7 +39,7 @@ Background technologies
 
 __Arvutaja__ uses an online grammar-aware Estonian speech recognition server
 
-  * http://bark.phon.ioc.ee/
+  - http://bark.phon.ioc.ee/speech-api/v1/
 
 ### GF-based speech recognition
 
@@ -61,9 +62,14 @@ raw recognition result into an evaluatable form.
 Examples
 --------
 
-The language understood by __Arvutaja__ is described by 3 underlying grammars.
+The language understood by __Arvutaja__ is described by several underlying grammars.
 Following is a list of some interesting examples, more can be found at
 http://kaljurand.github.com/Grammars/
+
+### Alarm
+
+  - ärata mind (palun) viis minutit hiljem
+  - ärata mind (palun) (kell) seitse null viis
 
 ### Unitconv
 
