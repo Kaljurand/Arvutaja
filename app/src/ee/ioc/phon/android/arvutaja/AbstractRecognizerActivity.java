@@ -19,6 +19,8 @@ package ee.ioc.phon.android.arvutaja;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -46,5 +48,19 @@ public abstract class AbstractRecognizerActivity extends Activity {
 
 	protected void toast(String message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+	}
+
+
+	public void showErrorDialog(int msg) {
+		new AlertDialog.Builder(this)
+		.setPositiveButton(getString(R.string.buttonOk), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		})
+		.setTitle(R.string.error)
+		.setMessage(msg)
+		.create()
+		.show();
 	}
 }

@@ -731,28 +731,28 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				}
 				switch (error) {
 				case SpeechRecognizer.ERROR_AUDIO:
-					toast(getString(R.string.errorResultAudioError));
+					showErrorDialog(R.string.errorResultAudioError);
 					break;
 				case SpeechRecognizer.ERROR_CLIENT:
-					toast(getString(R.string.errorResultClientError));
+					showErrorDialog(R.string.errorResultClientError);
 					break;
 				case SpeechRecognizer.ERROR_NETWORK:
-					toast(getString(R.string.errorResultNetworkError));
+					showErrorDialog(R.string.errorResultNetworkError);
 					break;
 				case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-					toast(getString(R.string.errorResultNetworkError));
+					showErrorDialog(R.string.errorResultNetworkError);
 					break;
 				case SpeechRecognizer.ERROR_SERVER:
-					toast(getString(R.string.errorResultServerError));
+					showErrorDialog(R.string.errorResultServerError);
 					break;
 				case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-					toast(getString(R.string.errorResultServerError));
+					showErrorDialog(R.string.errorResultServerError);
 					break;
 				case SpeechRecognizer.ERROR_NO_MATCH:
-					toast(getString(R.string.errorResultNoMatch));
+					showErrorDialog(R.string.errorResultNoMatch);
 					break;
 				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-					toast(getString(R.string.errorResultNoMatch));
+					showErrorDialog(R.string.errorResultNoMatch);
 					break;
 				case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
 					// This is programmer error.
