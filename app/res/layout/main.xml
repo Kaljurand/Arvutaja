@@ -24,8 +24,8 @@
 
         <ee.ioc.phon.android.arvutaja.MicButton
             android:id="@+id/buttonMicrophone"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/layoutHeightButtonMicrophone"
+            android:layout_height="@dimen/layoutHeightButtonMicrophone"
             android:layout_gravity="center"
             android:layout_margin="2dp"
             android:background="@drawable/button_mic"
