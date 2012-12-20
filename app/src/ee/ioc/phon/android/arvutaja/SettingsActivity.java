@@ -19,7 +19,6 @@ package ee.ioc.phon.android.arvutaja;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
@@ -128,13 +127,14 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 			index++;
 		}
 
-		ListPreference list = (ListPreference) mSettingsFragment.findPreference(mKeyService);
-		list.setEntries(entries);
-		list.setEntryValues(entryValues);
-		list.setValueIndex(selectedIndex);
-		list.setSummary(list.getEntry());
-
-		populateLangs();
+		if (services.size() > 0) {
+			ListPreference list = (ListPreference) mSettingsFragment.findPreference(mKeyService);
+			list.setEntries(entries);
+			list.setEntryValues(entryValues);
+			list.setValueIndex(selectedIndex);
+			list.setSummary(list.getEntry());
+			populateLangs();
+		}
 	}
 
 
@@ -216,8 +216,7 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 				CharSequence[] entries = new CharSequence[allLangs.size()];
 				for (int i = 0; i < allLangs.size(); i++) {
 					String ev = entryValues[i].toString();
-					Locale l = new Locale(ev);
-					entries[i] = l.getDisplayName(l) + " (" + ev + ")";
+					entries[i] = Utils.makeLangLabel(ev);
 				}
 				list.setEntries(entries);
 

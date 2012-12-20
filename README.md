@@ -41,7 +41,7 @@ Features
   * The __history__ of query evaluation results is presented in a persistent list.
   * Support for __vague/ambiguous queries__ (e.g. "viis norra krooni suures valuutas").
   * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
-    * map queries the result of which cannot be presened in the list;
+    * map queries the result of which cannot be presented in the list;
     * currency conversion (which the internal evaluator does not support yet);
     * getting a "2nd opinion" (from e.g. Google Search or WolframAlpha).
 
@@ -49,7 +49,7 @@ Features
 Comparison to other apps
 ------------------------
 
-The main differences between Arvutaja and other intelligent assistent / speech-input based apps like Google Now
+The main differences between Arvutaja and other intelligent assistant / speech-input based apps like Google Now
 and Siri are that Arvutaja
 
   - supports Estonian;

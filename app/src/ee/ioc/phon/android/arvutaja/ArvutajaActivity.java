@@ -38,7 +38,6 @@ import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.TextView;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
@@ -94,10 +93,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
-
-	private AudioCue mAudioCue;
-
-	private ActionBar mActionBar;
 
 	private SpeechRecognizer mSr;
 
@@ -168,11 +163,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 
 		private void updateUi() {
-			if (mActionBar != null) {
-				int count = mAdapter.getGroupCount();
-				mActionBar.setSubtitle(
-						mRes.getQuantityString(R.plurals.numberOfInputs, count, count));
-			}
+			int count = mAdapter.getGroupCount();
+			getActionBar().setSubtitle(
+					mRes.getQuantityString(R.plurals.numberOfInputs, count, count));
 		}
 	}
 
@@ -235,8 +228,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		registerForContextMenu(mListView);
 
-		mActionBar = getActionBar();
-		mActionBar.setHomeButtonEnabled(false);
+		getActionBar().setHomeButtonEnabled(false);
 
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
@@ -252,14 +244,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public void onStart() {
 		super.onStart();
 
-		if (mPrefs.getBoolean(getString(R.string.keyAudioCues), mRes.getBoolean(R.bool.defaultAudioCues))) {
-			mAudioCue = new AudioCue(this);
-		} else {
-			mAudioCue = null;
-		}
-
 		if (mPrefs.getBoolean(getString(R.string.prefFirstTime), true)) {
-			if (isK6neleInstalled()) {
+			if (isRecognizerInstalled(getString(R.string.nameK6nelePkg), getString(R.string.nameK6neleCls))) {
 				SharedPreferences.Editor editor = mPrefs.edit();
 				editor.putString(getString(R.string.keyService), getString(R.string.nameK6nelePkg));
 				editor.putString(getString(R.string.prefRecognizerServiceCls), getString(R.string.nameK6neleService));
@@ -288,8 +274,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			if (mSr == null) {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
+				String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+				getActionBar().setTitle("Arvutaja (" + lang + ")");
 				Intent intentRecognizer = createRecognizerIntent(
-						mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)),
+						lang,
 						getString(R.string.defaultGrammar),
 						getString(R.string.nameLangLinearize));
 				setUpRecognizerGui(mSr, intentRecognizer);
@@ -613,93 +601,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
-		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				if (mState == State.INIT || mState == State.ERROR) {
-					if (mAudioCue != null) {
-						mAudioCue.playStartSoundAndSleep();
-					}
-					startListening(sr, intentRecognizer);
-				}
-				else if (mState == State.LISTENING) {
-					sr.stopListening();
-				} else {
-					// TODO: bad state to press the button
-				}
-			}
-		});
+		final AudioCue audioCue;
 
-		LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		llMicrophone.setVisibility(View.VISIBLE);
-		llMicrophone.setEnabled(true);
-
-		Intent intentArvutaja = getIntent();
-		Bundle extras = intentArvutaja.getExtras();
-		if (extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
-			// We disable the extra so that it would not fire on orientation change.
-			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
-			setIntent(intentArvutaja);
-			startListening(sr, intentRecognizer);
+		if (mPrefs.getBoolean(getString(R.string.keyAudioCues), mRes.getBoolean(R.bool.defaultAudioCues))) {
+			audioCue = new AudioCue(this);
+		} else {
+			audioCue = null;
 		}
-	}
-
-
-	private void goToStore() {
-		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
-				this,
-				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
-				Uri.parse(getString(R.string.urlK6neleDownload))
-				);
-		d.show();
-	}
-
-
-	/**
-	 * This is one way to find out if K6nele is installed.
-	 * Alternatively we could query the service.
-	 */
-	private boolean isK6neleInstalled() {
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.setComponent(getK6neleComponent());
-		return (getIntentActivities(intent).size() > 0);
-	}
-
-
-	private ComponentName getK6neleComponent() {
-		return new ComponentName(
-				getString(R.string.nameK6nelePkg),
-				getString(R.string.nameK6neleCls));
-	}
-
-
-	/**
-	 * Look up the default recognizer service in the preferences.
-	 * If the default have not been set then set the first available
-	 * recognizer as the default. If no recognizer is installed then
-	 * return null.
-	 */
-	private ComponentName getServiceComponent() {
-		String pkg = mPrefs.getString(getString(R.string.keyService), null);
-		String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
-		if (pkg == null || cls == null) {
-			List<ResolveInfo> services = getPackageManager().queryIntentServices(
-					new Intent(RecognitionService.SERVICE_INTERFACE), 0);
-			if (services.isEmpty()) {
-				return null;
-			}
-			ResolveInfo ri = services.iterator().next();
-			pkg = ri.serviceInfo.packageName;
-			cls = ri.serviceInfo.name;
-			SharedPreferences.Editor editor = mPrefs.edit();
-			editor.putString(getString(R.string.keyService), pkg);
-			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
-			editor.commit();
-		}
-		return new ComponentName(pkg, cls);
-	}
-
-
-	private void startListening(final SpeechRecognizer sr, Intent intentRecognizer) {
 
 		sr.setRecognitionListener(new RecognitionListener() {
 
@@ -717,8 +625,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			public void onEndOfSpeech() {
 				mState = State.TRANSCRIBING;
 				mButtonMicrophone.setState(mState);
-				if (mAudioCue != null) {
-					mAudioCue.playStopSound();
+				if (audioCue != null) {
+					audioCue.playStopSound();
 				}
 			}
 
@@ -726,8 +634,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			public void onError(int error) {
 				mState = State.ERROR;
 				mButtonMicrophone.setState(mState);
-				if (mAudioCue != null) {
-					mAudioCue.playErrorSound();
+				if (audioCue != null) {
+					audioCue.playErrorSound();
 				}
 				switch (error) {
 				case SpeechRecognizer.ERROR_AUDIO:
@@ -792,7 +700,89 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				mButtonMicrophone.setVolumeLevel(rmsdB);
 			}
 		});
-		sr.startListening(intentRecognizer);
+
+		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				if (mState == State.INIT || mState == State.ERROR) {
+					if (audioCue != null) {
+						audioCue.playStartSoundAndSleep();
+					}
+					sr.startListening(intentRecognizer);
+				}
+				else if (mState == State.RECORDING) {
+					//sr.cancel();
+				}
+				else if (mState == State.TRANSCRIBING) {
+					//sr.cancel();
+				}
+				else if (mState == State.LISTENING) {
+					sr.stopListening();
+				} else {
+					// TODO: bad state to press the button
+				}
+			}
+		});
+
+		LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
+		llMicrophone.setVisibility(View.VISIBLE);
+		llMicrophone.setEnabled(true);
+
+		Intent intentArvutaja = getIntent();
+		Bundle extras = intentArvutaja.getExtras();
+		if (extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+			// We disable the extra so that it would not fire on orientation change.
+			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
+			setIntent(intentArvutaja);
+			sr.startListening(intentRecognizer);
+		}
+	}
+
+
+	private void goToStore() {
+		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
+				this,
+				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
+				Uri.parse(getString(R.string.urlK6neleDownload))
+				);
+		d.show();
+	}
+
+
+	/**
+	 * This is one way to find out if a specific recognizer is installed.
+	 * Alternatively we could query the service.
+	 */
+	private boolean isRecognizerInstalled(String pkg, String cls) {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.setComponent(new ComponentName(pkg, cls));
+		return (getIntentActivities(intent).size() > 0);
+	}
+
+
+	/**
+	 * Look up the default recognizer service in the preferences.
+	 * If the default have not been set then set the first available
+	 * recognizer as the default. If no recognizer is installed then
+	 * return null.
+	 */
+	private ComponentName getServiceComponent() {
+		String pkg = mPrefs.getString(getString(R.string.keyService), null);
+		String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
+		if (pkg == null || cls == null) {
+			List<ResolveInfo> services = getPackageManager().queryIntentServices(
+					new Intent(RecognitionService.SERVICE_INTERFACE), 0);
+			if (services.isEmpty()) {
+				return null;
+			}
+			ResolveInfo ri = services.iterator().next();
+			pkg = ri.serviceInfo.packageName;
+			cls = ri.serviceInfo.name;
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putString(getString(R.string.keyService), pkg);
+			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
+			editor.commit();
+		}
+		return new ComponentName(pkg, cls);
 	}
 
 

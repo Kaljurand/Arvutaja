@@ -14,6 +14,10 @@ import android.widget.ImageButton;
 
 public class MicButton extends ImageButton {
 
+	// TODO: take these from some configuration
+	private static final float DB_MIN = 15.0f;
+	private static final float DB_MAX = 30.0f;
+
 	private Drawable mDrawableMic;
 	private Drawable mDrawableMicTranscribing;
 
@@ -24,6 +28,7 @@ public class MicButton extends ImageButton {
 	private Animation mAnimFadeInOutInf;
 
 	private int mVolumeLevel = 0;
+	private int mMaxLevel;
 
 	public MicButton(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -68,13 +73,8 @@ public class MicButton extends ImageButton {
 
 
 	public void setVolumeLevel(float rmsdB) {
-		// TODO: take these from some configuration
-		float min = 15.f;
-		float max = 30.f;
-		final int maxLevel = mVolumeLevels.size() - 1;
-
-		int index = (int) ((rmsdB - min) / (max - min) * maxLevel);
-		int level = Math.min(Math.max(0, index), maxLevel);
+		int index = (int) ((rmsdB - DB_MIN) / (DB_MAX - DB_MIN) * mMaxLevel);
+		int level = Math.min(Math.max(0, index), mMaxLevel);
 		if (level != mVolumeLevel) {
 			mVolumeLevel = level;
 			setBackgroundDrawable(mVolumeLevels.get(level));
@@ -85,6 +85,7 @@ public class MicButton extends ImageButton {
 	public void fadeIn() {
 		Animations.startFadeAnimation(mAnimFadeIn, this, View.VISIBLE);
 	}
+
 
 	public void fadeOut() {
 		Animations.startFadeAnimation(mAnimFadeOut, this, View.INVISIBLE);
@@ -101,6 +102,7 @@ public class MicButton extends ImageButton {
 		mVolumeLevels.add(res.getDrawable(R.drawable.button_mic_recording_1));
 		mVolumeLevels.add(res.getDrawable(R.drawable.button_mic_recording_2));
 		mVolumeLevels.add(res.getDrawable(R.drawable.button_mic_recording_3));
+		mMaxLevel = mVolumeLevels.size() - 1;
 
 		mAnimFadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 		mAnimFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);

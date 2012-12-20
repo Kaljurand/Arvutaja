@@ -16,6 +16,8 @@
 
 package ee.ioc.phon.android.arvutaja;
 
+import java.util.Locale;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -147,6 +149,12 @@ public class Utils {
 			return "?.?.?";
 		}
 		return info.versionName;
+	}
+
+
+	public static String makeLangLabel(String localeAsStr) {
+		Locale l = new Locale(localeAsStr);
+		return l.getDisplayName(l) + " (" + localeAsStr + ")";
 	}
 
 
