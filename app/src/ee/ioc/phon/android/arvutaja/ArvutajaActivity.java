@@ -275,7 +275,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
 				String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
-				getActionBar().setTitle("Arvutaja (" + lang + ")");
+				getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
 				Intent intentRecognizer = createRecognizerIntent(
 						lang,
 						getString(R.string.defaultGrammar),
