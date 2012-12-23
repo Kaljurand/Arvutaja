@@ -18,33 +18,37 @@ package ee.ioc.phon.android.arvutaja;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -54,6 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ee.ioc.phon.android.arvutaja.Constants.State;
 import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
@@ -69,20 +74,27 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
 
+	private State mState = State.INIT;
+
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
 
+	private static final String SORT_ORDER_TIMESTAMP = Query.Columns.TIMESTAMP + " DESC";
+	private static final String SORT_ORDER_TRANSLATION = Query.Columns.TRANSLATION + " ASC";
+	private static final String SORT_ORDER_EVALUATION = Query.Columns.EVALUATION + " DESC";
+
+	private Resources mRes;
 	private SharedPreferences mPrefs;
 
 	private static String mCurrentSortOrder;
 
+	private MicButton mButtonMicrophone;
 	private ExpandableListView mListView;
-	private Intent mIntentRecognizer;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
 
-	private boolean mUseInternalTranslator = false;
+	private SpeechRecognizer mSr;
 
 	private static final String[] QUERY_PROJECTION = new String[] {
 		Query.Columns._ID,
@@ -109,7 +121,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static final int TOKEN_GROUP = 0;
 	private static final int TOKEN_CHILD = 1;
 
-	private static final class QueryHandler extends AsyncQueryHandler {
+
+	private final class QueryHandler extends AsyncQueryHandler {
 		private CursorTreeAdapter mAdapter;
 
 		public QueryHandler(Context context, CursorTreeAdapter adapter) {
@@ -129,44 +142,47 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				mAdapter.setChildrenCursor(groupPosition, cursor);
 				break;
 			}
+			updateUi();
+		}
+
+		protected void onDeleteComplete(int token, Object cookie, int result) {
+			updateUi();
+		}
+
+		protected void onInsertComplete(int token, Object cookie, Uri uri) {
+			updateUi();
+		}
+
+		public void insert(Uri contentUri, ContentValues values) {
+			startInsert(1, null, contentUri, values);
+		}
+
+		public void delete(Uri contentUri, long key) {
+			Uri uri = ContentUris.withAppendedId(contentUri, key);
+			startDelete(1, null, uri, null, null);
+		}
+
+		private void updateUi() {
+			int count = mAdapter.getGroupCount();
+			getActionBar().setSubtitle(
+					mRes.getQuantityString(R.plurals.numberOfInputs, count, count));
 		}
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		mUseInternalTranslator = mPrefs.getBoolean("keyUseInternalTranslator", false);
+		mRes = getResources();
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		String nameRecognizerPkg = getString(R.string.nameRecognizerPkg);
-		String nameRecognizerCls = getString(R.string.nameRecognizerCls);
+		mButtonMicrophone = (MicButton) findViewById(R.id.buttonMicrophone);
 
-		mIntentRecognizer = createRecognizerIntent(getString(R.string.defaultGrammar), getString(R.string.nameLangLinearize), mUseInternalTranslator);
-		mIntentRecognizer.setComponent(new ComponentName(nameRecognizerPkg, nameRecognizerCls));
-
-		final LinearLayout mLlMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
-		if (getIntentActivities(mIntentRecognizer).size() == 0) {
-			mIntentRecognizer = null;
-			mLlMicrophone.setEnabled(false);
-			AlertDialog d = Utils.getGoToStoreDialog(
-					this,
-					String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
-					Uri.parse(getString(R.string.urlSpeakDownload))
-					);
-			d.show();
-		} else {
-			mLlMicrophone.setVisibility(View.VISIBLE);
-			mLlMicrophone.setEnabled(true);
-		}
 
 		mListView = (ExpandableListView) findViewById(R.id.list);
-		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
-		mListView.setFastScrollEnabled(true);
-		mListView.setClickable(true);
+		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
@@ -191,17 +207,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-					mLlMicrophone.setVisibility(View.VISIBLE);
+					mButtonMicrophone.fadeIn();
 				} else {
-					mLlMicrophone.setVisibility(View.GONE);
+					mButtonMicrophone.fadeOut();
 				}
 			}
 		});
 
 		mAdapter = new MyExpandableListAdapter(
 				this,
-				R.layout.list_item_arvutaja_result,
-				R.layout.list_item_arvutaja_result,
+				R.layout.list_item_group,
+				R.layout.list_item_child,
 				new String[] { Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
 				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
 				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
@@ -212,22 +228,60 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		registerForContextMenu(mListView);
 
+		getActionBar().setHomeButtonEnabled(false);
+
 		mQueryHandler = new QueryHandler(this, mAdapter);
 
-		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), Query.Columns.TIMESTAMP + " DESC"));
+		startQuery(mPrefs.getString(getString(R.string.prefCurrentSortOrder), SORT_ORDER_TIMESTAMP));
 	}
 
 
+	/**
+	 * We initialize the speech recognizer here, assuming that the configuration
+	 * changed after onStop. That is why onStop destroys the recognizer.
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
-		Intent intentArvutaja = getIntent();
-		Bundle extras = intentArvutaja.getExtras();
-		if (mIntentRecognizer != null && extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
-			// We disable the extra so that it would not fire on orientation change.
-			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
-			setIntent(intentArvutaja);
-			launchRecognizerIntent(mIntentRecognizer);
+
+		if (mPrefs.getBoolean(getString(R.string.prefFirstTime), true)) {
+			if (isRecognizerInstalled(getString(R.string.nameK6nelePkg), getString(R.string.nameK6neleCls))) {
+				SharedPreferences.Editor editor = mPrefs.edit();
+				editor.putString(getString(R.string.keyService), getString(R.string.nameK6nelePkg));
+				editor.putString(getString(R.string.prefRecognizerServiceCls), getString(R.string.nameK6neleService));
+				editor.putBoolean(getString(R.string.prefFirstTime), false);
+				editor.commit();
+				AlertDialog d = Utils.getOkDialog(
+						this,
+						getString(R.string.msgFoundK6nele)
+						);
+				d.show();
+			} else {
+				// This can have 3 outcomes: K6nele gets installed, "Later" is pressed, "Never" is pressed.
+				// In the latter case we set prefFirstTime = false, so that this dialog is not shown again.
+				goToStore();
+			}
+		}
+
+		ComponentName serviceComponent = getServiceComponent();
+
+		if (serviceComponent == null) {
+			toast(getString(R.string.errorNoDefaultRecognizer));
+			goToStore();
+		} else {
+			Log.i("Starting service: " + serviceComponent);
+			mSr = SpeechRecognizer.createSpeechRecognizer(this, serviceComponent);
+			if (mSr == null) {
+				toast(getString(R.string.errorNoDefaultRecognizer));
+			} else {
+				String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+				getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
+				Intent intentRecognizer = createRecognizerIntent(
+						lang,
+						getString(R.string.defaultGrammar),
+						getString(R.string.nameLangLinearize));
+				setUpRecognizerGui(mSr, intentRecognizer);
+			}
 		}
 	}
 
@@ -235,25 +289,18 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// We assume that the microphone button triggers an activity that "pauses" Arvutaja.
-		// 1. The button appears when Arvutaja is fully in focus.
-		// 2. As soon as the button is tapped it becomes disabled.
-		// 3. It becomes enabled again when Arvutaja gets the focus back.
-		ImageButton mic = (ImageButton) findViewById(R.id.buttonMicrophone);
-		mic.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				v.setOnClickListener(null);
-				if (mIntentRecognizer != null) {
-					launchRecognizerIntent(mIntentRecognizer);
-				}
-			}
-		});
 	}
 
 
 	@Override
 	public void onStop() {
 		super.onStop();
+
+		if (mSr != null) {
+			mSr.cancel(); // TODO: do we need this, we do destroy anyway?
+			mSr.destroy();
+		}
+
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
 		editor.commit();
@@ -263,6 +310,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if (mSr != null) {
+			mSr.destroy();
+			mSr = null;
+		}
 		mAdapter.changeCursor(null);
 		mAdapter = null;
 	}
@@ -272,6 +323,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
+
+		// Indicate the current sort order by checking the corresponding radio button
+		int id = mPrefs.getInt(getString(R.string.prefCurrentSortOrderMenu), R.id.menuMainSortByTimestamp);
+		MenuItem menuItem = menu.findItem(id);
+		menuItem.setChecked(true);
 		return true;
 	}
 
@@ -280,23 +336,34 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuMainSortByTimestamp:
-			startQuery(Query.Columns.TIMESTAMP + " DESC");
+			sort(item, SORT_ORDER_TIMESTAMP);
 			return true;
 		case R.id.menuMainSortByTranslation:
-			startQuery(Query.Columns.TRANSLATION + " ASC");
+			sort(item, SORT_ORDER_TRANSLATION);
 			return true;
 		case R.id.menuMainSortByEvaluation:
-			startQuery(Query.Columns.EVALUATION + " DESC");
+			sort(item, SORT_ORDER_EVALUATION);
+			return true;
+		case R.id.menuMainExamples:
+			startActivity(new Intent(this, ExamplesActivity.class));
 			return true;
 		case R.id.menuMainSettings:
-			startActivity(new Intent(this, Preferences.class));
-			return true;
-		case R.id.menuMainAbout:
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.urlArvutajaHelp))));
+			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+
+	private void sort(MenuItem item, String sortOrder) {
+		startQuery(sortOrder);
+		item.setChecked(true);
+		// Save the ID of the selected item.
+		// TODO: ideally this should be done in onDestory
+		SharedPreferences.Editor editor = mPrefs.edit();
+		editor.putInt(getString(R.string.prefCurrentSortOrderMenu), item.getItemId());
+		editor.commit();
 	}
 
 
@@ -306,20 +373,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.cm_main, menu);
 
-		String message = null;
+		Cursor cursor = null;
+		String column = null;
+
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
 		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
-			message = cursor.getString(cursor.getColumnIndex(Qeval.Columns.MESSAGE));
+			cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
+			column = Qeval.Columns.MESSAGE;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
-			message = cursor.getString(cursor.getColumnIndex(Query.Columns.MESSAGE));
+			cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
+			column = Query.Columns.MESSAGE;
+		} else {
+			return;
 		}
 
+		String message = cursor.getString(cursor.getColumnIndex(column));
 		if (message == null || message.length() == 0) {
 			MenuItem menuItem = menu.findItem(R.id.cmMainShowError);
 			menuItem.setEnabled(false);
@@ -366,7 +438,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					String.format(getString(R.string.confirmDeleteEntry), fname),
 					new Executable() {
 						public void execute() {
-							delete(uri, key);
+							mQueryHandler.delete(uri, key);
 						}
 					}
 					).show();
@@ -416,13 +488,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	private static Intent createRecognizerIntent(String grammar, String langLinearize, boolean useInternalTranslator) {
+	private Intent createRecognizerIntent(String langSource, String grammar, String langTarget) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
-		if (! useInternalTranslator) {
-			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langLinearize);
-		}
+		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
+		if (mPrefs.getBoolean(getString(R.string.keyMaxOneResult), mRes.getBoolean(R.bool.defaultMaxOneResult))) { 
+			intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		}
+		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
+		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
 		return intent;
 	}
 
@@ -473,7 +548,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				long timestamp = now.toMillis(false);
 				ContentValues values1 = new ContentValues();
 				values1.put(Query.Columns.TIMESTAMP, timestamp);
-				values1.put(Query.Columns.UTTERANCE, "[TODO: utterance]");
+				values1.put(Query.Columns.UTTERANCE, ""); // TODO
 				if (results.size() == 1) {
 					values1.put(Query.Columns.TRANSLATION, results.get(0).get("in"));
 					values1.put(Query.Columns.EVALUATION, results.get(0).get("out"));
@@ -482,22 +557,29 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					// TRANSLATION must remain NULL here
 					values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
 				}
-				insert(QUERY_CONTENT_URI, values1);
+				mQueryHandler.insert(QUERY_CONTENT_URI, values1);
 				if (results.size() > 1) {
 					for (Map<String, String> r : results) {
 						ContentValues values2 = new ContentValues();
-						values2.put(Qeval.Columns.TIMESTAMP, timestamp);
+						values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
 						values2.put(Qeval.Columns.TRANSLATION, r.get("in"));
 						values2.put(Qeval.Columns.EVALUATION, r.get("out"));
 						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
-						insert(QEVAL_CONTENT_URI, values2);
+						mQueryHandler.insert(QEVAL_CONTENT_URI, values2);
 					}
 				}
 
 				// If the transcription is not ambiguous, and the user prefers to
 				// evaluate using an external activity, then we launch it via an intent.
-				if (results.size() == 1 && mPrefs.getBoolean("keyUseExternalEvaluator", false)) {
-					launchIntent(results.get(0).get("in"));
+
+				if (results.size() == 1) {
+					boolean launchExternalEvaluator = mPrefs.getBoolean(
+							getString(R.string.keyUseExternalEvaluator),
+							mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
+
+					if (launchExternalEvaluator) {
+						launchIntent(results.get(0).get("in"));
+					}
 				}
 			}
 		}
@@ -515,6 +597,192 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				null,
 				sortOrder
 				);
+	}
+
+
+	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
+		final AudioCue audioCue;
+
+		if (mPrefs.getBoolean(getString(R.string.keyAudioCues), mRes.getBoolean(R.bool.defaultAudioCues))) {
+			audioCue = new AudioCue(this);
+		} else {
+			audioCue = null;
+		}
+
+		sr.setRecognitionListener(new RecognitionListener() {
+
+			@Override
+			public void onBeginningOfSpeech() {
+				mState = State.LISTENING;
+			}
+
+			@Override
+			public void onBufferReceived(byte[] buffer) {
+				// TODO maybe show buffer waveform
+			}
+
+			@Override
+			public void onEndOfSpeech() {
+				mState = State.TRANSCRIBING;
+				mButtonMicrophone.setState(mState);
+				if (audioCue != null) {
+					audioCue.playStopSound();
+				}
+			}
+
+			@Override
+			public void onError(int error) {
+				mState = State.ERROR;
+				mButtonMicrophone.setState(mState);
+				if (audioCue != null) {
+					audioCue.playErrorSound();
+				}
+				switch (error) {
+				case SpeechRecognizer.ERROR_AUDIO:
+					showErrorDialog(R.string.errorResultAudioError);
+					break;
+				case SpeechRecognizer.ERROR_CLIENT:
+					showErrorDialog(R.string.errorResultClientError);
+					break;
+				case SpeechRecognizer.ERROR_NETWORK:
+					showErrorDialog(R.string.errorResultNetworkError);
+					break;
+				case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+					showErrorDialog(R.string.errorResultNetworkError);
+					break;
+				case SpeechRecognizer.ERROR_SERVER:
+					showErrorDialog(R.string.errorResultServerError);
+					break;
+				case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+					showErrorDialog(R.string.errorResultServerError);
+					break;
+				case SpeechRecognizer.ERROR_NO_MATCH:
+					showErrorDialog(R.string.errorResultNoMatch);
+					break;
+				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+					showErrorDialog(R.string.errorResultNoMatch);
+					break;
+				case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+					// This is programmer error.
+					break;
+				default:
+					break;
+				}
+			}
+
+			@Override
+			public void onEvent(int eventType, Bundle params) {
+				// TODO ???
+			}
+
+			@Override
+			public void onPartialResults(Bundle partialResults) {
+				// ignore
+			}
+
+			@Override
+			public void onReadyForSpeech(Bundle params) {
+				mState = State.RECORDING;
+				mButtonMicrophone.setState(mState);
+			}
+
+			@Override
+			public void onResults(Bundle results) {
+				ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+				// TODO: confidence scores support is only in API 14
+				mState = State.INIT;
+				mButtonMicrophone.setState(mState);
+				onSuccess(matches);
+			}
+
+			@Override
+			public void onRmsChanged(float rmsdB) {
+				mButtonMicrophone.setVolumeLevel(rmsdB);
+			}
+		});
+
+		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				if (mState == State.INIT || mState == State.ERROR) {
+					if (audioCue != null) {
+						audioCue.playStartSoundAndSleep();
+					}
+					sr.startListening(intentRecognizer);
+				}
+				else if (mState == State.RECORDING) {
+					//sr.cancel();
+				}
+				else if (mState == State.TRANSCRIBING) {
+					//sr.cancel();
+				}
+				else if (mState == State.LISTENING) {
+					sr.stopListening();
+				} else {
+					// TODO: bad state to press the button
+				}
+			}
+		});
+
+		LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
+		llMicrophone.setVisibility(View.VISIBLE);
+		llMicrophone.setEnabled(true);
+
+		Intent intentArvutaja = getIntent();
+		Bundle extras = intentArvutaja.getExtras();
+		if (extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+			// We disable the extra so that it would not fire on orientation change.
+			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
+			setIntent(intentArvutaja);
+			sr.startListening(intentRecognizer);
+		}
+	}
+
+
+	private void goToStore() {
+		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
+				this,
+				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
+				Uri.parse(getString(R.string.urlK6neleDownload))
+				);
+		d.show();
+	}
+
+
+	/**
+	 * This is one way to find out if a specific recognizer is installed.
+	 * Alternatively we could query the service.
+	 */
+	private boolean isRecognizerInstalled(String pkg, String cls) {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.setComponent(new ComponentName(pkg, cls));
+		return (getIntentActivities(intent).size() > 0);
+	}
+
+
+	/**
+	 * Look up the default recognizer service in the preferences.
+	 * If the default have not been set then set the first available
+	 * recognizer as the default. If no recognizer is installed then
+	 * return null.
+	 */
+	private ComponentName getServiceComponent() {
+		String pkg = mPrefs.getString(getString(R.string.keyService), null);
+		String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
+		if (pkg == null || cls == null) {
+			List<ResolveInfo> services = getPackageManager().queryIntentServices(
+					new Intent(RecognitionService.SERVICE_INTERFACE), 0);
+			if (services.isEmpty()) {
+				return null;
+			}
+			ResolveInfo ri = services.iterator().next();
+			pkg = ri.serviceInfo.packageName;
+			cls = ri.serviceInfo.name;
+			SharedPreferences.Editor editor = mPrefs.edit();
+			editor.putString(getString(R.string.keyService), pkg);
+			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
+			editor.commit();
+		}
+		return new ComponentName(pkg, cls);
 	}
 
 

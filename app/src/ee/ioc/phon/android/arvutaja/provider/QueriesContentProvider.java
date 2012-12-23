@@ -18,6 +18,8 @@ package ee.ioc.phon.android.arvutaja.provider;
 
 import java.util.HashMap;
 
+import ee.ioc.phon.android.arvutaja.Log;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -30,7 +32,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class QueriesContentProvider extends ContentProvider {
 
@@ -123,7 +124,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "Upgrading database v" + oldVersion + " -> v" + newVersion + ", which will destroy all old data.");
+			Log.i(TAG, "Upgrading database v" + oldVersion + " -> v" + newVersion + ", which will destroy all old data.");
 			db.execSQL("DROP TABLE IF EXISTS " + QUERIES_TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + QEVALS_TABLE_NAME);
 			onCreate(db);
@@ -256,8 +257,8 @@ public class QueriesContentProvider extends ContentProvider {
 		}
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-		Log.w(TAG, "Cursor count: " + c.getCount());
-		Log.w(TAG, "Cursor: " + c);
+		Log.i(TAG, "Cursor count: " + c.getCount());
+		Log.i(TAG, "Cursor: " + c);
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}

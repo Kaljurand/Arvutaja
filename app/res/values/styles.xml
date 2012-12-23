@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BlackTheme" parent="@android:style/Theme.Holo"></style>
+
+    <style name="LightTheme" parent="@android:style/Theme.Holo.Light"></style>
+
+</resources>

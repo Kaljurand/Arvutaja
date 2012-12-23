@@ -1,10 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="10dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="10dp" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <TextView
         android:id="@+id/list_item_translation"
@@ -12,8 +6,8 @@
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:text="1234567890 m in ft + 1234567890 m in ft ="
-        android:textColor="@color/grey2"
-        android:textSize="16sp"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="@dimen/textSizeListItemTranslation"
         android:typeface="monospace" />
 
     <TextView
@@ -22,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/list_item_translation"
         android:text="131,532.1225212344234242424241"
-        android:textSize="24sp"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="@dimen/textSizeListItemEvaluation"
         android:typeface="monospace" />
 
     <TextView
@@ -33,7 +28,7 @@
         android:layout_below="@id/list_item_evaluation"
         android:text="Some error occurred: java.org.parse.Text ERROR"
         android:textColor="@color/red"
-        android:textSize="13sp"
+        android:textSize="@dimen/textSizeListItemMessage"
         android:typeface="monospace"
         android:visibility="gone" />
 
@@ -45,8 +40,8 @@
         android:layout_below="@+id/list_item_message"
         android:text="131,532.12252123456"
         android:textColor="@color/blue"
-        android:textSize="14sp"
+        android:textSize="@dimen/textSizeListItemView"
         android:typeface="monospace"
         android:visibility="gone" />
 
-</RelativeLayout>
+</merge>

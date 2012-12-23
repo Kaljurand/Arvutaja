@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <bool name="defaultMaxOneResult">false</bool>
+    <bool name="defaultUseExternalEvaluator">false</bool>
+    <bool name="defaultAudioCues">true</bool>
+
+</resources>
