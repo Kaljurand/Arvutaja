@@ -1,14 +1,37 @@
 Arvutaja
 ========
 
-__Arvutaja__ (= the Estonian word for _Calculator_) is an Android app that
-offers a new way for:
+__Arvutaja__ (= the Estonian word for _the one that computes_) is an Android app that converts a spoken utterance
+in some natural language to an expression/command in some formal language and evaluates the formal expression
+using another app on the device.
 
-  * converting units and currencies,
-  * evaluating arithmetical expressions,
-  * performing Estonian address queries,
+Currently supported input languages:
 
-where the query is input via __Estonian speech__.
+  - Estonian
+  - English (experimental)
+
+Currently supported expressions and commands:
+
+  - measurement unit conversion expression
+  - currency conversion expression
+  - arithmetical expression
+  - alarm clock / timer setting command
+  - phone number
+  - Estonian address query (only with Estonian language input)
+
+The expressions/commands are evaluated using an external app, such as
+
+  - WolframAlpha website
+  - device's built-in alarm clock app
+  - device's built-in phone app
+  - Google Maps
+
+The arithmetical and measurement unit conversion expressions are also evaluated by Arvutaja itself.
+
+Arvutaja uses grammar-based speech recognition and is largely defined by the Action-grammar developed in the
+separate Grammars-project (<http://kaljurand.github.com/Grammars/>). This grammar defines
+which input languages and expressions are supported.
+
 
 Features
 --------
@@ -18,27 +41,43 @@ Features
   * The __history__ of query evaluation results is presented in a persistent list.
   * Support for __vague/ambiguous queries__ (e.g. "viis norra krooni suures valuutas").
   * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
-    * map queries the result of which cannot be presened in the list;
+    * map queries the result of which cannot be presented in the list;
     * currency conversion (which the internal evaluator does not support yet);
     * getting a "2nd opinion" (from e.g. Google Search or WolframAlpha).
 
 
-Dependencies
-------------
+Comparison to other apps
+------------------------
 
-__Arvutaja__ uses grammar-aware Estonian speech recognition service for Android
-which you have to install separately from
-http://recognizer-intent.googlecode.com
+The main differences between Arvutaja and other intelligent assistant / speech-input based apps like Google Now
+and Siri are that Arvutaja
+
+  - supports Estonian;
+  - is largely defined by a human-readable grammar, i.e. users can find out exactly which input phrases are supported;
+  - is entirely open by
+    - using an open source speech recognition server,
+    - using open source grammars,
+    - having an open source code.
+
+
+Dependencies on other apps
+--------------------------
+
+__Arvutaja__ uses grammar-aware Estonian speech recognition service for Android Kõnele
+which you have to install separately from either of the following URLs
+
+  - http://recognizer-intent.googlecode.com
+  - https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak
 
 
 Background technologies
 -----------------------
 
-### Estonian speech recognition
+### Speech recognition
 
-__Arvutaja__ uses an online grammar-aware Estonian speech recognition server
+__Arvutaja__ uses an online grammar-aware Estonian-aware speech recognition server
 
-  * http://bark.phon.ioc.ee/
+  - http://bark.phon.ioc.ee/speech-api/v1/
 
 ### GF-based speech recognition
 
@@ -58,12 +97,17 @@ raw recognition result into an evaluatable form.
   * http://www.softwaremonkey.org/Code/MathEval
 
 
-Examples
---------
+Examples (Estonian)
+-------------------
 
-The language understood by __Arvutaja__ is described by 3 underlying grammars.
+The language understood by __Arvutaja__ is described by several underlying grammars.
 Following is a list of some interesting examples, more can be found at
 http://kaljurand.github.com/Grammars/
+
+### Alarm
+
+  - ärata mind (palun) viis minutit hiljem
+  - ärata mind (palun) (kell) seitse null viis
 
 ### Unitconv
 

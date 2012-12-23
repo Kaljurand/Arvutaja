@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Arvutaja examples</title>
+<meta name="Author" content="Kaarel Kaljurand"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel='stylesheet' type='text/css' href='css/main.css'/>
+</head>
+
+<body>
+
+<p class="intro"><b>Arvutaja</b>
+(Estonian for "the one that computes") records a speech input,
+interprets it as an expression or command, and evaluates it
+(or carries it out) using an app on the device. Supported inputs
+include
+arithmetical expressions,
+measurement unit and currency conversion expressions,
+alarm clock / timer setting commands.</p>
+
+<h3>Numbers and arithmetical expressions</h3>
+<p>Arbitrarily long arithmetical expressions with numbers between
+-10<sup>12</sup> and 10<sup>12</sup> (including some decimal numbers),
+with the main operators ("plus", "minus", "times", "divided by",
+"to the power of").</p>
+
+<table>
+<tr><td>nine hundred and ninety nine billion nine hundred and ninety nine
+million nine hundred and ninety nine thousand nine hundred and ninety nine
+point nine</td></tr>
+
+<tr><td>pie plus one minus two times three divided by four to the power of
+five</td></tr>
+
+<tr><td>minus twelve point thirty four plus zero point one hundred and twelve</td></tr>
+</table>
+
+<p>Note that the input is always interpreted in the left-associative manner, i.e.</p>
+
+<pre>
+one plus two times three == ((1 + 2) * 3)
+</pre>
+
+
+<h3>Unit conversion</h3>
+<p>Unit conversion expressions with about 50 main units and currency conversion
+with about 15 currencies.</p>
+
+<table>
+<tr><td>convert thirty two point five fahrenheits to degrees</td></tr>
+<tr><td>convert one hundred point one miles per hours squared to meters per seconds squared</td></tr>
+<tr><td>convert twelve thousand three hundred and forty five Norwegian crowns to Euros</td></tr>
+<tr><td>convert half American dollars to New Zealand dollars</td></tr>
+</table>
+
+<h3>Alarm clock and timer</h3>
+<p>Commands for setting the alarm clock and the timer.</p>
+<table>
+<tr><td>set the alarm at seven thirty one</td></tr>
+<tr><td>set the timer for fifteen minutes</td></tr>
+<tr><td>set the timer for two hours and fifteen minutes</td></tr>
+</table>
+
+<h3>Dialing a number</h3>
+<p>Dialing a phone number by listing its digits.</p>
+<table>
+<tr><td>dial one one eight two</td></tr>
+</table>
+
+<h2>Variation in the input</h2>
+<p>In principle the input must follow the fixed syntactic structure displayed
+in the above example sentences, but some variation is supported, e.g. requests can
+start with "please" and calculations can be formed by "how much is … in …".</p>
+
+<table>
+<tr><td>please set the timer for fifteen minutes</td></tr>
+<tr><td>please convert one speed of light to meters per second</td></tr>
+<tr><td>how much is one speed of light in meters per second</td></tr>
+</table>
+
+<h2>Other input languages</h2>
+<p>Arvutaja supports also <a href="et.html">Estonian language</a> input,
+with additional queries such as Estonian address queries.</p>
+
+
+<h2>See also</h2>
+<p>Arvutaja uses grammar-based speech recognition. The grammars are written using the
+<a href="http://www.grammaticalframework.org/">Grammatical Framework</a> and developed
+in the <a href="http://kaljurand.github.com/Grammars/">Grammars project</a>.
+In addition to many example sentences, also the full source code of the grammars is
+available, e.g. to find out which units are available in English look at the source code
+of
+<a href="https://github.com/Kaljurand/Grammars/blob/master/gf/Unitconv/UnitEng.gf">UnitEng.gf</a>.</p>
+
+<p>Grammar-aware speech recognition is provided by the
+<a href="https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak">Kõnele app</a>.</p>
+
+</body>
+</html>

@@ -17,7 +17,7 @@
 package ee.ioc.phon.android.arvutaja.provider;
 
 // Android 4.0.3_r1 implementation with annotations removed.
-// This backport is needed to makearvutaja work on devices older
+// This backport is needed to make Arvutaja work on devices older
 // than API level 9.
 
 

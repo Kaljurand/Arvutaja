@@ -1,24 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <ListPreference
+        android:dialogTitle="@string/dialogTitleService"
+        android:entries="@array/entriesService"
+        android:entryValues="@array/valuesService"
+        android:key="@string/keyService"
+        android:title="@string/titleService" >
+    </ListPreference>
+    <ListPreference
+        android:dialogTitle="@string/dialogTitleLanguage"
+        android:entries="@array/entriesLanguage"
+        android:entryValues="@array/valuesLanguage"
+        android:key="@string/keyLanguage"
+        android:title="@string/titleLanguage" >
+    </ListPreference>
+
     <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="keyUseExternalEvaluator"
+        android:defaultValue="@bool/defaultMaxOneResult"
+        android:key="@string/keyMaxOneResult"
+        android:summary="@string/summaryMaxOneResult"
+        android:title="@string/titleMaxOneResult" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/defaultUseExternalEvaluator"
+        android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
         android:title="@string/titleUseExternalEvaluator" />
+    <CheckBoxPreference
+        android:defaultValue="@bool/defaultAudioCues"
+        android:key="@string/keyAudioCues"
+        android:summary="@string/summaryAudioCues"
+        android:title="@string/titleAudioCues" />
 
-    <!--
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="keyUseInternalTranslator"
-            android:summary="@string/summaryUseInternalTranslator"
-            android:title="@string/titleUseInternalTranslator" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="keyShowEditor"
-            android:summary="@string/summaryShowEditor"
-            android:title="@string/titleShowEditor" />
-    -->
+    <PreferenceCategory android:title="@string/titleCategoryLinks" >
+        <Preference
+            android:summary="@string/summaryArvutajaProject"
+            android:title="@string/titleArvutajaProject" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlArvutajaProject" />
+        </Preference>
+        <Preference
+            android:summary="@string/summaryGrammarsProject"
+            android:title="@string/titleGrammarsProject" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlGrammarsProject" />
+        </Preference>
+        <Preference
+            android:summary="@string/summaryK6neleProject"
+            android:title="@string/titleK6neleProject" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/urlK6neleProject" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>
