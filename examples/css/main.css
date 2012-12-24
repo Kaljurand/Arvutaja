@@ -1,0 +1,7 @@
+.intro { font-size: 110%; padding: 0.2em; background-color: #ffe }
+h1, h2, h3 { font-family: sans-serif; border-bottom: 1px solid silver }
+h2 { margin-top: 2em }
+td { border-bottom: 1px solid silver }
+table { font-family: monospace }
+pre { font-family: monospace; margin-left: 1em }
+body { font-family: sans-serif }
