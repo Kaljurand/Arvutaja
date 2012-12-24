@@ -2,8 +2,8 @@
 <resources>
 
     <!-- About 1.4x larger than the default values -->
-    <dimen name="textSizeListItemTranslation">22sp</dimen>
-    <dimen name="textSizeListItemEvaluation">34sp</dimen>
+    <dimen name="textSizeListItemTranslation">20sp</dimen>
+    <dimen name="textSizeListItemEvaluation">30sp</dimen>
     <dimen name="textSizeListItemMessage">18sp</dimen>
     <dimen name="textSizeListItemView">20sp</dimen>
     <dimen name="layoutHeightButtonMicrophone">120dp</dimen>

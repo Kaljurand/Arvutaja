@@ -3,15 +3,15 @@
 
     <ListPreference
         android:dialogTitle="@string/dialogTitleService"
-        android:entries="@array/entriesService"
-        android:entryValues="@array/valuesService"
+        android:entries="@array/empty"
+        android:entryValues="@array/empty"
         android:key="@string/keyService"
         android:title="@string/titleService" >
     </ListPreference>
     <ListPreference
         android:dialogTitle="@string/dialogTitleLanguage"
-        android:entries="@array/entriesLanguage"
-        android:entryValues="@array/valuesLanguage"
+        android:entries="@array/empty"
+        android:entryValues="@array/empty"
         android:key="@string/keyLanguage"
         android:title="@string/titleLanguage" >
     </ListPreference>

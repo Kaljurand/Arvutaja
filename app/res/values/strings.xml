@@ -6,7 +6,7 @@
     <string name="keyMaxOneResult" translatable="false">keyMaxOneResult</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="keyAudioCues" translatable="false">keyAudioCues</string>
-    <string name="urlArvutajaProject" translatable="false">http://kaljurand.github.com/Arvutaja/</string>
+    <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.html</string>
     <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.com/Grammars/</string>
     <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
@@ -73,14 +73,13 @@
     <string name="fileExamples">file:///android_asset/examples/en_US.html</string>
     <string name="msgFoundK6nele">Using Kõnele as the speech recognizer. You can override it in the Arvutaja-settings, but keep in mind that Arvutaja works best only with Kõnele.</string>
 
-    <!-- TODO: get rid of the following, because these are picked up dynamically -->
-    <string-array name="entriesService" translatable="false"></string-array>
-    <string-array name="valuesService" translatable="false"></string-array>
-    <string-array name="entriesLanguage" translatable="false"></string-array>
+    <string-array name="empty" translatable="false"></string-array>
 
-    <string name="defaultLanguage" translatable="false">en-US</string>
-
-    <string-array name="valuesLanguage" translatable="false"></string-array>
+    <!--
+    This is input language that we assume if for some reason we fail to detect
+    the user-selected/recognizer-supported input language.
+    -->
+    <string name="defaultLanguage" translatable="false">et-EE</string>
 
     <plurals name="numberOfInputs">
         <item quantity="zero">no inputs</item> <!-- zero is ignored in English -->
