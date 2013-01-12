@@ -13,6 +13,9 @@ public class CommandParser {
 		if (Alarm.isCommand(command))
 			return new Alarm(command, context.getString(R.string.alarmExtraMessage));
 
+		if (command.startsWith("weather "))
+			return new DefaultCommand(command);
+
 		if (Dial.isCommand(command))
 			return new Dial(command);
 
