@@ -16,4 +16,8 @@ public class WebSearch extends DefaultCommand {
 		return intent;
 	}
 
+	public static boolean isCommand(String command) {
+		return command.contains("weather") || command.contains("current time");
+	}
+
 }
