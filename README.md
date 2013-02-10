@@ -40,8 +40,7 @@ There are currently two versions of Arvutaja, which differ in their UIs and how 
   - [v0.5.08](https://s3-eu-west-1.amazonaws.com/arvutaja/apk/Arvutaja-0.5.08.apk), requires Android v4+
   - [v0.4.06](https://s3-eu-west-1.amazonaws.com/arvutaja/apk/Arvutaja-0.4.06.apk)
 
-Version v0.4.06 is also available on Google Play.
-
+Both versions are also available on [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja).
 
 Features
 --------
