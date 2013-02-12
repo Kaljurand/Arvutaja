@@ -32,6 +32,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
@@ -42,6 +43,7 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 	private SharedPreferences mPrefs;
 	private String mKeyService;
 	private String mKeyLanguage;
+	private String mKeyMaxResults;
 
 	// TODO: we support one service per package, this might
 	// be a limitation...
@@ -55,6 +57,7 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mKeyService = getString(R.string.keyService);
 		mKeyLanguage = getString(R.string.keyLanguage);
+		mKeyMaxResults = getString(R.string.keyMaxResults);
 
 		// Display the fragment as the main content.
 		getFragmentManager().beginTransaction().replace(android.R.id.content, mSettingsFragment).commit();
@@ -65,6 +68,10 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 	protected void onResume() {
 		super.onResume();
 		mPrefs.registerOnSharedPreferenceChangeListener(this);
+
+		Preference pref = (Preference) mSettingsFragment.findPreference(mKeyMaxResults);
+		String maxResults = mPrefs.getString(mKeyMaxResults, getString(R.string.defaultMaxResults));
+		setSummary(pref, R.plurals.summaryMaxResults, maxResults);
 
 		populateServices();
 	}
@@ -92,7 +99,16 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 		} else if (key.equals(mKeyLanguage)) {
 			ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
 			pref.setSummary(pref.getEntry());
+		} else if (mKeyMaxResults.equals(key)) {
+			ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
+			setSummary(pref, R.plurals.summaryMaxResults, pref.getEntry().toString());
 		}
+	}
+
+
+	private void setSummary(Preference pref, int pluralsResource, String countAsString) {
+		int count = Integer.parseInt(countAsString);
+		pref.setSummary(getResources().getQuantityString(pluralsResource, count, count));
 	}
 
 

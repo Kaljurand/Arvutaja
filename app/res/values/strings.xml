@@ -3,7 +3,7 @@
 
     <string name="keyService" translatable="false">keyService</string>
     <string name="keyLanguage" translatable="false">keyLanguage</string>
-    <string name="keyMaxOneResult" translatable="false">keyMaxOneResult</string>
+    <string name="keyMaxResults" translatable="false">keyMaxResults</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="keyAudioCues" translatable="false">keyAudioCues</string>
     <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.html</string>
@@ -44,8 +44,7 @@
     <string name="cmMainDelete">Delete</string>
     <string name="cmMainShowError">Show error message</string>
     <string name="titleCategoryLinks">Links</string>
-    <string name="titleMaxOneResult">Max 1 result</string>
-    <string name="summaryMaxOneResult">Show only a single recognition result</string>
+    <string name="titleMaxResults">Number of results</string>
     <string name="titleUseExternalEvaluator">Autoview</string>
     <string name="summaryUseExternalEvaluator">Automatically view the result in an external app (e.g. Google Maps, WolframAlpha)</string>
     <string name="titleService">Speech recognizer</string>
@@ -74,6 +73,15 @@
     <string name="msgFoundK6nele">Using Kõnele as the speech recognizer. You can override it in the Arvutaja-settings, but keep in mind that Arvutaja works best only with Kõnele.</string>
 
     <string-array name="empty" translatable="false"></string-array>
+    <string-array name="entryValuesMaxResults" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+    </string-array>
+
+    <string name="defaultMaxResults" translatable="false">1</string>
 
     <!--
     This is input language that we assume if for some reason we fail to detect
@@ -85,6 +93,10 @@
         <item quantity="zero">no inputs</item> <!-- zero is ignored in English -->
         <item quantity="one">1 input</item>
         <item quantity="other">%d inputs</item>
+    </plurals>
+    <plurals name="summaryMaxResults">
+        <item quantity="one">Output only one result</item>
+        <item quantity="other">Output at most %d results</item>
     </plurals>
 
 </resources>

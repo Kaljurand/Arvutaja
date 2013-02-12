@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -502,9 +502,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
-		if (mPrefs.getBoolean(getString(R.string.keyMaxOneResult), mRes.getBoolean(R.bool.defaultMaxOneResult))) { 
-			intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-		}
+		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,
+				Integer.parseInt(mPrefs.getString(getString(R.string.keyMaxResults), getString(R.string.defaultMaxResults))));
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
 		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
 		return intent;
@@ -550,6 +549,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				mProgress.dismiss();
 			}
 			if (results.isEmpty()) {
+				// TODO: this should not happen
 				toast(getString(R.string.warningParserInputNotSupported));
 			} else {
 				Time now = new Time();

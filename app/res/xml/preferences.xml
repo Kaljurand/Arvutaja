@@ -15,12 +15,15 @@
         android:key="@string/keyLanguage"
         android:title="@string/titleLanguage" >
     </ListPreference>
+    <ListPreference
+        android:defaultValue="@string/defaultMaxResults"
+        android:dialogTitle="@string/titleMaxResults"
+        android:entries="@array/entryValuesMaxResults"
+        android:entryValues="@array/entryValuesMaxResults"
+        android:key="@string/keyMaxResults"
+        android:title="@string/titleMaxResults" >
+    </ListPreference>
 
-    <CheckBoxPreference
-        android:defaultValue="@bool/defaultMaxOneResult"
-        android:key="@string/keyMaxOneResult"
-        android:summary="@string/summaryMaxOneResult"
-        android:title="@string/titleMaxOneResult" />
     <CheckBoxPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
