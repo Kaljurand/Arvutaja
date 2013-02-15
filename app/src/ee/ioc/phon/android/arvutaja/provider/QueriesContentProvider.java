@@ -1,5 +1,5 @@
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "arvutaja.db";
 
-	private static final int DATABASE_VERSION = 21;
+	private static final int DATABASE_VERSION = 22;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -82,6 +82,7 @@ public class QueriesContentProvider extends ContentProvider {
 			db.execSQL("CREATE TABLE " + QEVALS_TABLE_NAME + " ("
 					+ Qeval.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ Qeval.Columns.TIMESTAMP + " TIMESTAMP,"
+					+ Qeval.Columns.UTTERANCE + " TEXT,"
 					+ Qeval.Columns.TRANSLATION + " TEXT,"
 					+ Qeval.Columns.EVALUATION + " REAL,"
 					+ Qeval.Columns.VIEW + " TEXT,"
@@ -304,9 +305,10 @@ public class QueriesContentProvider extends ContentProvider {
 		qevalsProjectionMap = new HashMap<String, String>();
 		qevalsProjectionMap.put(Qeval.Columns._ID, Qeval.Columns._ID);
 		qevalsProjectionMap.put(Qeval.Columns.TIMESTAMP, Qeval.Columns.TIMESTAMP);
+		qevalsProjectionMap.put(Qeval.Columns.UTTERANCE, Qeval.Columns.UTTERANCE);
 		qevalsProjectionMap.put(Qeval.Columns.TRANSLATION, Qeval.Columns.TRANSLATION);
 		qevalsProjectionMap.put(Qeval.Columns.EVALUATION, Qeval.Columns.EVALUATION);
-		qevalsProjectionMap.put(Query.Columns.VIEW, Query.Columns.VIEW);
-		qevalsProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
+		qevalsProjectionMap.put(Qeval.Columns.VIEW, Qeval.Columns.VIEW);
+		qevalsProjectionMap.put(Qeval.Columns.MESSAGE, Qeval.Columns.MESSAGE);
 	}
 }

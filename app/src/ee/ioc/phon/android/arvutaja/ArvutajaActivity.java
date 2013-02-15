@@ -41,7 +41,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.TextView;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -52,13 +51,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ee.ioc.phon.android.arvutaja.Constants.State;
 import ee.ioc.phon.android.arvutaja.command.Command;
@@ -75,6 +71,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	// Set of non-standard extras that K6nele supports
 	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
 	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
+
+	public static final String RESULTS_RECOGNITION_LINEARIZATIONS = "ee.ioc.phon.android.extra.RESULTS_RECOGNITION_LINEARIZATIONS";
+	public static final String RESULTS_RECOGNITION_LINEARIZATION_COUNTS = "ee.ioc.phon.android.extra.RESULTS_RECOGNITION_LINEARIZATION_COUNTS";
+
 
 	private State mState = State.INIT;
 
@@ -112,6 +112,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static final String[] QEVAL_PROJECTION = new String[] {
 		Qeval.Columns._ID,
 		Qeval.Columns.TIMESTAMP,
+		Qeval.Columns.UTTERANCE,
 		Qeval.Columns.TRANSLATION,
 		Qeval.Columns.EVALUATION,
 		Qeval.Columns.VIEW,
@@ -227,10 +228,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				this,
 				R.layout.list_item_group,
 				R.layout.list_item_child,
-				new String[] { Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
-				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
-				new String[] { Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
-				new int[] { R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message }
+				new String[] { Query.Columns.UTTERANCE, Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
+				new String[] { Qeval.Columns.UTTERANCE, Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message }
 				);
 
 		mListView.setAdapter(mAdapter);
@@ -462,8 +463,23 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	@Override
-	protected void onSuccess(List<String> matches) {
-		new TranslateTask().execute(matches);
+	protected void onSuccess(Bundle bundle) {
+		ArrayList<String> lins = bundle.getStringArrayList(RESULTS_RECOGNITION_LINEARIZATIONS);
+		ArrayList<Integer> counts = bundle.getIntegerArrayList(RESULTS_RECOGNITION_LINEARIZATION_COUNTS);
+		ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+		// TODO: confidence scores support is only in API 14
+
+		if (lins == null || counts == null) {
+			lins = new ArrayList<String>();
+			counts = new ArrayList<Integer>();
+			for (String match : matches) {
+				lins.add(match);
+				lins.add(match);
+				lins.add("TODO: current language");
+				counts.add(1);
+			}
+		}
+		processResults(lins, counts);
 	}
 
 
@@ -509,87 +525,92 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		return intent;
 	}
 
+	/**
+	 * <ul>
+	 *   <li>raw utterance of hypothesis 1
+	 *   <li>linearization 1.1
+	 *   <li>language code of linearization 1.1
+	 *   <li>linearization 1.2
+	 *   <li>language code of linearization 1.2
+	 *   <li>...
+	 *   <li>raw utterance of hypothesis 2
+	 *   <li>...
+	 * </ul>
 
-	private class TranslateTask extends AsyncTask<List<String>, Void, List<Map<String, String>>> {
-
-		private ProgressDialog mProgress;
-
-		protected void onPreExecute() {
+	 * @param lins
+	 * @param counts
+	 */
+	private void processResults(List<String> lins, List<Integer> counts) {
+		if (lins == null || lins.isEmpty()) {
+			toast(getString(R.string.warningParserInputNotSupported));
+			return;
 		}
 
-		protected List<Map<String, String>> doInBackground(List<String>... s) {
-			return getResultsWithExternalTranslator(s);
-		}
+		// Special case where there is a single hypothesis containing a single linearization.
+		// 3 list items:
+		// raw utterance, linearization, language
+		boolean singleResult = counts.size() == 1 && counts.iterator().next() == 1;
+		String bestCommand = lins.get(1);
 
-
-		private List<Map<String, String>> getResultsWithExternalTranslator(List<String>... s) {
+		Time now = new Time();
+		now.setToNow();
+		long timestamp = now.toMillis(false);
+		ContentValues values1 = new ContentValues();
+		values1.put(Query.Columns.TIMESTAMP, timestamp);
+		if (singleResult) {
+			values1.put(Query.Columns.UTTERANCE, lins.get(0));
+			values1.put(Query.Columns.TRANSLATION, bestCommand);
 			try {
-				List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
-				for (String lin : s[0]) {
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("in", lin);
+				String out = CommandParser.getCommand(getApplicationContext(), bestCommand).getOut();
+				values1.put(Query.Columns.EVALUATION, out);
+			} catch (Exception e) {
+				// We store the exception message in the "message" field,
+				// but it should not be shown to the user.
+				values1.put(Query.Columns.MESSAGE, e.getMessage());
+			}
+		} else {
+			// TRANSLATION must remain NULL here
+			values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
+		}
+		mQueryHandler.insert(QUERY_CONTENT_URI, values1);
+		if (! singleResult) {
+			int begin = 0;
+			for (Integer c : counts) {
+				int end = begin + 1 + 2*c;
+				String utterance = lins.get(begin);
+				for (int pos = begin + 1; pos < end; pos = pos + 2) {
+					String lin = lins.get(pos);
+					//String lang = lins.get(pos + 1); // TODO: store the lang as well
+
+					// TODO: filter out empty transcriptions, unless there is nothing else to show
+					lin = ("".equals(lin) ? "(0)" : lin);
+
+					ContentValues values2 = new ContentValues();
+					values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
+					values2.put(Qeval.Columns.UTTERANCE, utterance);
+					values2.put(Qeval.Columns.TRANSLATION, lin);
 					try {
-						map.put("out", CommandParser.getCommand(getApplicationContext(), lin).getOut());
+						values2.put(Qeval.Columns.EVALUATION, CommandParser.getCommand(getApplicationContext(), lin).getOut());
 					} catch (Exception e) {
 						// We store the exception message in the "message" field,
 						// but it should not be shown to the user.
-						map.put("message", e.getMessage());
+						values2.put(Qeval.Columns.MESSAGE, e.getMessage());
 					}
-					translations.add(map);
+					mQueryHandler.insert(QEVAL_CONTENT_URI, values2);
 				}
-				return translations;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+				begin = end;
 			}
 		}
 
+		// If the transcription is not ambiguous, and the user prefers to
+		// evaluate using an external activity, then we launch it via an intent.
+		if (singleResult) {
+			boolean launchExternalEvaluator = mPrefs.getBoolean(
+					getString(R.string.keyUseExternalEvaluator),
+					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
-		protected void onPostExecute(List<Map<String, String>> results) {
-			if (mProgress != null) {
-				mProgress.dismiss();
-			}
-			if (results.isEmpty()) {
-				// TODO: this should not happen
-				toast(getString(R.string.warningParserInputNotSupported));
-			} else {
-				Time now = new Time();
-				now.setToNow();
-				long timestamp = now.toMillis(false);
-				ContentValues values1 = new ContentValues();
-				values1.put(Query.Columns.TIMESTAMP, timestamp);
-				values1.put(Query.Columns.UTTERANCE, ""); // TODO
-				if (results.size() == 1) {
-					values1.put(Query.Columns.TRANSLATION, results.get(0).get("in"));
-					values1.put(Query.Columns.EVALUATION, results.get(0).get("out"));
-					values1.put(Query.Columns.MESSAGE, results.get(0).get("message"));
-				} else {
-					// TRANSLATION must remain NULL here
-					values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
-				}
-				mQueryHandler.insert(QUERY_CONTENT_URI, values1);
-				if (results.size() > 1) {
-					for (Map<String, String> r : results) {
-						ContentValues values2 = new ContentValues();
-						values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
-						values2.put(Qeval.Columns.TRANSLATION, r.get("in"));
-						values2.put(Qeval.Columns.EVALUATION, r.get("out"));
-						values2.put(Qeval.Columns.MESSAGE, r.get("message"));
-						mQueryHandler.insert(QEVAL_CONTENT_URI, values2);
-					}
-				}
-
-				// If the transcription is not ambiguous, and the user prefers to
-				// evaluate using an external activity, then we launch it via an intent.
-
-				if (results.size() == 1) {
-					boolean launchExternalEvaluator = mPrefs.getBoolean(
-							getString(R.string.keyUseExternalEvaluator),
-							mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
-
-					if (launchExternalEvaluator) {
-						launchIntent(results.get(0).get("in"));
-					}
-				}
+			if (launchExternalEvaluator) {
+				launchIntent(bestCommand);
 			}
 		}
 	}
@@ -697,11 +718,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onResults(Bundle results) {
-				ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-				// TODO: confidence scores support is only in API 14
 				mState = State.INIT;
 				mButtonMicrophone.setState(mState);
-				onSuccess(matches);
+				onSuccess(results);
 			}
 
 			@Override

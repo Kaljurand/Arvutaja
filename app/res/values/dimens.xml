@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="widget_margin">15dp</dimen>
+    <dimen name="textSizeListItemUtterance">14sp</dimen>
     <dimen name="textSizeListItemTranslation">16sp</dimen>
     <dimen name="textSizeListItemEvaluation">24sp</dimen>
     <dimen name="textSizeListItemMessage">13sp</dimen>

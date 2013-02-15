@@ -2,6 +2,7 @@
 <resources>
 
     <!-- About 1.4x larger than the default values -->
+    <dimen name="textSizeListItemUtterance">18sp</dimen>
     <dimen name="textSizeListItemTranslation">20sp</dimen>
     <dimen name="textSizeListItemEvaluation">30sp</dimen>
     <dimen name="textSizeListItemMessage">18sp</dimen>

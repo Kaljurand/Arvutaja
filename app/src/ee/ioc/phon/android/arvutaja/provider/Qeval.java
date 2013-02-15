@@ -1,5 +1,5 @@
 /*
- * Copyright 2011, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,9 @@ public class Qeval {
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvuataja";
 
+		// TODO: add lang
 		public static final String TIMESTAMP = "TIMESTAMP";
+		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";
 		public static final String EVALUATION = "EVALUATION";
 		public static final String VIEW = "VIEW";

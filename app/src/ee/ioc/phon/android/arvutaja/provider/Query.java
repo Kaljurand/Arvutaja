@@ -35,6 +35,7 @@ public class Query {
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvuataja";
 
+		// TODO: add lang
 		public static final String TIMESTAMP = "TIMESTAMP";
 		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";
