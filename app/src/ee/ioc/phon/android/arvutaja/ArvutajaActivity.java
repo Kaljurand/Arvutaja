@@ -392,30 +392,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.cm_main, menu);
-
-		Cursor cursor = null;
-		String column = null;
-
-		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
-			column = Qeval.Columns.MESSAGE;
-		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
-			column = Query.Columns.MESSAGE;
-		} else {
-			return;
-		}
-
-		String message = cursor.getString(cursor.getColumnIndex(column));
-		if (message == null || message.length() == 0) {
-			MenuItem menuItem = menu.findItem(R.id.cmMainShowError);
-			menuItem.setEnabled(false);
-		}
 	}
 
 
@@ -423,7 +399,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		final long key;
 		String fname;
-		String message = "";
 		final Uri uri;
 
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
@@ -434,14 +409,12 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
 			key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
 			fname = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
-			message = cursor.getString(cursor.getColumnIndex(Qeval.Columns.MESSAGE));
 			uri = QEVAL_CONTENT_URI;
 		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
 			key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
 			fname = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
-			message = cursor.getString(cursor.getColumnIndex(Query.Columns.MESSAGE));
 			uri = QUERY_CONTENT_URI;
 		} else {
 			return false;
@@ -452,6 +425,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 
 		switch (item.getItemId()) {
+		case R.id.cmMainShow:
+			Intent intent = new Intent(this, ShowActivity.class);
+			intent.setData(ContentUris.withAppendedId(uri, key));
+			startActivity(intent);
+			return true;
 		case R.id.cmMainDelete:
 			Utils.getYesNoDialog(
 					this,
@@ -462,9 +440,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						}
 					}
 					).show();
-			return true;
-		case R.id.cmMainShowError:
-			toast(message);
 			return true;
 		default:
 			return super.onContextItemSelected(item);

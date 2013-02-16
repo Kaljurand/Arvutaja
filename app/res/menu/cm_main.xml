@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/cmMainShow"
+        android:title="@string/cmMainShow"/>
+    <item
         android:id="@+id/cmMainDelete"
         android:icon="@drawable/ic_menu_delete"
         android:title="@string/cmMainDelete"/>
-    <item
-        android:id="@+id/cmMainShowError"
-        android:title="@string/cmMainShowError"/>
 
 </menu>

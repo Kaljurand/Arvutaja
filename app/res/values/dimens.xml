@@ -8,5 +8,11 @@
     <dimen name="textSizeListItemMessage">13sp</dimen>
     <dimen name="textSizeListItemView">14sp</dimen>
     <dimen name="layoutHeightButtonMicrophone">80dp</dimen>
+    <dimen name="textSizeTimestamp">16sp</dimen>
+    <dimen name="textSizeUtterance">18sp</dimen>
+    <dimen name="textSizeTranslation">22sp</dimen>
+    <dimen name="textSizeEvaluation">24sp</dimen>
+    <dimen name="textSizeMessage">16sp</dimen>
+    <dimen name="textSizeView">16sp</dimen>
 
 </resources>

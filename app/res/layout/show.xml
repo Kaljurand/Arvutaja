@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/tvTimestamp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?android:textColorSecondary"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeTimestamp"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/tvUtterance"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/grey1"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeUtterance"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/tvTranslation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Interpretation failed"
+        android:textColor="?android:textColorSecondary"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeTranslation"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/tvEvaluation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Click to view"
+        android:textColor="?android:textColorPrimary"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeEvaluation"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/tvView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="View"
+        android:textColor="@color/blue"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeMessage" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red"
+        android:padding="6dp"
+        android:text="Message"
+        android:textColor="?android:textColorSecondary"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/textSizeMessage"
+        android:typeface="monospace" />
+
+</LinearLayout>

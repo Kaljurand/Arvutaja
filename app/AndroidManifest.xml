@@ -35,6 +35,11 @@
             android:name=".SettingsActivity"
             android:label="@string/labelSettings" >
         </activity>
+        <activity
+            android:name=".ShowActivity"
+            android:label="@string/cmMainShow"
+            android:theme="@style/LightThemeDialog" >
+        </activity>
 
         <provider
             android:name=".provider.QueriesContentProvider"

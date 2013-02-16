@@ -41,8 +41,8 @@
     <string name="menuMainSortByEvaluation">by value</string>
     <string name="menuMainExamples">Examples</string>
     <string name="menuMainSettings">Settings</string>
+    <string name="cmMainShow">Info</string>
     <string name="cmMainDelete">Delete</string>
-    <string name="cmMainShowError">Show error message</string>
     <string name="titleCategoryLinks">Links</string>
     <string name="titleMaxResults">Number of results</string>
     <string name="titleUseExternalEvaluator">Autoview</string>

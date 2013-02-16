@@ -16,6 +16,7 @@
 
 package ee.ioc.phon.android.arvutaja.provider;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import ee.ioc.phon.android.arvutaja.Log;
@@ -60,11 +61,8 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
-		private final Context mContext;
-
 		DatabaseHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			mContext = context;
 		}
 
 		@Override
@@ -232,14 +230,13 @@ public class QueriesContentProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		/*
-		Log.w(TAG, "QUERY: " + uri);
-		Log.w(TAG, "uri: " + uri);
-		Log.w(TAG, "projection: " + Arrays.toString(projection));
-		Log.w(TAG, "selection: " + selection);
-		Log.w(TAG, "selectionArgs: " + selectionArgs);
-		Log.w(TAG, "sortOrder: " + sortOrder);
-		 */
+
+		Log.i("uri: " + uri);
+		Log.i("projection: " + Arrays.toString(projection));
+		Log.i("selection: " + selection);
+		Log.i("selectionArgs: " + selectionArgs);
+		Log.i("sortOrder: " + sortOrder);
+
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
 		switch (sUriMatcher.match(uri)) {
@@ -251,6 +248,18 @@ public class QueriesContentProvider extends ContentProvider {
 		case QEVALS:
 			qb.setTables(QEVALS_TABLE_NAME);
 			qb.setProjectionMap(qevalsProjectionMap);
+			break;
+
+		case QUERY_ID:
+			qb.setTables(QUERIES_TABLE_NAME);
+			qb.setProjectionMap(queriesProjectionMap);
+			qb.appendWhere(Query.Columns._ID + "=" + uri.getLastPathSegment());
+			break;
+
+		case QEVAL_ID:
+			qb.setTables(QEVALS_TABLE_NAME);
+			qb.setProjectionMap(qevalsProjectionMap);
+			qb.appendWhere(Qeval.Columns._ID + "=" + uri.getLastPathSegment());
 			break;
 
 		default:

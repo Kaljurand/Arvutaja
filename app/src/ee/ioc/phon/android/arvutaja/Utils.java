@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
@@ -41,26 +40,6 @@ import android.text.util.Linkify;
 public class Utils {
 
 	private Utils() {}
-
-
-	/**
-	 * TODO: should we immediately return null if id = 0?
-	 */
-	public static String idToValue(Context context, Uri contentUri, String columnId, String columnUrl, long id) {
-		String value = null;
-		Cursor c = context.getContentResolver().query(
-				contentUri,
-				new String[] { columnUrl },
-				columnId + "= ?",
-				new String[] { String.valueOf(id) },
-				null);
-
-		if (c.moveToFirst()) {
-			value = c.getString(0);
-		}
-		c.close();
-		return value;
-	}
 
 
 	public static AlertDialog getOkDialog(final Context context, String msg) {
