@@ -7,6 +7,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:paddingBottom="10dp"
         android:textColor="@color/grey1"
+        android:textIsSelectable="false"
         android:textSize="@dimen/textSizeListItemUtterance"
         android:typeface="sans" />
 

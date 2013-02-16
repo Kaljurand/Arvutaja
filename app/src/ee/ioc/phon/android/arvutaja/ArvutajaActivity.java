@@ -53,6 +53,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,12 +127,14 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static final int TOKEN_CHILD = 1;
 
 
-	private final class QueryHandler extends AsyncQueryHandler {
+	private static final class QueryHandler extends AsyncQueryHandler {
+		private final WeakReference<ArvutajaActivity> mRef;
 		private CursorTreeAdapter mAdapter;
 
-		public QueryHandler(Context context, CursorTreeAdapter adapter) {
-			super(context.getContentResolver());
-			this.mAdapter = adapter;
+		public QueryHandler(ArvutajaActivity activity, CursorTreeAdapter adapter) {
+			super(activity.getContentResolver());
+			mRef = new WeakReference<ArvutajaActivity>(activity);
+			mAdapter = adapter;
 		}
 
 		@Override
@@ -167,9 +170,12 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 
 		private void updateUi() {
-			int count = mAdapter.getGroupCount();
-			getActionBar().setSubtitle(
-					mRes.getQuantityString(R.plurals.numberOfInputs, count, count));
+			ArvutajaActivity outerClass = mRef.get();
+			if (outerClass != null) {
+				int count = mAdapter.getGroupCount();
+				outerClass.getActionBar().setSubtitle(
+						outerClass.getResources().getQuantityString(R.plurals.numberOfInputs, count, count));
+			}
 		}
 	}
 
