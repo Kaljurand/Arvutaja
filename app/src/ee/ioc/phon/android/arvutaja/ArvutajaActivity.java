@@ -38,6 +38,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.SimpleCursorTreeAdapter;
 import android.widget.TextView;
 
 import android.app.AlertDialog;
