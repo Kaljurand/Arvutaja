@@ -32,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
@@ -855,6 +856,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				int[] childrenTo) {
 
 			super(context, null, groupLayout, groupFrom, groupTo, childLayout, childrenFrom, childrenTo);
+		}
+
+		// Expand groups by default
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+			View v = super.getGroupView(groupPosition, isExpanded, convertView, parent);
+			ExpandableListView eLV = (ExpandableListView) parent;
+			eLV.expandGroup(groupPosition);
+			return v;
 		}
 
 		@Override
