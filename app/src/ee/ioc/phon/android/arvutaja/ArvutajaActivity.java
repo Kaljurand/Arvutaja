@@ -55,7 +55,9 @@ import android.preference.PreferenceManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ee.ioc.phon.android.arvutaja.Constants.State;
 import ee.ioc.phon.android.arvutaja.command.Command;
@@ -580,17 +582,23 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 		mQueryHandler.insert(QUERY_CONTENT_URI, values1);
 		if (! singleResult) {
+			// We do not show repeated linearizations, this includes empty linearizations,
+			// i.e. we show only a single utterance which didn't result in a linearization.
+			Set<String> seen = new HashSet<String>();
 			int begin = 0;
 			for (Integer c : counts) {
 				int end = begin + 1 + 2*c;
 				String utterance = lins.get(begin);
 				for (int pos = begin + 1; pos < end; pos = pos + 2) {
 					String lin = lins.get(pos);
+
+					if (seen.contains(lin)) {
+						continue;
+					} else {
+						seen.add(lin);
+					}
+
 					//String lang = lins.get(pos + 1); // TODO: store the lang as well
-
-					// TODO: filter out empty transcriptions, unless there is nothing else to show
-					lin = ("".equals(lin) ? "(0)" : lin);
-
 					ContentValues values2 = new ContentValues();
 					values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
 					values2.put(Qeval.Columns.UTTERANCE, utterance);
