@@ -110,7 +110,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		Query.Columns.UTTERANCE,
 		Query.Columns.TRANSLATION,
 		Query.Columns.EVALUATION,
-		Query.Columns.VIEW,
+		Query.Columns.TARGET_LANG,
 		Query.Columns.MESSAGE
 	};
 
@@ -120,7 +120,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		Qeval.Columns.UTTERANCE,
 		Qeval.Columns.TRANSLATION,
 		Qeval.Columns.EVALUATION,
-		Qeval.Columns.VIEW,
+		Qeval.Columns.TARGET_LANG,
 		Qeval.Columns.MESSAGE
 	};
 
@@ -238,10 +238,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				this,
 				R.layout.list_item_group,
 				R.layout.list_item_child,
-				new String[] { Query.Columns.UTTERANCE, Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.VIEW, Query.Columns.MESSAGE },
-				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message },
-				new String[] { Qeval.Columns.UTTERANCE, Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.VIEW, Qeval.Columns.MESSAGE },
-				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_view, R.id.list_item_message }
+				new String[] { Query.Columns.UTTERANCE, Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.TARGET_LANG, Query.Columns.MESSAGE },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_target_lang, R.id.list_item_message },
+				new String[] { Qeval.Columns.UTTERANCE, Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.TARGET_LANG, Qeval.Columns.MESSAGE },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_target_lang, R.id.list_item_message }
 				);
 
 		mListView.setAdapter(mAdapter);
@@ -458,9 +458,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			lins = new ArrayList<String>();
 			counts = new ArrayList<Integer>();
 			for (String match : matches) {
-				lins.add(match);
-				lins.add(match);
-				lins.add("TODO: current language");
+				lins.add(match); // utterance
+				lins.add(match); // translation
+				lins.add("GVS"); // target language
 				counts.add(1);
 			}
 		}
@@ -545,6 +545,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (singleResult) {
 			values1.put(Query.Columns.UTTERANCE, lins.get(0));
 			values1.put(Query.Columns.TRANSLATION, bestCommand);
+			values1.put(Query.Columns.TARGET_LANG, lins.get(2));
 			try {
 				String out = CommandParser.getCommand(getApplicationContext(), bestCommand).getOut();
 				values1.put(Query.Columns.EVALUATION, out);
@@ -575,11 +576,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						seen.add(lin);
 					}
 
-					//String lang = lins.get(pos + 1); // TODO: store the lang as well
 					ContentValues values2 = new ContentValues();
 					values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
 					values2.put(Qeval.Columns.UTTERANCE, utterance);
 					values2.put(Qeval.Columns.TRANSLATION, lin);
+					values2.put(Qeval.Columns.TARGET_LANG, lins.get(pos + 1));
 					try {
 						values2.put(Qeval.Columns.EVALUATION, CommandParser.getCommand(getApplicationContext(), lin).getOut());
 					} catch (Exception e) {

@@ -35,12 +35,11 @@ public class Qeval {
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvuataja";
 
-		// TODO: add lang
 		public static final String TIMESTAMP = "TIMESTAMP";
 		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";
 		public static final String EVALUATION = "EVALUATION";
-		public static final String VIEW = "VIEW";
+		public static final String TARGET_LANG = "TARGET_LANG";
 		public static final String MESSAGE = "MESSAGE";
 	}
 }

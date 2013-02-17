@@ -43,7 +43,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "arvutaja.db";
 
-	private static final int DATABASE_VERSION = 22;
+	private static final int DATABASE_VERSION = 23;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -73,7 +73,7 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Query.Columns.UTTERANCE + " TEXT,"
 					+ Query.Columns.TRANSLATION + " TEXT,"
 					+ Query.Columns.EVALUATION + " REAL,"
-					+ Query.Columns.VIEW + " TEXT,"
+					+ Query.Columns.TARGET_LANG + " TEXT,"
 					+ Query.Columns.MESSAGE + " TEXT"
 					+ ");");
 
@@ -83,7 +83,7 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Qeval.Columns.UTTERANCE + " TEXT,"
 					+ Qeval.Columns.TRANSLATION + " TEXT,"
 					+ Qeval.Columns.EVALUATION + " REAL,"
-					+ Qeval.Columns.VIEW + " TEXT,"
+					+ Qeval.Columns.TARGET_LANG + " TEXT,"
 					+ Qeval.Columns.MESSAGE + " TEXT"
 					+ ");");
 
@@ -308,7 +308,7 @@ public class QueriesContentProvider extends ContentProvider {
 		queriesProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
 		queriesProjectionMap.put(Query.Columns.TRANSLATION, Query.Columns.TRANSLATION);
 		queriesProjectionMap.put(Query.Columns.EVALUATION, Query.Columns.EVALUATION);
-		queriesProjectionMap.put(Query.Columns.VIEW, Query.Columns.VIEW);
+		queriesProjectionMap.put(Query.Columns.TARGET_LANG, Query.Columns.TARGET_LANG);
 		queriesProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
 
 		qevalsProjectionMap = new HashMap<String, String>();
@@ -317,7 +317,7 @@ public class QueriesContentProvider extends ContentProvider {
 		qevalsProjectionMap.put(Qeval.Columns.UTTERANCE, Qeval.Columns.UTTERANCE);
 		qevalsProjectionMap.put(Qeval.Columns.TRANSLATION, Qeval.Columns.TRANSLATION);
 		qevalsProjectionMap.put(Qeval.Columns.EVALUATION, Qeval.Columns.EVALUATION);
-		qevalsProjectionMap.put(Qeval.Columns.VIEW, Qeval.Columns.VIEW);
+		qevalsProjectionMap.put(Qeval.Columns.TARGET_LANG, Qeval.Columns.TARGET_LANG);
 		qevalsProjectionMap.put(Qeval.Columns.MESSAGE, Qeval.Columns.MESSAGE);
 	}
 }

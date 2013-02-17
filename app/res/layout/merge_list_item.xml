@@ -45,7 +45,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/list_item_view"
+        android:id="@+id/list_item_target_lang"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
