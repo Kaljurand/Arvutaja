@@ -109,9 +109,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		Query.Columns.TIMESTAMP,
 		Query.Columns.UTTERANCE,
 		Query.Columns.TRANSLATION,
-		Query.Columns.EVALUATION,
-		Query.Columns.TARGET_LANG,
-		Query.Columns.MESSAGE
+		Query.Columns.EVALUATION
 	};
 
 	private static final String[] QEVAL_PROJECTION = new String[] {
@@ -119,9 +117,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		Qeval.Columns.TIMESTAMP,
 		Qeval.Columns.UTTERANCE,
 		Qeval.Columns.TRANSLATION,
-		Qeval.Columns.EVALUATION,
-		Qeval.Columns.TARGET_LANG,
-		Qeval.Columns.MESSAGE
+		Qeval.Columns.EVALUATION
 	};
 
 	private static final int GROUP_TIMESTAMP_COLUMN_INDEX = 1;
@@ -238,10 +234,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				this,
 				R.layout.list_item_group,
 				R.layout.list_item_child,
-				new String[] { Query.Columns.UTTERANCE, Query.Columns.TRANSLATION, Query.Columns.EVALUATION, Query.Columns.TARGET_LANG, Query.Columns.MESSAGE },
-				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_target_lang, R.id.list_item_message },
-				new String[] { Qeval.Columns.UTTERANCE, Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION, Qeval.Columns.TARGET_LANG, Qeval.Columns.MESSAGE },
-				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation, R.id.list_item_target_lang, R.id.list_item_message }
+				new String[] { Query.Columns.UTTERANCE, Query.Columns.TRANSLATION, Query.Columns.EVALUATION },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation },
+				new String[] { Qeval.Columns.UTTERANCE, Qeval.Columns.TRANSLATION, Qeval.Columns.EVALUATION },
+				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation }
 				);
 
 		mListView.setAdapter(mAdapter);
@@ -447,14 +443,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	@Override
-	protected void onSuccess(Bundle bundle) {
+	private void onSuccess(String lang, Bundle bundle) {
 		ArrayList<String> lins = bundle.getStringArrayList(RESULTS_RECOGNITION_LINEARIZATIONS);
 		ArrayList<Integer> counts = bundle.getIntegerArrayList(RESULTS_RECOGNITION_LINEARIZATION_COUNTS);
 		ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		// TODO: confidence scores support is only in API 14
 
-		if (lins == null || counts == null) {
+		if (lins == null || lins.isEmpty() || counts == null || counts.isEmpty()) {
+			if (matches == null || matches.isEmpty()) {
+				showErrorDialog(R.string.errorResultNoMatch);
+				return;
+			}
 			lins = new ArrayList<String>();
 			counts = new ArrayList<Integer>();
 			for (String match : matches) {
@@ -464,7 +463,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				counts.add(1);
 			}
 		}
-		processResults(lins, counts);
+		processResults(lang, lins, counts);
 	}
 
 
@@ -511,6 +510,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 	/**
+	 * We do not show repeated or empty linearizations.
 	 * <ul>
 	 *   <li>raw utterance of hypothesis 1
 	 *   <li>linearization 1.1
@@ -521,88 +521,68 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	 *   <li>raw utterance of hypothesis 2
 	 *   <li>...
 	 * </ul>
-
-	 * @param lins
-	 * @param counts
 	 */
-	private void processResults(List<String> lins, List<Integer> counts) {
-		if (lins == null || lins.isEmpty()) {
-			toast(getString(R.string.warningParserInputNotSupported));
-			return;
-		}
-
-		// Special case where there is a single hypothesis containing a single linearization.
-		// 3 list items:
-		// raw utterance, linearization, language
-		boolean singleResult = counts.size() == 1 && counts.iterator().next() == 1;
-		String bestCommand = lins.get(1);
-
+	private void processResults(String lang, List<String> lins, List<Integer> counts) {
 		Time now = new Time();
 		now.setToNow();
 		long timestamp = now.toMillis(false);
-		ContentValues values1 = new ContentValues();
-		values1.put(Query.Columns.TIMESTAMP, timestamp);
-		if (singleResult) {
-			values1.put(Query.Columns.UTTERANCE, lins.get(0));
-			values1.put(Query.Columns.TRANSLATION, bestCommand);
-			values1.put(Query.Columns.TARGET_LANG, lins.get(2));
-			try {
-				String out = CommandParser.getCommand(getApplicationContext(), bestCommand).getOut();
-				values1.put(Query.Columns.EVALUATION, out);
-			} catch (Exception e) {
-				// We store the exception message in the "message" field,
-				// but it should not be shown to the user.
-				values1.put(Query.Columns.MESSAGE, e.getMessage());
-			}
-		} else {
-			// TRANSLATION must remain NULL here
-			values1.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
-		}
-		mQueryHandler.insert(QUERY_CONTENT_URI, values1);
-		if (! singleResult) {
-			// We do not show repeated linearizations, this includes empty linearizations,
-			// i.e. we show only a single utterance which didn't result in a linearization.
-			Set<String> seen = new HashSet<String>();
-			int begin = 0;
-			for (Integer c : counts) {
-				int end = begin + 1 + 2*c;
-				String utterance = lins.get(begin);
-				for (int pos = begin + 1; pos < end; pos = pos + 2) {
-					String lin = lins.get(pos);
 
-					if (seen.contains(lin)) {
-						continue;
-					} else {
-						seen.add(lin);
-					}
+		List<ContentValues> valuesList = new ArrayList<ContentValues>();
+		Set<String> seen = new HashSet<String>();
+		int begin = 0;
+		for (Integer c : counts) {
+			int end = begin + 1 + 2*c;
+			String utterance = lins.get(begin);
+			for (int pos = begin + 1; pos < end; pos = pos + 2) {
+				String lin = lins.get(pos);
+				String targetLang = lins.get(pos+1);
+				String key = lin + "|" + targetLang;
 
-					ContentValues values2 = new ContentValues();
-					values2.put(Qeval.Columns.TIMESTAMP, timestamp); // TODO: why needed?
-					values2.put(Qeval.Columns.UTTERANCE, utterance);
-					values2.put(Qeval.Columns.TRANSLATION, lin);
-					values2.put(Qeval.Columns.TARGET_LANG, lins.get(pos + 1));
-					try {
-						values2.put(Qeval.Columns.EVALUATION, CommandParser.getCommand(getApplicationContext(), lin).getOut());
-					} catch (Exception e) {
-						// We store the exception message in the "message" field,
-						// but it should not be shown to the user.
-						values2.put(Qeval.Columns.MESSAGE, e.getMessage());
-					}
-					mQueryHandler.insert(QEVAL_CONTENT_URI, values2);
+				if (lin.isEmpty() || seen.contains(key)) {
+					continue;
+				} else {
+					seen.add(key);
 				}
-				begin = end;
+
+				ContentValues values = new ContentValues();
+				values.put(Qeval.Columns.TIMESTAMP, timestamp);
+				values.put(Qeval.Columns.UTTERANCE, utterance);
+				values.put(Qeval.Columns.TRANSLATION, lin);
+				values.put(Qeval.Columns.LANG, lang);
+				values.put(Qeval.Columns.TARGET_LANG, targetLang);
+				try {
+					values.put(Qeval.Columns.EVALUATION, CommandParser.getCommand(getApplicationContext(), lin).getOut());
+				} catch (Exception e) {
+					// We store the exception message in the "message" field,
+					// but it should not be shown to the user.
+					values.put(Qeval.Columns.MESSAGE, e.getMessage());
+				}
+				valuesList.add(values);
 			}
+			begin = end;
 		}
 
-		// If the transcription is not ambiguous, and the user prefers to
-		// evaluate using an external activity, then we launch it via an intent.
-		if (singleResult) {
+		if (valuesList.isEmpty()) {
+			showErrorDialog(R.string.errorResultNoMatch);
+		} else if (valuesList.size() == 1) {
+			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0));
+			// If the transcription is not ambiguous, and the user prefers to
+			// evaluate using an external activity, then we launch it via an intent.
 			boolean launchExternalEvaluator = mPrefs.getBoolean(
 					getString(R.string.keyUseExternalEvaluator),
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
 			if (launchExternalEvaluator) {
-				launchIntent(bestCommand);
+				launchIntent(lins.get(1));
+			}
+		} else {
+			ContentValues values = new ContentValues();
+			values.put(Query.Columns.TIMESTAMP, timestamp);
+			// TRANSLATION must remain NULL here
+			values.put(Query.Columns.EVALUATION, getString(R.string.ambiguous));
+			mQueryHandler.insert(QUERY_CONTENT_URI, values);
+			for (ContentValues cv : valuesList) {
+				mQueryHandler.insert(QEVAL_CONTENT_URI, cv);
 			}
 		}
 	}
@@ -712,7 +692,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			public void onResults(Bundle results) {
 				mState = State.INIT;
 				mButtonMicrophone.setState(mState);
-				onSuccess(results);
+				onSuccess(intentRecognizer.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE), results);
 			}
 
 			@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2012-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-public abstract class SubActivity extends Activity {
+public abstract class SubActivity extends AbstractRecognizerActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +39,6 @@ public abstract class SubActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
-
-	protected void toast(String message) {
-		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 	}
 
 }

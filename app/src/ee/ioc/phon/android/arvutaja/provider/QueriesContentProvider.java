@@ -43,7 +43,7 @@ public class QueriesContentProvider extends ContentProvider {
 
 	private static final String DATABASE_NAME = "arvutaja.db";
 
-	private static final int DATABASE_VERSION = 23;
+	private static final int DATABASE_VERSION = 25;
 
 	private static final String UNKNOWN_URI = "Unknown URI: ";
 
@@ -73,6 +73,7 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Query.Columns.UTTERANCE + " TEXT,"
 					+ Query.Columns.TRANSLATION + " TEXT,"
 					+ Query.Columns.EVALUATION + " REAL,"
+					+ Query.Columns.LANG + " TEXT,"
 					+ Query.Columns.TARGET_LANG + " TEXT,"
 					+ Query.Columns.MESSAGE + " TEXT"
 					+ ");");
@@ -83,41 +84,10 @@ public class QueriesContentProvider extends ContentProvider {
 					+ Qeval.Columns.UTTERANCE + " TEXT,"
 					+ Qeval.Columns.TRANSLATION + " TEXT,"
 					+ Qeval.Columns.EVALUATION + " REAL,"
+					+ Qeval.Columns.LANG + " TEXT,"
 					+ Qeval.Columns.TARGET_LANG + " TEXT,"
 					+ Qeval.Columns.MESSAGE + " TEXT"
 					+ ");");
-
-			/*
-			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
-					"'1', " +
-					"'1233', " +
-					"'kaks meetrit jalgades', " +
-					"'2 m IN ft', " +
-					"'6.02'" +
-			");");
-
-			db.execSQL("INSERT INTO " + QUERIES_TABLE_NAME + " VALUES (" +
-					"'2', " +
-					"'1234', " +
-					"'kaks minutit sekundites', " +
-					"NULL, " +
-					"NULL" +
-			");");
-
-			db.execSQL("INSERT INTO " + QEVALS_TABLE_NAME + " VALUES (" +
-					"'1', " +
-					"'1234', " +
-					"'2 min IN sec', " +
-					"'120'" +
-			");");
-
-			db.execSQL("INSERT INTO " + QEVALS_TABLE_NAME + " VALUES (" +
-					"'2', " +
-					"'1234', " +
-					"'2 angmin IN angsec', " +
-					"'ang120'" +
-			");");
-			 */
 		}
 
 
@@ -308,6 +278,7 @@ public class QueriesContentProvider extends ContentProvider {
 		queriesProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
 		queriesProjectionMap.put(Query.Columns.TRANSLATION, Query.Columns.TRANSLATION);
 		queriesProjectionMap.put(Query.Columns.EVALUATION, Query.Columns.EVALUATION);
+		queriesProjectionMap.put(Query.Columns.LANG, Query.Columns.LANG);
 		queriesProjectionMap.put(Query.Columns.TARGET_LANG, Query.Columns.TARGET_LANG);
 		queriesProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
 
@@ -317,6 +288,7 @@ public class QueriesContentProvider extends ContentProvider {
 		qevalsProjectionMap.put(Qeval.Columns.UTTERANCE, Qeval.Columns.UTTERANCE);
 		qevalsProjectionMap.put(Qeval.Columns.TRANSLATION, Qeval.Columns.TRANSLATION);
 		qevalsProjectionMap.put(Qeval.Columns.EVALUATION, Qeval.Columns.EVALUATION);
+		qevalsProjectionMap.put(Qeval.Columns.LANG, Qeval.Columns.LANG);
 		qevalsProjectionMap.put(Qeval.Columns.TARGET_LANG, Qeval.Columns.TARGET_LANG);
 		qevalsProjectionMap.put(Qeval.Columns.MESSAGE, Qeval.Columns.MESSAGE);
 	}

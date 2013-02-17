@@ -17,8 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@id/list_item_utterance"
-        android:text="1234567890 m in ft + 1234567890 m in ft ="
         android:textColor="?android:textColorSecondary"
+        android:textIsSelectable="false"
         android:textSize="@dimen/textSizeListItemTranslation"
         android:typeface="monospace" />
 
@@ -27,33 +27,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/list_item_translation"
-        android:text="131,532.1225212344234242424241"
         android:textColor="?android:textColorPrimary"
+        android:textIsSelectable="false"
         android:textSize="@dimen/textSizeListItemEvaluation"
         android:typeface="monospace" />
-
-    <TextView
-        android:id="@+id/list_item_message"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/list_item_evaluation"
-        android:text="Some error occurred: java.org.parse.Text ERROR"
-        android:textColor="@color/red"
-        android:textSize="@dimen/textSizeListItemMessage"
-        android:typeface="monospace"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/list_item_target_lang"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/list_item_message"
-        android:text="131,532.12252123456"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/textSizeListItemView"
-        android:typeface="monospace"
-        android:visibility="gone" />
 
 </merge>

@@ -5,14 +5,12 @@
     <dimen name="textSizeListItemUtterance">14sp</dimen>
     <dimen name="textSizeListItemTranslation">16sp</dimen>
     <dimen name="textSizeListItemEvaluation">24sp</dimen>
-    <dimen name="textSizeListItemMessage">13sp</dimen>
-    <dimen name="textSizeListItemView">14sp</dimen>
     <dimen name="layoutHeightButtonMicrophone">80dp</dimen>
-    <dimen name="textSizeTimestamp">16sp</dimen>
-    <dimen name="textSizeUtterance">18sp</dimen>
-    <dimen name="textSizeTranslation">18sp</dimen>
+    <dimen name="textSizeTimestamp">14sp</dimen>
+    <dimen name="textSizeUtterance">16sp</dimen>
+    <dimen name="textSizeTranslation">16sp</dimen>
     <dimen name="textSizeEvaluation">24sp</dimen>
-    <dimen name="textSizeMessage">14sp</dimen>
-    <dimen name="textSizeView">16sp</dimen>
+    <dimen name="textSizeMessage">12sp</dimen>
+    <dimen name="textSizeView">14sp</dimen>
 
 </resources>

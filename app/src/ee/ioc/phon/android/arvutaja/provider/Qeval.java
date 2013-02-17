@@ -39,6 +39,7 @@ public class Qeval {
 		public static final String UTTERANCE = "UTTERANCE";
 		public static final String TRANSLATION = "TRANSLATION";
 		public static final String EVALUATION = "EVALUATION";
+		public static final String LANG = "LANG";
 		public static final String TARGET_LANG = "TARGET_LANG";
 		public static final String MESSAGE = "MESSAGE";
 	}

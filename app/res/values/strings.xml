@@ -12,6 +12,7 @@
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
     <string name="ambiguous" translatable="false">...</string>
+    <string name="arrowRight" translatable="false">→</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizer" translatable="false">Kõnele</string>
     <string name="nameK6nelePkg" translatable="false">ee.ioc.phon.android.speak</string>
@@ -24,7 +25,7 @@
     <string name="prefFirstTime" translatable="false">prefFirstTime</string>
     <string name="labelExamples">Examples</string>
     <string name="labelSettings">Settings</string>
-    <string name="warningParserInputNotSupported">Input sentence not supported</string>
+    <string name="warningUtteranceNotSupported">Input sentence not supported</string>
     <string name="error">Error</string>
     <string name="errorResultAudioError">Audio recording failed. Maybe another app is currently recording.</string>
     <string name="errorResultNetworkError">Something is wrong with the network</string>

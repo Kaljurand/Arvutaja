@@ -5,7 +5,7 @@
     <string name="labelSettings">Seaded</string>
     <string name="labelExamples">Näited</string>
     <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.et.html</string>
-    <string name="warningParserInputNotSupported">Konverteri keele grammatika ei toeta sisendlauset</string>
+    <string name="warningUtteranceNotSupported">Sisendlause pole toetatud</string>
     <string name="error">Viga</string>
     <string name="errorResultAudioError">Lindistamine luhtus</string>
     <string name="errorResultNetworkError">Puudub võrguühendus kõnetuvastusserveriga</string>

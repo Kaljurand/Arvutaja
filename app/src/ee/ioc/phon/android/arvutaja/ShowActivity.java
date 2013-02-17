@@ -16,17 +16,12 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-import java.util.List;
-
 import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Query;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,20 +32,20 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
+ * Shows the full DB record:
+ *
  * TIMESTAMP
  * UTTERANCE
- * TRANSLATION (linearization)
- * EVALUATION (possibly missing)
+ * LANG
+ * TRANSLATION (linearization), possibly missing
+ * EVALUATION, possibly missing
+ * TARGET_LANG
  * VIEW (show which external evaluator would be used, support clicking on it)
  * MESSAGE (show error message if present)
- *
- * input language
- * output language
  */
-public class ShowActivity extends Activity {
+public class ShowActivity extends AbstractRecognizerActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +70,9 @@ public class ShowActivity extends Activity {
 
 				// Utterance
 				((TextView) findViewById(R.id.tvUtterance)).setText(c.getString(c.getColumnIndex(Query.Columns.UTTERANCE)));
-				TextView tvInputLang = (TextView) findViewById(R.id.tvInputLang);
-				// TODO
-				String inputLang = "et-EE"; //c.getString(c.getColumnIndex(Query.Columns.TARGET_LANG));
-				tvInputLang.setText(inputLang);
+				TextView tvLang = (TextView) findViewById(R.id.tvLang);
+				String lang = c.getString(c.getColumnIndex(Query.Columns.LANG));
+				tvLang.setText(lang);
 
 				TextView tvTranslation = (TextView) findViewById(R.id.tvTranslation);
 				LinearLayout llInterpretation = (LinearLayout) findViewById(R.id.llInterpretation);
@@ -99,6 +93,7 @@ public class ShowActivity extends Activity {
 					TextView tvEvaluation = (TextView) findViewById(R.id.tvEvaluation);
 					String evaluation = c.getString(c.getColumnIndex(Query.Columns.EVALUATION));
 					if (evaluation == null || evaluation.length() == 0) {
+						tvEvaluation.setVisibility(View.GONE);
 						// If the internal evaluation is missing then show the internal error message (if present)
 						String message = c.getString(c.getColumnIndex(Query.Columns.MESSAGE));
 						if (message == null || message.length() == 0) {
@@ -112,14 +107,41 @@ public class ShowActivity extends Activity {
 					}
 
 					// Show a link to the external evaluator
-					// TODO: improve
-					TextView tvView = (TextView) findViewById(R.id.tvView);
-					tvView.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							launchIntent(translation);
+					final TextView tvView = (TextView) findViewById(R.id.tvView);
+					try {
+						final Command command = CommandParser.getCommand(this, translation);
+						final Intent intent = command.getIntent();
+						if (getIntentActivities(intent).size() == 0) {
+							tvView.setOnClickListener(new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									AlertDialog d = Utils.getGoToStoreDialog(
+											getApplicationContext(),
+											getString(R.string.errorIntentActivityNotPresent),
+											command.getSuggestion()
+											);
+									d.show();
+									// Make the textview clickable. Must be called after show()
+									((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+								}
+							});
+						} else {
+							String uri = intent.getDataString();
+							if (uri == null) {
+								tvView.setText(intent.getAction());
+							} else {
+								tvView.setText(Uri.decode(uri));
+							}
+							tvView.setOnClickListener(new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									startActivity(intent);
+								}
+							});
 						}
-					});
+					} catch (CommandParseException e) {
+						toast(getString(R.string.errorCommandNotSupported));
+					}
 				}
 			}
 			c.close();
@@ -127,37 +149,5 @@ public class ShowActivity extends Activity {
 			tvMessage.setVisibility(View.VISIBLE);
 			tvMessage.setText(e.getMessage());
 		}
-	}
-
-	private void launchIntent(String commandAsString) {
-		try {
-			Command command = CommandParser.getCommand(this, commandAsString);
-			Intent intent = command.getIntent();
-			if (getIntentActivities(intent).size() == 0) {
-				AlertDialog d = Utils.getGoToStoreDialog(
-						this,
-						getString(R.string.errorIntentActivityNotPresent),
-						command.getSuggestion()
-						);
-				d.show();
-				// Make the textview clickable. Must be called after show()
-				((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-			} else {
-				startActivity(intent);
-			}
-		} catch (CommandParseException e) {
-			toast(getString(R.string.errorCommandNotSupported));
-		}
-	}
-
-	private List<ResolveInfo> getIntentActivities(Intent intent) {
-		PackageManager pm = getPackageManager();
-		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
-		return activities;
-	}
-
-
-	private void toast(String message) {
-		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 	}
 }
