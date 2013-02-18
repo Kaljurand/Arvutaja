@@ -39,7 +39,8 @@
     <string name="summaryGrammarsProject">Kõnetuvastusgrammatikad GF-raamistikus</string>
     <string name="titleK6neleProject">Kõnele projekt</string>
     <string name="summaryK6neleProject">Grammatikateadlik ja eesti keelt toetav kõnetuvastusteenus Androidil</string>
-    <string name="confirmDeleteEntry">Tahate kindlasti kustutada \"%1$s\"?</string>
+    <string name="confirmDeleteEntry">Kas tahate kindlasti kustutada \"%1$s\"?</string>
+    <string name="confirmDeleteMultiEntry">Kas tahate kindlasti need tulemused kustutada?</string>
     <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
     <string name="buttonYes">Jah</string>
     <string name="buttonNo">Ei</string>

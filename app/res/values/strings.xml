@@ -61,6 +61,7 @@
     <string name="titleK6neleProject">project Kõnele</string>
     <string name="summaryK6neleProject">Grammar-aware Estonian-supporting speech recognition service for Android</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
+    <string name="confirmDeleteMultiEntry">Are you sure you want to delete this multielement entry?</string>
     <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonYes">Yes</string>
     <string name="buttonNo">No</string>

@@ -32,7 +32,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
@@ -158,10 +157,24 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		protected void onInsertComplete(int token, Object cookie, Uri uri) {
 			updateUi();
+			// TODO: This should be done in a better way.
+			// The idea is that if insert was called with cookie set to "true",
+			// then we launch the Show-activity to display the inserted entry.
+			ArvutajaActivity outerClass = mRef.get();
+			if (outerClass != null && cookie != null && cookie instanceof Boolean) {
+				Boolean cookieAsBoolean = (Boolean) cookie;
+				if (cookieAsBoolean.booleanValue()) {
+					outerClass.showDetails(uri);
+				}
+			}
 		}
 
 		public void insert(Uri contentUri, ContentValues values) {
 			startInsert(1, null, contentUri, values);
+		}
+
+		public void insert(Uri contentUri, ContentValues values, boolean displayEntry) {
+			startInsert(1, displayEntry, contentUri, values);
 		}
 
 		public void delete(Uri contentUri, long key) {
@@ -204,7 +217,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getGroup(groupPosition);
-				launchIntent(cursor, Query.Columns.TRANSLATION);
+				//launchIntent(cursor, Query.Columns.TRANSLATION);
+				long key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
+				showDetails(ContentUris.withAppendedId(QUERY_CONTENT_URI, key));
 				return false;
 			}
 		});
@@ -213,7 +228,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
-				launchIntent(cursor, Qeval.Columns.TRANSLATION);
+				//launchIntent(cursor, Qeval.Columns.TRANSLATION);
+				long key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
+				showDetails(ContentUris.withAppendedId(QEVAL_CONTENT_URI, key));
 				return false;
 			}
 		});
@@ -416,20 +433,21 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			return false;
 		}
 
-		if (fname == null) {
-			fname = getString(R.string.ambiguous);
-		}
 
 		switch (item.getItemId()) {
 		case R.id.cmMainShow:
-			Intent intent = new Intent(this, ShowActivity.class);
-			intent.setData(ContentUris.withAppendedId(uri, key));
-			startActivity(intent);
+			showDetails(ContentUris.withAppendedId(uri, key));
 			return true;
 		case R.id.cmMainDelete:
+			String message = null;
+			if (fname == null) {
+				message = getString(R.string.confirmDeleteMultiEntry);
+			} else {
+				message = String.format(getString(R.string.confirmDeleteEntry), fname);
+			}
 			Utils.getYesNoDialog(
 					this,
-					String.format(getString(R.string.confirmDeleteEntry), fname),
+					message,
 					new Executable() {
 						public void execute() {
 							mQueryHandler.delete(uri, key);
@@ -489,7 +507,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				// Make the textview clickable. Must be called after show()
 				((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
 			} else {
-				startActivity(intent);
+				startForeignActivity(intent);
 			}
 		} catch (CommandParseException e) {
 			toast(getString(R.string.errorCommandNotSupported));
@@ -565,12 +583,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (valuesList.isEmpty()) {
 			showErrorDialog(R.string.errorResultNoMatch);
 		} else if (valuesList.size() == 1) {
-			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0));
 			// If the transcription is not ambiguous, and the user prefers to
 			// evaluate using an external activity, then we launch it via an intent.
 			boolean launchExternalEvaluator = mPrefs.getBoolean(
 					getString(R.string.keyUseExternalEvaluator),
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
+
+			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0), ! launchExternalEvaluator);
 
 			if (launchExternalEvaluator) {
 				launchIntent(lins.get(1));
@@ -755,6 +774,14 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 	}
 
+
+	private void showDetails(Uri uri) {
+		Intent intent = new Intent(this, ShowActivity.class);
+		intent.setData(uri);
+		startActivity(intent);
+	}
+
+
 	private void goToStore() {
 		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
 				this,
@@ -812,15 +839,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				int[] childrenTo) {
 
 			super(context, null, groupLayout, groupFrom, groupTo, childLayout, childrenFrom, childrenTo);
-		}
-
-		// Expand groups by default
-		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-			View v = super.getGroupView(groupPosition, isExpanded, convertView, parent);
-			ExpandableListView eLV = (ExpandableListView) parent;
-			eLV.expandGroup(groupPosition);
-			return v;
 		}
 
 		@Override

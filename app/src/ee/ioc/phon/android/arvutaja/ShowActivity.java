@@ -30,6 +30,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,7 +54,16 @@ public class ShowActivity extends AbstractRecognizerActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.show);
 
-		Uri contentUri = getIntent().getData();
+		final Uri contentUri = getIntent().getData();
+
+		ImageButton bDelete = (ImageButton) findViewById(R.id.bDelete);
+		bDelete.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getContentResolver().delete(contentUri, null, null);
+				finish();
+
+			}});
 
 		TextView tvMessage = (TextView) findViewById(R.id.tvMessage);
 		try {
@@ -95,12 +105,15 @@ public class ShowActivity extends AbstractRecognizerActivity {
 					if (evaluation == null || evaluation.length() == 0) {
 						tvEvaluation.setVisibility(View.GONE);
 						// If the internal evaluation is missing then show the internal error message (if present)
+						// Actually, don't show the message because it looks scary and is not localized.
+						/*
 						String message = c.getString(c.getColumnIndex(Query.Columns.MESSAGE));
 						if (message == null || message.length() == 0) {
 						} else {
 							tvMessage.setVisibility(View.VISIBLE);
 							tvMessage.setText(message);
 						}
+						 */
 					} else {
 						// Otherwise show the internal evaluation
 						tvEvaluation.setText(evaluation);
@@ -135,7 +148,7 @@ public class ShowActivity extends AbstractRecognizerActivity {
 							tvView.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									startActivity(intent);
+									startForeignActivity(intent);
 								}
 							});
 						}

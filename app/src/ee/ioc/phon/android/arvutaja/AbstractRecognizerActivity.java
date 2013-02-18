@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,16 @@ import android.widget.Toast;
  * @author Kaarel Kaljurand
  */
 public abstract class AbstractRecognizerActivity extends Activity {
+
+	/**
+	 * Launches an activity which the user probably does not want to see
+	 * if he presses HOME while in this activity and then starts Arvutaja again
+	 * from the launcher.
+	 */
+	public void startForeignActivity(Intent intent) {
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		startActivity(intent);
+	}
 
 	public String getVersionName() {
 		return Utils.getVersionName(this);
