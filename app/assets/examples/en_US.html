@@ -21,7 +21,7 @@ arithmetical expressions,
 measurement unit and currency conversion expressions,
 alarm clock / timer setting commands.</p>
 
-<h3>Numbers and arithmetical expressions</h3>
+<h3>Arithmetical expressions</h3>
 <p>Arbitrarily long arithmetical expressions with numbers between
 -10<sup>12</sup> and 10<sup>12</sup> (including some decimal numbers),
 with the main operators ("plus", "minus", "times", "divided by",
@@ -41,21 +41,28 @@ five</td></tr>
 <p>Note that the input is always interpreted in the left-associative manner, i.e.</p>
 
 <pre>
-one plus two times three == ((1 + 2) * 3)
+one plus two times three
+= ((1 + 2) * 3)
 </pre>
 
+<p>Arvutaja computes the result but links to
+WolframAlpha for a more detailed analysis.</p>
 
 <h3>Unit conversion</h3>
 <p>Unit conversion expressions with about 50 main units and currency conversion
 with about 15 currencies.</p>
 
 <table>
-<tr><td>convert thirty two point five fahrenheits to degrees</td></tr>
+<tr><td>convert thirty two point five Fahrenheits to Celsius</td></tr>
 <tr><td>convert one hundred point one miles per hours squared to meters per seconds squared</td></tr>
 <tr><td>convert two cubic inches to gallons</td></tr>
 <tr><td>convert twelve thousand three hundred and forty five Norwegian crowns to Euros</td></tr>
 <tr><td>convert half American dollars to New Zealand dollars</td></tr>
 </table>
+
+<p>Arvutaja computes the result (unless the expression is a
+currency conversion expression)
+but links to WolframAlpha for a more detailed analysis.</p>
 
 <h3>Alarm clock and timer</h3>
 <p>Commands for setting the alarm clock and the timer.</p>
@@ -65,11 +72,16 @@ with about 15 currencies.</p>
 <tr><td>set the timer for two hours and fifteen minutes</td></tr>
 </table>
 
+<p>Arvutaja forwards the command to the device's alarm clock app.</p>
+
 <h3>Dialing a number</h3>
 <p>Dialing a phone number by listing its digits.</p>
 <table>
 <tr><td>dial one one eight two</td></tr>
 </table>
+
+<p>Arvutaja forwards the command to the device's phone app.</p>
+
 
 <h2>Variation in the input</h2>
 <p>In principle the input must follow the fixed syntactic structure displayed

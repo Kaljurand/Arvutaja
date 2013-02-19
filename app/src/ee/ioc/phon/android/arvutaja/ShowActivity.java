@@ -62,7 +62,6 @@ public class ShowActivity extends AbstractRecognizerActivity {
 			public void onClick(View v) {
 				getContentResolver().delete(contentUri, null, null);
 				finish();
-
 			}});
 
 		TextView tvMessage = (TextView) findViewById(R.id.tvMessage);
@@ -145,7 +144,7 @@ public class ShowActivity extends AbstractRecognizerActivity {
 							} else {
 								tvView.setText(Uri.decode(uri));
 							}
-							tvView.setOnClickListener(new OnClickListener() {
+							llInterpretation.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
 									startForeignActivity(intent);

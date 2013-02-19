@@ -4,6 +4,7 @@
     <string name="labelApp">Arvutaja</string>
     <string name="labelSettings">Seaded</string>
     <string name="labelExamples">Näited</string>
+    <string name="labelShow">Info</string>
     <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.et.html</string>
     <string name="warningUtteranceNotSupported">Sisendlause pole toetatud</string>
     <string name="error">Viga</string>
@@ -22,8 +23,6 @@
     <string name="menuMainSortByEvaluation">väärtuse järgi</string>
     <string name="menuMainSettings">Seaded</string>
     <string name="menuMainExamples">Näited</string>
-    <string name="cmMainShow">Info</string>
-    <string name="cmMainDelete">Kustuta</string>
     <string name="titleService">Kõnetuvastaja</string>
     <string name="dialogTitleService">Valige kõnetuvastaja</string>
     <string name="titleLanguage">Sisendkeel</string>
@@ -39,9 +38,8 @@
     <string name="summaryGrammarsProject">Kõnetuvastusgrammatikad GF-raamistikus</string>
     <string name="titleK6neleProject">Kõnele projekt</string>
     <string name="summaryK6neleProject">Grammatikateadlik ja eesti keelt toetav kõnetuvastusteenus Androidil</string>
-    <string name="confirmDeleteEntry">Kas tahate kindlasti kustutada \"%1$s\"?</string>
-    <string name="confirmDeleteMultiEntry">Kas tahate kindlasti need tulemused kustutada?</string>
     <string name="buttonMicrophoneContentDescription">Vajutage sellele nupule, et sisestada avaldis</string>
+    <string name="buttonDeleteContentDescription">Kustutage see avaldis</string>
     <string name="buttonYes">Jah</string>
     <string name="buttonNo">Ei</string>
     <string name="buttonOk">OK</string>

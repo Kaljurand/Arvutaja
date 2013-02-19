@@ -25,8 +25,6 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,7 +33,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.SimpleCursorTreeAdapter;
@@ -217,9 +214,12 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getGroup(groupPosition);
-				//launchIntent(cursor, Query.Columns.TRANSLATION);
-				long key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
-				showDetails(ContentUris.withAppendedId(QUERY_CONTENT_URI, key));
+
+				String translation = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
+				if (translation != null) {
+					long key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
+					showDetails(ContentUris.withAppendedId(QUERY_CONTENT_URI, key));
+				}
 				return false;
 			}
 		});
@@ -228,7 +228,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
-				//launchIntent(cursor, Qeval.Columns.TRANSLATION);
 				long key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
 				showDetails(ContentUris.withAppendedId(QEVAL_CONTENT_URI, key));
 				return false;
@@ -400,67 +399,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.cm_main, menu);
-	}
-
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		final long key;
-		String fname;
-		final Uri uri;
-
-		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-		if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getChild(groupPos, childPos);
-			key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
-			fname = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
-			uri = QEVAL_CONTENT_URI;
-		} else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			Cursor cursor = (Cursor) mListView.getExpandableListAdapter().getGroup(groupPos);
-			key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
-			fname = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
-			uri = QUERY_CONTENT_URI;
-		} else {
-			return false;
-		}
-
-
-		switch (item.getItemId()) {
-		case R.id.cmMainShow:
-			showDetails(ContentUris.withAppendedId(uri, key));
-			return true;
-		case R.id.cmMainDelete:
-			String message = null;
-			if (fname == null) {
-				message = getString(R.string.confirmDeleteMultiEntry);
-			} else {
-				message = String.format(getString(R.string.confirmDeleteEntry), fname);
-			}
-			Utils.getYesNoDialog(
-					this,
-					message,
-					new Executable() {
-						public void execute() {
-							mQueryHandler.delete(uri, key);
-						}
-					}
-					).show();
-			return true;
-		default:
-			return super.onContextItemSelected(item);
-		}
-	}
-
-
 	private void onSuccess(String lang, Bundle bundle) {
 		ArrayList<String> lins = bundle.getStringArrayList(RESULTS_RECOGNITION_LINEARIZATIONS);
 		ArrayList<Integer> counts = bundle.getIntegerArrayList(RESULTS_RECOGNITION_LINEARIZATION_COUNTS);
@@ -482,14 +420,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		}
 		processResults(lang, lins, counts);
-	}
-
-
-	private void launchIntent(Cursor cursor, String translation) {
-		String commandAsString = cursor.getString(cursor.getColumnIndex(translation));
-		if (commandAsString != null) {
-			launchIntent(commandAsString);
-		}
 	}
 
 
