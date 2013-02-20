@@ -44,7 +44,7 @@
     <string name="menuMainExamples">Examples</string>
     <string name="menuMainSettings">Settings</string>
     <string name="titleCategoryLinks">Links</string>
-    <string name="titleMaxResults">Number of results</string>
+    <string name="titleMaxResults">Recognition hypotheses</string>
     <string name="titleUseExternalEvaluator">Autoview</string>
     <string name="summaryUseExternalEvaluator">Automatically view the result in an external app (e.g. Google Maps, WolframAlpha)</string>
     <string name="titleService">Speech recognizer</string>
@@ -95,8 +95,8 @@
         <item quantity="other">%d inputs</item>
     </plurals>
     <plurals name="summaryMaxResults">
-        <item quantity="one">Output only one result</item>
-        <item quantity="other">Output at most %d results</item>
+        <item quantity="one">Output only the most likely recognition hypothesis</item>
+        <item quantity="other">Output at most %d recognition hypotheses</item>
     </plurals>
 
 </resources>

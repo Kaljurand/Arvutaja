@@ -27,7 +27,7 @@
     <string name="dialogTitleService">Valige kõnetuvastaja</string>
     <string name="titleLanguage">Sisendkeel</string>
     <string name="dialogTitleLanguage">Valige sisendkeel</string>
-    <string name="titleMaxResults">Vastuste arv</string>
+    <string name="titleMaxResults">Tuvastushüpoteeside arv</string>
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
     <string name="titleAudioCues">Helisignaalid</string>
@@ -58,8 +58,8 @@
         <item quantity="other">%d sisendit</item>
     </plurals>
     <plurals name="summaryMaxResults">
-        <item quantity="one">Väljasta 1 vastus</item>
-        <item quantity="other">Väljasta kõige rohkem %d vastust</item>
+        <item quantity="one">Väljasta ainult kõige tõenäolisem tuvastushüpotees</item>
+        <item quantity="other">Väljasta maksimaalselt %d tuvastushüpoteesi</item>
     </plurals>
 
 </resources>
