@@ -31,6 +31,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -209,6 +211,62 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mListView = (ExpandableListView) findViewById(R.id.list);
 
 		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
+
+
+		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View _view, int position, long _id) {
+				ExpandableListView listView = (ExpandableListView) parent;
+
+				// Converts a flat list position (the raw position of an item (child or group) in the list)
+				// to a group and/or child position (represented in a packed position).
+				long packedPosition = listView.getExpandableListPosition(position);
+				Cursor cursor = null;
+				final Uri contentUri;
+				final long key;
+				String translation = null;
+				if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {			
+					cursor = (Cursor) listView.getExpandableListAdapter().getGroup(position);
+					if (cursor == null) {
+						return false;
+					}
+					key = cursor.getLong(cursor.getColumnIndex(Query.Columns._ID));
+					contentUri = QUERY_CONTENT_URI;
+					translation = cursor.getString(cursor.getColumnIndex(Query.Columns.TRANSLATION));
+				} else if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+					int groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition);
+					int childPosition = ExpandableListView.getPackedPositionChild(packedPosition);
+					cursor = (Cursor) listView.getExpandableListAdapter().getChild(groupPosition, childPosition);
+					if (cursor == null) {
+						return false;
+					}
+					key = cursor.getLong(cursor.getColumnIndex(Qeval.Columns._ID));
+					contentUri = QEVAL_CONTENT_URI;
+					translation = cursor.getString(cursor.getColumnIndex(Qeval.Columns.TRANSLATION));
+				} else {
+					return false;
+				}
+
+				String message = null;
+				if (translation == null) {
+					message = getString(R.string.confirmDeleteMultiEntry);
+				} else {
+					message = String.format(getString(R.string.confirmDeleteEntry), translation);
+				}
+				Utils.getYesNoDialog(
+						ArvutajaActivity.this,
+						message,
+						new Executable() {
+							public void execute() {
+								mQueryHandler.delete(contentUri, key);
+							}
+						}
+						).show();
+				return true;
+			}
+		});
+
 
 		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
