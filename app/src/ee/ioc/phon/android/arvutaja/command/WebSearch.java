@@ -1,5 +1,6 @@
 package ee.ioc.phon.android.arvutaja.command;
 
+import ee.ioc.phon.android.arvutaja.R;
 import android.app.SearchManager;
 import android.content.Intent;
 
@@ -7,6 +8,10 @@ public class WebSearch extends DefaultCommand {
 
 	public WebSearch(String command) {
 		super(command);
+	}
+
+	public int getMessage() {
+		return R.string.msgActionWebSearch;
 	}
 
 	@Override

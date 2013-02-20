@@ -54,6 +54,13 @@
         Seda valikut on võimalik soovi korral Arvutaja-seadetes muuta.</string>
     <string name="confirmDeleteEntry">Kas tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Kas tahate kindlasti selle tulemustegrupi kustutada?</string>
+    <string name="msgActionWebSearch">Otsi veebist</string>
+    <string name="msgActionSearch">Otsi</string>
+    <string name="msgActionSearchLongPress">Otsi telefonist</string>
+    <string name="msgActionSetAlarm">Pane äratuskell helisema</string>
+    <string name="msgActionViewWolframAlpha">Ava WolframAlpha veebirakendus</string>
+    <string name="msgActionViewGoogleMaps">Ava Google Maps kaardirakendus</string>
+    <string name="msgActionDial">Vali number</string>
 
     <plurals name="numberOfInputs">
         <item quantity="one">1 sisend</item>

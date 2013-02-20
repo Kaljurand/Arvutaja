@@ -25,4 +25,10 @@ public interface Command {
 	 * @return evaluation of the expression that was given to the constructor
 	 */
 	String getOut();
+
+
+	/**
+	 * @return resource ID of the message to show in the UI for this command.
+	 */
+	int getMessage();
 }

@@ -91,8 +91,7 @@
             android:layout_marginTop="16dp"
             android:textColor="@color/link"
             android:textIsSelectable="false"
-            android:textSize="@dimen/textSizeView"
-            android:typeface="monospace" />
+            android:textSize="@dimen/textSizeView" />
     </LinearLayout>
 
     <LinearLayout

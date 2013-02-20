@@ -3,6 +3,8 @@ package ee.ioc.phon.android.arvutaja.command;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ee.ioc.phon.android.arvutaja.R;
+
 import android.content.Intent;
 import android.net.Uri;
 
@@ -21,6 +23,10 @@ public class Direction extends DefaultCommand {
 
 	public Direction(String command) {
 		super(command);
+	}
+
+	public int getMessage() {
+		return R.string.msgActionViewGoogleMaps;
 	}
 
 	@Override

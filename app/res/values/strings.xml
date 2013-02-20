@@ -73,6 +73,13 @@
     <string name="msgFoundK6nele">Using Kõnele as the speech recognizer. You can override it in the Arvutaja-settings, but keep in mind that Arvutaja works best only with Kõnele.</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Are you sure you want to delete this multielement entry?</string>
+    <string name="msgActionWebSearch">Click to search the web</string>
+    <string name="msgActionSearch">Click to search</string>
+    <string name="msgActionSearchLongPress">Click to search device</string>
+    <string name="msgActionSetAlarm">Click to set the alarm</string>
+    <string name="msgActionViewWolframAlpha">Click to view on WolframAlpha</string>
+    <string name="msgActionViewGoogleMaps">Click to view on Google Maps</string>
+    <string name="msgActionDial">Click to dial</string>
 
     <string-array name="empty" translatable="false"></string-array>
     <string-array name="entryValuesMaxResults" translatable="false">

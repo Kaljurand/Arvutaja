@@ -2,6 +2,8 @@ package ee.ioc.phon.android.arvutaja.command;
 
 import javax.measure.unit.Unit;
 
+import ee.ioc.phon.android.arvutaja.R;
+
 import android.content.Intent;
 
 /**
@@ -15,6 +17,10 @@ public class Unitconv extends DefaultCommand {
 
 	public Unitconv(String command) {
 		super(command);
+	}
+
+	public int getMessage() {
+		return R.string.msgActionViewWolframAlpha;
 	}
 
 	@Override

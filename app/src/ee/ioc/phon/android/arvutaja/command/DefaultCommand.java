@@ -1,5 +1,6 @@
 package ee.ioc.phon.android.arvutaja.command;
 
+import ee.ioc.phon.android.arvutaja.R;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,9 +13,13 @@ public class DefaultCommand implements Command {
 		mCommand = command;
 	}
 
+	public int getMessage() {
+		return R.string.msgActionWebSearch;
+	}
+
 	@Override
 	public Intent getIntent() throws CommandParseException {
-		Intent intent = new Intent(Intent.ACTION_SEARCH);
+		Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
 		intent.putExtra(SearchManager.QUERY, mCommand);
 		return intent;
 	}

@@ -2,6 +2,8 @@ package ee.ioc.phon.android.arvutaja.command;
 
 import java.util.regex.Pattern;
 
+import ee.ioc.phon.android.arvutaja.R;
+
 import android.content.Intent;
 
 /**
@@ -19,6 +21,10 @@ public class Expr extends DefaultCommand {
 
 	public Expr(String command) {
 		super(command);
+	}
+
+	public int getMessage() {
+		return R.string.msgActionViewWolframAlpha;
 	}
 
 	@Override

@@ -20,13 +20,12 @@ import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Query;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Time;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -118,32 +117,23 @@ public class ShowActivity extends AbstractRecognizerActivity {
 						tvEvaluation.setText(evaluation);
 					}
 
-					// Show a link to the external evaluator
+					// Show a link to the external evaluator, or to the Play Store
+					// if there is not external evaluator.
 					final TextView tvView = (TextView) findViewById(R.id.tvView);
+					String message = null;
 					try {
 						final Command command = CommandParser.getCommand(this, translation);
 						final Intent intent = command.getIntent();
-						if (getIntentActivities(intent).size() == 0) {
-							tvView.setOnClickListener(new OnClickListener() {
+						if (getIntentActivities(intent).isEmpty()) {
+							message = getString(R.string.errorIntentActivityNotPresent);
+							llInterpretation.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									AlertDialog d = Utils.getGoToStoreDialog(
-											getApplicationContext(),
-											getString(R.string.errorIntentActivityNotPresent),
-											command.getSuggestion()
-											);
-									d.show();
-									// Make the textview clickable. Must be called after show()
-									((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+									startForeignActivity(new Intent(Intent.ACTION_VIEW, command.getSuggestion()));
 								}
 							});
 						} else {
-							String uri = intent.getDataString();
-							if (uri == null) {
-								tvView.setText(intent.getAction());
-							} else {
-								tvView.setText(Uri.decode(uri));
-							}
+							message = getString(command.getMessage());
 							llInterpretation.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
@@ -152,7 +142,10 @@ public class ShowActivity extends AbstractRecognizerActivity {
 							});
 						}
 					} catch (CommandParseException e) {
-						toast(getString(R.string.errorCommandNotSupported));
+						message = getString(R.string.errorCommandNotSupported);
+						tvView.setTextColor(Color.RED);
+					} finally {
+						tvView.setText(message);
 					}
 				}
 			}

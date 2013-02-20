@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ee.ioc.phon.android.arvutaja.R;
 import ee.ioc.phon.android.arvutaja.provider.AlarmClock;
 
 import android.content.Intent;
@@ -33,6 +34,10 @@ public class Alarm extends DefaultCommand {
 	public Alarm(String command, String msg) {
 		super(command);
 		mExtraMessage = msg;
+	}
+
+	public int getMessage() {
+		return R.string.msgActionSetAlarm;
 	}
 
 	public Intent getIntent() throws CommandParseException {
