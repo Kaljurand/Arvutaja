@@ -37,10 +37,11 @@ Download
 
 There are currently two versions of Arvutaja, which differ in their UIs and how they use the speech recognizer.
 
-  - [v0.6.00](https://docs.google.com/file/d/0B5rlzd4hAZrEbDltT2YxQUJBeWM/edit?usp=sharing), requires Android v4+
-  - [v0.4.06](https://s3-eu-west-1.amazonaws.com/arvutaja/apk/Arvutaja-0.4.06.apk)
+  - v0.6.00, requires Android v4+
+  - v0.4.06, requires Android v1.6+
 
-Both versions are also available on [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja).
+APK-packages for both versions are available via [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja)
+and [GitHub Releases](https://github.com/Kaljurand/Arvutaja/releases).
 
 Features
 --------
