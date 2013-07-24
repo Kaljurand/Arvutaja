@@ -10,14 +10,13 @@ import android.content.Intent;
  * <p>Examples of supported expressions:</p>
  * <ul>
  * <li>( 12 + - 34 ) * 123</li>
+ * <li>PI ^ 0.1</li>
  * </ul>
  */
 public class Expr extends DefaultCommand {
 
-	public static final Pattern p1 = Pattern.compile("^[0-9.]+$");
-	public static final Pattern p2 = Pattern.compile("^\\(.*\\)$");
 	// Tolerate anything that is composed of digits, operator symbols and brackets
-	public static final Pattern p3 = Pattern.compile("^[0-9().+*/ -]+$");
+	public static final Pattern PATTERN_EXPR = Pattern.compile("^[0-9().\\^+*/ -]+$");
 
 	public Expr(String command) {
 		super(command);
@@ -39,7 +38,7 @@ public class Expr extends DefaultCommand {
 	}
 
 	public static boolean isCommand(String command) {
-		return p1.matcher(command).matches() || p2.matcher(command).matches() || p3.matcher(command).matches();
+		return PATTERN_EXPR.matcher(command.replace("PI", "0")).matches();
 	}
 
 }
