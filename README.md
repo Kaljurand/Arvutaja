@@ -41,7 +41,7 @@ There are currently two versions of Arvutaja. They use the same underlying gramm
 differ in their UIs and how they use the speech recognizer.
 
   - v0.5+, requires Android v4+
-  - v0.4.06, requires Android v1.6+ (not maintained)
+  - v0.4, requires Android v1.6+ (not developed anymore)
 
 APK-packages for both versions are available via [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja)
 and [GitHub Releases](https://github.com/Kaljurand/Arvutaja/releases).
@@ -84,7 +84,7 @@ In order to execute some actions, Arvutaja expects the device to contain
 Included libraries
 ------------------
 
-  - Unit conversion powered by <http://jscience.org/> (`jscience-4.3.jar` and `unit-api-0.6.0.jar`)
+  - Unit conversion powered by <http://jscience.org> (`jscience-4.3.jar` and `unit-api-0.6.0.jar`)
   - Evaluation of arithmetical expressions powered by <http://www.softwaremonkey.org/Code/MathEval>
 
 Examples (Estonian)
