@@ -1,14 +1,15 @@
 Arvutaja
 ========
 
-__Arvutaja__ (= the Estonian word for _the one that computes_) is an Android app that converts a spoken utterance
-in some natural language to an expression/command in some formal language and evaluates the formal expression
-using another app on the device.
+__Arvutaja__ (= the Estonian word for _the one that computes_) is a voice actions app for Android,
+i.e. it converts a spoken utterance
+in some natural language to an expression/command in some formal language and then
+evaluates/executes the formal expression.
 
 Currently supported input languages:
 
   - Estonian
-  - English (experimental)
+  - English
 
 Currently supported expressions and commands:
 
@@ -18,6 +19,7 @@ Currently supported expressions and commands:
   - alarm clock / timer setting command
   - phone number
   - Estonian address query (only with Estonian language input)
+  - Estonian weather query (only with Estonian language input)
 
 The expressions/commands are evaluated using an external app, such as
 
@@ -29,16 +31,17 @@ The expressions/commands are evaluated using an external app, such as
 The arithmetical and measurement unit conversion expressions are also evaluated by Arvutaja itself.
 
 Arvutaja uses grammar-based speech recognition and is largely defined by the Action-grammar developed in the
-separate Grammars-project (<http://kaljurand.github.com/Grammars/>). This grammar defines
+separate Grammars-project (<http://kaljurand.github.io/Grammars/>). This grammar defines
 which input languages and expressions are supported.
 
 Download
 --------
 
-There are currently two versions of Arvutaja, which differ in their UIs and how they use the speech recognizer.
+There are currently two versions of Arvutaja. They use the same underlying grammar but
+differ in their UIs and how they use the speech recognizer.
 
-  - v0.6.00, requires Android v4+
-  - v0.4.06, requires Android v1.6+
+  - v0.5+, requires Android v4+
+  - v0.4.06, requires Android v1.6+ (not maintained)
 
 APK-packages for both versions are available via [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja)
 and [GitHub Releases](https://github.com/Kaljurand/Arvutaja/releases).
@@ -47,7 +50,6 @@ Features
 --------
 
   * __No complex menus!__ Just a microphone button.
-  * __Tap once!__ Tapping the widget launches the recognizer, which records the speech, turns it into text, which gets evaluated, with no additional taps needed to see the result.
   * The __history__ of query evaluation results is presented in a persistent list.
   * Support for __vague/ambiguous queries__ (e.g. "viis norra krooni suures valuutas").
   * Clicking on a list item sends the query to a 3rd party app. This is mostly used for
@@ -55,64 +57,41 @@ Features
     * currency conversion (which the internal evaluator does not support yet);
     * getting a "2nd opinion" (from e.g. Google Search or WolframAlpha).
 
+The main difference between Arvutaja and other intelligent assistant / voice actions apps like Google Now
+and Siri is that Arvutaja is largely defined by a human-readable multilingual grammar.
+Also, Arvutaja is open and modular by
 
-Comparison to other apps
-------------------------
-
-The main differences between Arvutaja and other intelligent assistant / speech-input based apps like Google Now
-and Siri are that Arvutaja
-
-  - supports Estonian;
-  - is largely defined by a human-readable grammar, i.e. users can find out exactly which input phrases are supported;
-  - is entirely open by
-    - using an open source speech recognition server,
-    - using open source grammars,
-    - having an open source code.
-
+  - using open source grammars (i.e. users can find out exactly which input phrases are supported),
+  - not depending on any particular speech recognition server,
+  - having an open source code.
 
 Dependencies on other apps
 --------------------------
 
-__Arvutaja__ uses grammar-aware Estonian speech recognition service for Android Kõnele
-which you have to install separately from either of the following URLs
+For speech recognition, Arvutaja can technically use any Android speech recognizer (chosen via the Arvutaja settings).
+However, it is recommended to use Kõnele, a grammar-aware speech recognition service for Android.
+You have to install it separately from either of the following URLs
 
   - http://recognizer-intent.googlecode.com
   - https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak
 
+In order to execute some actions, Arvutaja expects the device to contain
 
-Background technologies
------------------------
+  - a web browser;
+  - an app that understands Google Maps' URLs (`http://maps.google.com/maps?...`);
+  - an app that responds to the standard Android alarm clock intent (`android.intent.action.SET_ALARM`).
 
-### Speech recognition
+Included libraries
+------------------
 
-__Arvutaja__ uses an online grammar-aware Estonian-aware speech recognition server
-
-  - http://bark.phon.ioc.ee/speech-api/v1/
-
-### GF-based speech recognition
-
-Grammatical Framework (GF) is used by the server to guide speech recognition
-and to transform the
-raw recognition result into an evaluatable form.
-
-  * GF: http://www.grammaticalframework.org/
-  * Estonian GF grammars: http://kaljurand.github.com/Grammars/
-
-### Unit conversion
-
-  * Unit conversion powered by jscience-4.3.jar (unit-api-0.6.0.jar)
-
-### Arithmetical expressions
-
-  * http://www.softwaremonkey.org/Code/MathEval
-
+  - Unit conversion powered by <http://jscience.org/> (`jscience-4.3.jar` and `unit-api-0.6.0.jar`)
+  - Evaluation of arithmetical expressions powered by <http://www.softwaremonkey.org/Code/MathEval>
 
 Examples (Estonian)
 -------------------
 
-The language understood by __Arvutaja__ is described by several underlying grammars.
-Following is a list of some interesting examples, more can be found at
-http://kaljurand.github.com/Grammars/
+Following is a list of some input examples, more can be found at
+<http://kaljurand.github.io/Grammars/>.
 
 ### Alarm
 
