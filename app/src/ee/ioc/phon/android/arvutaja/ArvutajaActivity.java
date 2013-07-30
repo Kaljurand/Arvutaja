@@ -23,6 +23,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -57,6 +58,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import ee.ioc.phon.android.arvutaja.Constants.State;
@@ -65,6 +67,7 @@ import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
+import ee.ioc.phon.android.speechrecorder.TtsProvider;
 
 
 public class ArvutajaActivity extends AbstractRecognizerActivity {
@@ -101,6 +104,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private QueryHandler mQueryHandler;
 
 	private SpeechRecognizer mSr;
+	private TtsProvider mTts;
 
 	private static final String[] QUERY_PROJECTION = new String[] {
 		Query.Columns._ID,
@@ -304,6 +308,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
+
 		mAdapter = new MyExpandableListAdapter(
 				this,
 				R.layout.list_item_group,
@@ -364,8 +369,25 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			if (mSr == null) {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
-				String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
-				getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
+				final String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+				mTts = new TtsProvider(this, new TextToSpeech.OnInitListener() {
+					@Override
+					public void onInit(int status) {
+						getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
+						if (status == TextToSpeech.SUCCESS) {
+							if (mTts.isLanguageAvailable(lang)) {
+								mTts.setLanguage(lang);
+								Locale locale = new Locale(lang);
+								say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
+							} else {
+								toast(String.format(getString(R.string.errorTtsLangNotAvailable), lang));
+							}
+						} else {
+							toast(getString(R.string.errorTtsInitError));
+							Log.e(getString(R.string.errorTtsInitError));
+						}
+					}
+				});
 				Intent intentRecognizer = createRecognizerIntent(
 						lang,
 						getString(R.string.defaultGrammar),
@@ -403,6 +425,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (mSr != null) {
 			mSr.destroy();
 			mSr = null;
+		}
+		// Stop TTS
+		if (mTts != null) {
+			mTts.shutdown();
 		}
 		mAdapter.changeCursor(null);
 		mAdapter = null;
@@ -516,6 +542,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 	/**
+	 * This is called after successful speech recognition to inform the user
+	 * about the results and also store the results.
+	 *
 	 * We do not show repeated or empty linearizations.
 	 * <ul>
 	 *   <li>raw utterance of hypothesis 1
@@ -570,6 +599,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		if (valuesList.isEmpty()) {
 			showErrorDialog(R.string.errorResultNoMatch);
+			say(getString(R.string.errorResultNoMatch));
 		} else if (valuesList.size() == 1) {
 			// If the transcription is not ambiguous, and the user prefers to
 			// evaluate using an external activity, then we launch it via an intent.
@@ -577,12 +607,18 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					getString(R.string.keyUseExternalEvaluator),
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
+			String ttsOutput = makeTtsOutput(
+					valuesList.get(0).getAsString(Qeval.Columns.UTTERANCE),
+					valuesList.get(0).getAsString(Qeval.Columns.EVALUATION)
+					);
+			say(ttsOutput);
 			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0), ! launchExternalEvaluator);
 
 			if (launchExternalEvaluator) {
 				launchIntent(lins.get(1));
 			}
 		} else {
+			say(String.format(getString(R.string.ttsAmbiguous), valuesList.size()));
 			ContentValues values = new ContentValues();
 			values.put(Query.Columns.TIMESTAMP, timestamp);
 			// TRANSLATION must remain NULL here
@@ -608,6 +644,20 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				);
 	}
 
+	private void say(String str) {
+		if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
+			if (mTts == null) {
+				// TODO: show Toast
+			} else {
+				// TODO: check if the TTS engine has been initialized
+				mTts.say(str);
+			}
+		}
+	}
+
+	private String makeTtsOutput(String expression, String value) {
+		return expression + " " + value;
+	}
 
 	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
 		final AudioCue audioCue;

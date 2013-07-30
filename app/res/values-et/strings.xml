@@ -17,6 +17,10 @@
     <string name="errorCommandNotSupported">Ei tunne sellist käsku</string>
     <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks. Installeerige see Play poest.</string>
     <string name="errorNoDefaultRecognizer">Kõnetuvastaja pole installeeritud või seadistatud</string>
+    <string name="errorTtsLangNotAvailable">Kõneväljund ei ole keele \"%1$s\" jaoks installeeritud</string>
+    <string name="errorTtsInitError">Kõneväljundi konfigureerimine luhtus</string>
+    <string name="ttsAmbiguous">Sisend on mitmene: %1$d avaldist</string>
+    <string name="ttsTtsLangAvailable">Kõneväljund on olemas keelele %1$s</string>
     <string name="menuMainSort">Sorteeri …</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>
@@ -32,6 +36,8 @@
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
     <string name="titleAudioCues">Helisignaalid</string>
     <string name="summaryAudioCues">Anna lindistamise algusest ja lõpust märku lühikese helisignaaliga</string>
+    <string name="titleUseTts">Kõneväljund</string>
+    <string name="summaryUseTts">Korda sisendit</string>
     <string name="titleArvutajaProject">Arvutaja projekt</string>
     <string name="summaryArvutajaProject">(selle rakenduse looja)</string>
     <string name="titleGrammarsProject">Grammatikate projekt</string>
