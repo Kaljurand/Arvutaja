@@ -4,8 +4,8 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.provider.AlarmClock;
 import ee.ioc.phon.android.arvutaja.R;
-import ee.ioc.phon.android.arvutaja.provider.AlarmClock;
 
 import android.content.Intent;
 import android.net.Uri;
