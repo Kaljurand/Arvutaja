@@ -67,7 +67,7 @@ import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
-import ee.ioc.phon.android.speechrecorder.TtsProvider;
+import ee.ioc.phon.android.speechutils.TtsProvider;
 
 
 public class ArvutajaActivity extends AbstractRecognizerActivity {
@@ -375,12 +375,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					public void onInit(int status) {
 						getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
 						if (status == TextToSpeech.SUCCESS) {
-							if (mTts.isLanguageAvailable(lang)) {
-								mTts.setLanguage(lang);
-								Locale locale = new Locale(lang);
-								say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
-							} else {
+							Locale locale = mTts.chooseLanguage(lang);
+							if (locale == null) {
 								toast(String.format(getString(R.string.errorTtsLangNotAvailable), lang));
+							} else {
+								mTts.setLanguage(locale);
+								// TODO: temporary
+								say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
 							}
 						} else {
 							toast(getString(R.string.errorTtsInitError));
@@ -530,6 +531,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private Intent createRecognizerIntent(String langSource, String grammar, String langTarget) {
+		Locale locale = new Locale(langSource);
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -537,7 +539,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,
 				Integer.parseInt(mPrefs.getString(getString(R.string.keyMaxResults), getString(R.string.defaultMaxResults))));
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
-		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
+		// Request the App-language and the TTS-language (e.g. Engtts).
+		// We assume (in the following) that only a single variant is returned for both types of languages.
+		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget + "," + locale.getISO3Language() + "tts");
 		return intent;
 	}
 
@@ -545,13 +549,17 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	 * This is called after successful speech recognition to inform the user
 	 * about the results and also store the results.
 	 *
-	 * We do not show repeated or empty linearizations.
+	 * We assume that each hypothesis comes with {@code 2*n} linearizations
+	 * corresponding to {@code n} parse results of the raw recognition result.
+	 * Each result has 2 linearizations (App and ???tts), in any order.
+	 * We ignore that results where App is empty or is repeated.
+	 *
 	 * <ul>
 	 *   <li>raw utterance of hypothesis 1
 	 *   <li>linearization 1.1
-	 *   <li>language code of linearization 1.1
+	 *   <li>language code of linearization 1.1 (App)
 	 *   <li>linearization 1.2
-	 *   <li>language code of linearization 1.2
+	 *   <li>language code of linearization 1.2 (Engtts)
 	 *   <li>...
 	 *   <li>raw utterance of hypothesis 2
 	 *   <li>...
@@ -562,6 +570,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		now.setToNow();
 		long timestamp = now.toMillis(false);
 
+		String ttsLang = (new Locale(lang).getISO3Language()) + "tts";
+		String ttsPhrase = null;
+
 		List<ContentValues> valuesList = new ArrayList<ContentValues>();
 		Set<String> seen = new HashSet<String>();
 		int begin = 0;
@@ -571,8 +582,15 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			for (int pos = begin + 1; pos < end; pos = pos + 2) {
 				String lin = lins.get(pos);
 				String targetLang = lins.get(pos+1);
-				String key = lin + "|" + targetLang;
 
+				// TODO: we currently only pick out the first TTS language linearization,
+				// because in the case of several linearizations they are not currently spoken.
+				if (ttsPhrase == null && ttsLang.equals(targetLang)) {
+					ttsPhrase = lin;
+					continue;
+				}
+
+				String key = lin + "|" + targetLang;
 				if (lin.isEmpty() || seen.contains(key)) {
 					continue;
 				} else {
@@ -599,6 +617,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		if (valuesList.isEmpty()) {
 			showErrorDialog(R.string.errorResultNoMatch);
+			// TODO: use the speech input locale, not the GUI locale,
+			// i.e. if the user speaks in English, then respond in English,
+			// even though the (visual) GUI is in German.
 			say(getString(R.string.errorResultNoMatch));
 		} else if (valuesList.size() == 1) {
 			// If the transcription is not ambiguous, and the user prefers to
@@ -608,7 +629,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
 			String ttsOutput = makeTtsOutput(
-					valuesList.get(0).getAsString(Qeval.Columns.UTTERANCE),
+					ttsPhrase,
 					valuesList.get(0).getAsString(Qeval.Columns.EVALUATION)
 					);
 			say(ttsOutput);
