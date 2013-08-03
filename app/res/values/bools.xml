@@ -3,6 +3,6 @@
 
     <bool name="defaultUseExternalEvaluator">false</bool>
     <bool name="defaultAudioCues">true</bool>
-    <bool name="defaultUseTts">true</bool>
+    <bool name="defaultUseTts">false</bool>
 
 </resources>

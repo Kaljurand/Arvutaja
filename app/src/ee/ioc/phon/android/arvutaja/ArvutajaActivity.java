@@ -370,6 +370,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
 				final String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+				if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
 				mTts = new TtsProvider(this, new TextToSpeech.OnInitListener() {
 					@Override
 					public void onInit(int status) {
@@ -380,8 +381,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 								toast(String.format(getString(R.string.errorTtsLangNotAvailable), lang));
 							} else {
 								mTts.setLanguage(locale);
-								// TODO: temporary
-								say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
+								//say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
 							}
 						} else {
 							toast(getString(R.string.errorTtsInitError));
@@ -389,6 +389,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						}
 					}
 				});
+				} else {
+					mTts = null;
+					getActionBar().setTitle(getString(R.string.labelApp) + " (" + lang + ")");
+				}
 				Intent intentRecognizer = createRecognizerIntent(
 						lang,
 						getString(R.string.defaultGrammar),
@@ -414,6 +418,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			mSr.destroy();
 		}
 
+		// Stop TTS
+		if (mTts != null) {
+			mTts.shutdown();
+		}
+
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
 		editor.commit();
@@ -423,14 +432,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		// TODO: move this to onStop
 		if (mSr != null) {
 			mSr.destroy();
 			mSr = null;
 		}
-		// Stop TTS
-		if (mTts != null) {
-			mTts.shutdown();
-		}
+
 		mAdapter.changeCursor(null);
 		mAdapter = null;
 	}
@@ -500,7 +508,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			for (String match : matches) {
 				lins.add(match); // utterance
 				lins.add(match); // translation
-				lins.add("GVS"); // target language
+				lins.add("GVS"); // TODO: target language
 				counts.add(1);
 			}
 		}
@@ -536,14 +544,21 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplicationContext().getPackageName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, langSource);
+		// TODO: check it later as well, as the recognizer might ignore it,
+		// e.g. GVS always returns 5 results regardless of this setting.
 		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,
 				Integer.parseInt(mPrefs.getString(getString(R.string.keyMaxResults), getString(R.string.defaultMaxResults))));
 		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
-		// Request the App-language and the TTS-language (e.g. Engtts).
+		// Request the App-language and (if switched on) the TTS-language (e.g. Engtts).
 		// We assume (in the following) that only a single variant is returned for both types of languages.
-		intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget + "," + locale.getISO3Language() + "tts");
+		if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
+			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget + "," + Utils.localeToTtsCode(locale));
+		} else {
+			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
+		}
 		return intent;
 	}
+
 
 	/**
 	 * This is called after successful speech recognition to inform the user
@@ -570,7 +585,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		now.setToNow();
 		long timestamp = now.toMillis(false);
 
-		String ttsLang = (new Locale(lang).getISO3Language()) + "tts";
+		String ttsLang = Utils.localeToTtsCode(new Locale(lang));
 		String ttsPhrase = null;
 
 		List<ContentValues> valuesList = new ArrayList<ContentValues>();
@@ -579,14 +594,18 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		for (Integer c : counts) {
 			int end = begin + 1 + 2*c;
 			String utterance = lins.get(begin);
+			Log.i("UTT: " + utterance);
 			for (int pos = begin + 1; pos < end; pos = pos + 2) {
 				String lin = lins.get(pos);
 				String targetLang = lins.get(pos+1);
+				Log.i("-> LIN " + pos + ": " + targetLang + ": " + lin);
 
 				// TODO: we currently only pick out the first TTS language linearization,
 				// because in the case of several linearizations they are not currently spoken.
-				if (ttsPhrase == null && ttsLang.equals(targetLang)) {
-					ttsPhrase = lin;
+				if (ttsLang.equals(targetLang)) {
+					if (ttsPhrase == null) {
+						ttsPhrase = lin;
+					}
 					continue;
 				}
 
@@ -628,11 +647,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					getString(R.string.keyUseExternalEvaluator),
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
-			String ttsOutput = makeTtsOutput(
-					ttsPhrase,
-					valuesList.get(0).getAsString(Qeval.Columns.EVALUATION)
+			if (ttsPhrase != null) {
+				String ttsOutput = makeTtsOutput(
+						ttsPhrase,
+						valuesList.get(0).getAsString(Qeval.Columns.EVALUATION)
 					);
-			say(ttsOutput);
+				say(ttsOutput);
+			}
 			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0), ! launchExternalEvaluator);
 
 			if (launchExternalEvaluator) {
@@ -666,18 +687,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 	private void say(String str) {
-		if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
-			if (mTts == null) {
-				// TODO: show Toast
-			} else {
-				// TODO: check if the TTS engine has been initialized
-				mTts.say(str);
-			}
+		if (mTts != null) {
+			mTts.say(str);
 		}
 	}
 
 	private String makeTtsOutput(String expression, String value) {
-		return expression + " " + value;
+		if (value != null && ! value.isEmpty()) {
+			return expression + " = " + value;
+		}
+		return expression;
 	}
 
 	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {

@@ -59,7 +59,7 @@
     <string name="titleAudioCues">Play audio cues</string>
     <string name="summaryAudioCues">Beep before and after recording</string>
     <string name="titleUseTts">Speech output</string>
-    <string name="summaryUseTts">Repeat the command by voice</string>
+    <string name="summaryUseTts">Read back the command with the system default text-to-speech engine</string>
     <string name="titleArvutajaProject">project Arvutaja</string>
     <string name="summaryArvutajaProject">(maker of this app)</string>
     <string name="titleGrammarsProject">project Grammars</string>

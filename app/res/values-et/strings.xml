@@ -37,7 +37,7 @@
     <string name="titleAudioCues">Helisignaalid</string>
     <string name="summaryAudioCues">Anna lindistamise algusest ja lõpust märku lühikese helisignaaliga</string>
     <string name="titleUseTts">Kõneväljund</string>
-    <string name="summaryUseTts">Korda sisendit</string>
+    <string name="summaryUseTts">Korda sisendit süsteemse kõnesüntesaatoriga</string>
     <string name="titleArvutajaProject">Arvutaja projekt</string>
     <string name="summaryArvutajaProject">(selle rakenduse looja)</string>
     <string name="titleGrammarsProject">Grammatikate projekt</string>
