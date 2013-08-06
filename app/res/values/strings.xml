@@ -6,6 +6,7 @@
     <string name="keyMaxResults" translatable="false">keyMaxResults</string>
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="keyAudioCues" translatable="false">keyAudioCues</string>
+    <string name="keyUseTts" translatable="false">keyUseTts</string>
     <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.html</string>
     <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.com/Grammars/</string>
     <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
@@ -37,6 +38,10 @@
     <string name="errorCommandNotSupported">Command not supported</string>
     <string name="errorIntentActivityNotPresent">There is no app to perform this task. Install it from Play Store first.</string>
     <string name="errorNoDefaultRecognizer">Speech recognizer not installed or no default recognizer set</string>
+    <string name="errorTtsLangNotAvailable">Spoken output not available for language \"%1$s\"</string>
+    <string name="errorTtsInitError">Spoken output initialization failed</string>
+    <string name="ttsAmbiguous">Input is ambiguous between %1$d readings.</string>
+    <string name="ttsTtsLangAvailable">Spoken output is available for %1$s.</string>
     <string name="menuMainSort">Sort …</string>
     <string name="menuMainSortByTimestamp">by time</string>
     <string name="menuMainSortByTranslation">by expression</string>
@@ -53,6 +58,8 @@
     <string name="dialogTitleLanguage">Select language</string>
     <string name="titleAudioCues">Play audio cues</string>
     <string name="summaryAudioCues">Beep before and after recording</string>
+    <string name="titleUseTts">Speech output</string>
+    <string name="summaryUseTts">Read back the command with the system default text-to-speech engine</string>
     <string name="titleArvutajaProject">project Arvutaja</string>
     <string name="summaryArvutajaProject">(maker of this app)</string>
     <string name="titleGrammarsProject">project Grammars</string>
