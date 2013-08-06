@@ -16,6 +16,7 @@
 
 package ee.ioc.phon.android.arvutaja;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -116,7 +117,8 @@ public class Utils {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-			}})
+			}
+		})
 			.setMessage(s)
 			.create();
 	}
@@ -140,6 +142,22 @@ public class Utils {
 	public static String localeToTtsCode(Locale locale) {
 		String iso3 = locale.getISO3Language();
 		return Character.toUpperCase(iso3.charAt(0)) + iso3.substring(1) + "tts";
+	}
+
+
+	/**
+	 * <p>Renders the expression and its value in a way that it can be spoken.
+	 * The value can be Infinity, NaN, very large, and have many places after the dot.
+	 * We render only 4 places after the dot and do not render scientific notation.</p>
+	 *
+	 * TODO: add localization
+	 */
+	public static String makeTtsOutput(Locale locale, String expression, Double value) {
+		if (value != null) {
+			return expression + " = " + new DecimalFormat("#.####").format(value);
+			//return expression + " = " + String.format(locale, "%.4f", value);
+		}
+		return expression;
 	}
 
 

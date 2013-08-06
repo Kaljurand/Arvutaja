@@ -585,7 +585,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		now.setToNow();
 		long timestamp = now.toMillis(false);
 
-		String ttsLang = Utils.localeToTtsCode(new Locale(lang));
+		Locale locale = new Locale(lang);
+		String ttsLang = Utils.localeToTtsCode(locale);
 		String ttsPhrase = null;
 
 		List<ContentValues> valuesList = new ArrayList<ContentValues>();
@@ -602,8 +603,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 				// TODO: we currently only pick out the first TTS language linearization,
 				// because in the case of several linearizations they are not currently spoken.
+				// TODO: we ignore "no lang" (which the server currently prints if an undefined language was queried)
+				// This should be fixed in the server.
 				if (ttsLang.equals(targetLang)) {
-					if (ttsPhrase == null) {
+					if (ttsPhrase == null && ! "no lang".equals(lin)) {
 						ttsPhrase = lin;
 					}
 					continue;
@@ -648,9 +651,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
 			if (ttsPhrase != null) {
-				String ttsOutput = makeTtsOutput(
+				String ttsOutput = Utils.makeTtsOutput(
+						locale,
 						ttsPhrase,
-						valuesList.get(0).getAsString(Qeval.Columns.EVALUATION)
+						valuesList.get(0).getAsDouble(Qeval.Columns.EVALUATION)
 					);
 				say(ttsOutput);
 			}
@@ -689,14 +693,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private void say(String str) {
 		if (mTts != null) {
 			mTts.say(str);
+			//toast(str); // for testing
 		}
-	}
-
-	private String makeTtsOutput(String expression, String value) {
-		if (value != null && ! value.isEmpty()) {
-			return expression + " = " + value;
-		}
-		return expression;
 	}
 
 	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
