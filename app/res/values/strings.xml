@@ -80,6 +80,7 @@
     <string name="msgActionViewWolframAlpha">Click to view on WolframAlpha</string>
     <string name="msgActionViewGoogleMaps">Click to view on Google Maps</string>
     <string name="msgActionDial">Click to dial</string>
+    <string name="msgActionView">Click to view</string>
 
     <string-array name="empty" translatable="false"></string-array>
     <string-array name="entryValuesMaxResults" translatable="false">

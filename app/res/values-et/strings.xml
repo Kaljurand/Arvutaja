@@ -61,6 +61,7 @@
     <string name="msgActionViewWolframAlpha">Ava WolframAlpha veebirakendus</string>
     <string name="msgActionViewGoogleMaps">Ava Google Maps kaardirakendus</string>
     <string name="msgActionDial">Vali number</string>
+    <string name="msgActionView">Ava</string>
 
     <plurals name="numberOfInputs">
         <item quantity="one">1 sisend</item>

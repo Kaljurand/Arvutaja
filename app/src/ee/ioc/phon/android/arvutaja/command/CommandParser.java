@@ -10,6 +10,10 @@ public class CommandParser {
 			throw new CommandParseException();
 		}
 
+		// In case the command is a URI then we launch ACTION_VIEW.
+		if (View.isCommand(command))
+			return new View(command);
+
 		if (Alarm.isCommand(command))
 			return new Alarm(command, context.getString(R.string.alarmExtraMessage));
 
