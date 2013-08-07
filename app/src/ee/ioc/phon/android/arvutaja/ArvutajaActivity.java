@@ -628,7 +628,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				values.put(Qeval.Columns.LANG, lang);
 				values.put(Qeval.Columns.TARGET_LANG, targetLang);
 				try {
-					values.put(Qeval.Columns.EVALUATION, CommandParser.getCommand(getApplicationContext(), lin).getOut());
+					Object evaluation = CommandParser.getCommand(getApplicationContext(), lin).getOut();
+					if (evaluation instanceof Double) {
+						Double dblEvaluation = (Double) evaluation;
+						values.put(Qeval.Columns.EVALUATION, dblEvaluation);
+					} else {
+						values.put(Qeval.Columns.EVALUATION, "");
+					}
 				} catch (Exception e) {
 					// We store the exception message in the "message" field,
 					// but it should not be shown to the user.
@@ -646,20 +652,26 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			// even though the (visual) GUI is in German.
 			say(LocalizedStrings.getString(locale, R.string.errorResultNoMatch));
 		} else if (valuesList.size() == 1) {
+			if (ttsPhrase != null) {
+				Double dblEvaluation = valuesList.get(0).getAsDouble(Qeval.Columns.EVALUATION);
+				String ttsOutput = Utils.makeTtsOutput(
+						locale,
+						ttsPhrase,
+						dblEvaluation
+					);
+				say(ttsOutput);
+				// We also toast the string that is meant for TTS, because it can say it wrong,
+				// e.g. the English TTS engine (on my device, at the time of writing)
+				// reads 10^9 as some other number (because of overflow?)
+				toast(ttsOutput);
+			}
+
 			// If the transcription is not ambiguous, and the user prefers to
 			// evaluate using an external activity, then we launch it via an intent.
 			boolean launchExternalEvaluator = mPrefs.getBoolean(
 					getString(R.string.keyUseExternalEvaluator),
 					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
 
-			if (ttsPhrase != null) {
-				String ttsOutput = Utils.makeTtsOutput(
-						locale,
-						ttsPhrase,
-						valuesList.get(0).getAsDouble(Qeval.Columns.EVALUATION)
-					);
-				say(ttsOutput);
-			}
 			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0), ! launchExternalEvaluator);
 
 			if (launchExternalEvaluator) {

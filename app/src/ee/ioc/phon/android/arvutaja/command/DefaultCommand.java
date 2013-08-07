@@ -35,7 +35,7 @@ public class DefaultCommand implements Command {
 	}
 
 	@Override
-	public String getOut() {
+	public Object getOut() {
 		return "";
 	}
 

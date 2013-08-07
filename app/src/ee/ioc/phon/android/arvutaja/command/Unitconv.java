@@ -28,7 +28,7 @@ public class Unitconv extends DefaultCommand {
 		return getActionView("http://www.wolframalpha.com/input/?i=", getCommand());
 	}
 
-	public String getOut() {
+	public Object getOut() {
 		String query = new String(getCommand());
 		query = query.replace("convert ", "");
 		String[] splits = query.split(" to ");
@@ -36,7 +36,7 @@ public class Unitconv extends DefaultCommand {
 		double mNumber = Double.parseDouble(numberAsStr);
 		String mIn  = splits[0].replaceFirst("^[0-9\\. ]+", "").replaceAll("\\s+", "");
 		String mOut = splits[1].replaceAll("\\s+", "");
-		return Double.toString(Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber));
+		return Unit.valueOf(mIn).getConverterTo(Unit.valueOf(mOut)).convert(mNumber);
 	}
 
 	public static boolean isCommand(String command) {

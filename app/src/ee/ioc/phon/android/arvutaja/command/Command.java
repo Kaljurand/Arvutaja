@@ -19,12 +19,12 @@ public interface Command {
 	String getCommand();
 
 	/**
-	 * <p>Evaluates the expression and returns the result as a String.
+	 * <p>Evaluates the expression and returns the result.
 	 * This method can throw various exceptions.</p>
 	 *
 	 * @return evaluation of the expression that was given to the constructor
 	 */
-	String getOut();
+	Object getOut();
 
 
 	/**

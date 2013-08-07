@@ -31,10 +31,10 @@ public class Expr extends DefaultCommand {
 		return getActionView("http://www.wolframalpha.com/input/?i=", getCommand());
 	}
 
-	public String getOut() {
+	public Object getOut() {
 		MathEval math = new MathEval();
 		// We remove all the space characters otherwise MathEval's tokenizer can fail
-		return Double.toString(math.evaluate(getCommand().replaceAll("\\s+", "")));
+		return math.evaluate(getCommand().replaceAll("\\s+", ""));
 	}
 
 	public static boolean isCommand(String command) {
