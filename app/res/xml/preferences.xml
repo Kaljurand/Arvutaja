@@ -64,4 +64,20 @@
         </Preference>
     </PreferenceCategory>
 
+    <!--
+    <PreferenceCategory android:title="TESTS" >
+
+        <Preference android:title="VOICE_COMMAND" >
+            <intent android:action="android.intent.action.VOICE_COMMAND"/>
+        </Preference>
+        <Preference android:title="SEARCH_LONG_PRESS" >
+            <intent android:action="android.intent.action.SEARCH_LONG_PRESS"/>
+        </Preference>
+        <Preference android:title="VOICE_SEARCH_HANDS_FREE" >
+            <intent android:action="android.speech.action.VOICE_SEARCH_HANDS_FREE"/>
+        </Preference>
+
+    </PreferenceCategory>
+    -->
+
 </PreferenceScreen>

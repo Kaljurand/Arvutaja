@@ -398,6 +398,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						getString(R.string.defaultGrammar),
 						getString(R.string.nameLangLinearize));
 				setUpRecognizerGui(mSr, intentRecognizer);
+
+				processIntent(mSr, intentRecognizer);
 			}
 		}
 	}
@@ -836,14 +838,26 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		LinearLayout llMicrophone = (LinearLayout) findViewById(R.id.llMicrophone);
 		llMicrophone.setVisibility(View.VISIBLE);
 		llMicrophone.setEnabled(true);
+	}
 
+	/**
+	 * Immediately launch the recognizer if
+	 *   - action is ACTION_VOICE_COMMAND, or
+	 *   - EXTRA_LAUNCH_RECOGNIZER == true
+	 */
+	private void processIntent(SpeechRecognizer sr, Intent intentRecognizer) {
 		Intent intentArvutaja = getIntent();
 		Bundle extras = intentArvutaja.getExtras();
-		if (extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
-			// We disable the extra so that it would not fire on orientation change.
-			intentArvutaja.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, false);
-			setIntent(intentArvutaja);
-			sr.startListening(intentRecognizer);
+
+		if (
+				Intent.ACTION_VOICE_COMMAND.equals(intentArvutaja.getAction())
+			||
+				extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+			// We disable the intent so that it would not fire on orientation change
+			Intent intentVoid = new Intent(this, ArvutajaActivity.class);
+			intentVoid.setAction(null);
+			setIntent(intentVoid);
+			mButtonMicrophone.performClick();
 		}
 	}
 

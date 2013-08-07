@@ -26,6 +26,30 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- input/output: Nothing -->
+            <!-- Samsung Galaxy SII launches VOICE_COMMAND when HOME is double-clicked -->
+            <intent-filter>
+                <action android:name="android.intent.action.VOICE_COMMAND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- input/output: Nothing -->
+            <!-- TODO: not sure if we should support this -->
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            -->
+            <!-- TODO: future work (API 16) -->
+            <!--
+            <intent-filter>
+                <action android:name="android.speech.action.VOICE_SEARCH_HANDS_FREE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".ExamplesActivity"
