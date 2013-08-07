@@ -154,7 +154,8 @@ public class Utils {
 	 */
 	public static String makeTtsOutput(Locale locale, String expression, Double value) {
 		if (value != null) {
-			return expression + " = " + new DecimalFormat("#.####").format(value);
+			String equals = LocalizedStrings.getString(locale, R.string.equals);
+			return expression + " " + equals + " " + new DecimalFormat("#.####").format(value);
 			//return expression + " = " + String.format(locale, "%.4f", value);
 		}
 		return expression;

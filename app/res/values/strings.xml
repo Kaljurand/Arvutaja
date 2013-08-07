@@ -7,11 +7,13 @@
     <string name="keyUseExternalEvaluator" translatable="false">keyUseExternalEvaluator</string>
     <string name="keyAudioCues" translatable="false">keyAudioCues</string>
     <string name="keyUseTts" translatable="false">keyUseTts</string>
-    <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.html</string>
-    <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.com/Grammars/</string>
+    <string name="urlArvutajaProject">http://kaljurand.github.io/Arvutaja/index.html</string>
+    <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.io/Grammars/</string>
     <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
+    <!-- TODO: com -> io (but keep com for the time being) -->
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>
+    <string name="equals" translatable="false">=</string>
     <string name="ambiguous" translatable="false">...</string>
     <string name="arrowRight" translatable="false">→</string>
     <string name="nameLangLinearize" translatable="false">App</string>
@@ -40,8 +42,6 @@
     <string name="errorNoDefaultRecognizer">Speech recognizer not installed or no default recognizer set</string>
     <string name="errorTtsLangNotAvailable">Spoken output not available for language \"%1$s\"</string>
     <string name="errorTtsInitError">Spoken output initialization failed</string>
-    <string name="ttsAmbiguous">Input is ambiguous between %1$d readings.</string>
-    <string name="ttsTtsLangAvailable">Spoken output is available for %1$s.</string>
     <string name="menuMainSort">Sort …</string>
     <string name="menuMainSortByTimestamp">by time</string>
     <string name="menuMainSortByTranslation">by expression</string>
@@ -65,7 +65,7 @@
     <string name="titleGrammarsProject">project Grammars</string>
     <string name="summaryGrammarsProject">Speech recognition grammars in Grammatical Framework</string>
     <string name="titleK6neleProject">project Kõnele</string>
-    <string name="summaryK6neleProject">Grammar-aware Estonian-supporting speech recognition service for Android</string>
+    <string name="summaryK6neleProject">Grammar-aware speech recognition service for Android</string>
     <string name="buttonMicrophoneContentDescription">Press this button to speak an expression</string>
     <string name="buttonDeleteContentDescription">Delete this expression</string>
     <string name="buttonYes">Yes</string>
@@ -81,7 +81,6 @@
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Are you sure you want to delete this multielement entry?</string>
     <string name="msgActionWebSearch">Click to search the web</string>
-    <string name="msgActionSearch">Click to search</string>
     <string name="msgActionSearchLongPress">Click to search device</string>
     <string name="msgActionSetAlarm">Click to set the alarm</string>
     <string name="msgActionViewWolframAlpha">Click to view on WolframAlpha</string>

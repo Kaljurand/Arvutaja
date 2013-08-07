@@ -256,7 +256,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				if (translation == null) {
 					message = getString(R.string.confirmDeleteMultiEntry);
 				} else {
-					message = String.format(getString(R.string.confirmDeleteEntry), translation);
+					message = getString(R.string.confirmDeleteEntry, translation);
 				}
 				Utils.getYesNoDialog(
 						ArvutajaActivity.this,
@@ -370,6 +370,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
 				final String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+
 				if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
 				mTts = new TtsProvider(this, new TextToSpeech.OnInitListener() {
 					@Override
@@ -378,10 +379,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						if (status == TextToSpeech.SUCCESS) {
 							Locale locale = mTts.chooseLanguage(lang);
 							if (locale == null) {
-								toast(String.format(getString(R.string.errorTtsLangNotAvailable), lang));
+								toast(getString(R.string.errorTtsLangNotAvailable, lang));
 							} else {
 								mTts.setLanguage(locale);
-								//say(String.format(getString(R.string.ttsTtsLangAvailable), locale.getDisplayLanguage(locale)));
 							}
 						} else {
 							toast(getString(R.string.errorTtsInitError));
@@ -639,10 +639,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		if (valuesList.isEmpty()) {
 			showErrorDialog(R.string.errorResultNoMatch);
-			// TODO: use the speech input locale, not the GUI locale,
+			// We use the speech input locale, not the GUI locale,
 			// i.e. if the user speaks in English, then respond in English,
 			// even though the (visual) GUI is in German.
-			say(getString(R.string.errorResultNoMatch));
+			say(LocalizedStrings.getString(locale, R.string.errorResultNoMatch));
 		} else if (valuesList.size() == 1) {
 			// If the transcription is not ambiguous, and the user prefers to
 			// evaluate using an external activity, then we launch it via an intent.
@@ -664,7 +664,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				launchIntent(lins.get(1));
 			}
 		} else {
-			say(String.format(getString(R.string.ttsAmbiguous), valuesList.size()));
+			// We use the speech input locale, not the GUI locale,
+			// i.e. if the user speaks in English, then respond in English,
+			// even though the (visual) GUI is in German.
+			say(LocalizedStrings.getString(locale, R.string.ambiguous, valuesList.size()));
 			ContentValues values = new ContentValues();
 			values.put(Query.Columns.TIMESTAMP, timestamp);
 			// TRANSLATION must remain NULL here
@@ -861,7 +864,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private void goToStore() {
 		AlertDialog d = Utils.getGoToStoreDialogWithThreeButtons(
 				this,
-				String.format(getString(R.string.errorRecognizerNotPresent), getString(R.string.nameRecognizer)),
+				getString(R.string.errorRecognizerNotPresent, getString(R.string.nameRecognizer)),
 				Uri.parse(getString(R.string.urlK6neleDownload))
 				);
 		d.show();

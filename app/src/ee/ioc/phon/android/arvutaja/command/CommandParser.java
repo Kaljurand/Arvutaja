@@ -10,6 +10,10 @@ public class CommandParser {
 			throw new CommandParseException();
 		}
 
+		// We check expressions first because some can be mistaken for URIs.
+		if (Expr.isCommand(command))
+			return new Expr(command);
+
 		// In case the command is a URI then we launch ACTION_VIEW.
 		if (View.isCommand(command))
 			return new View(command);
@@ -22,9 +26,6 @@ public class CommandParser {
 
 		if (Dial.isCommand(command))
 			return new Dial(command);
-
-		if (Expr.isCommand(command))
-			return new Expr(command);
 
 		if (Search.isCommand(command))
 			return new Search(command);

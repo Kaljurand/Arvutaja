@@ -5,7 +5,7 @@
     <string name="labelSettings">Seaded</string>
     <string name="labelExamples">Näited</string>
     <string name="labelShow">Info</string>
-    <string name="urlArvutajaProject">http://kaljurand.github.com/Arvutaja/index.et.html</string>
+    <string name="urlArvutajaProject">http://kaljurand.github.io/Arvutaja/index.et.html</string>
     <string name="warningUtteranceNotSupported">Sisendlause pole toetatud</string>
     <string name="error">Viga</string>
     <string name="errorResultAudioError">Lindistamine luhtus</string>
@@ -19,8 +19,6 @@
     <string name="errorNoDefaultRecognizer">Kõnetuvastaja pole installeeritud või seadistatud</string>
     <string name="errorTtsLangNotAvailable">Kõneväljund ei ole keele \"%1$s\" jaoks installeeritud</string>
     <string name="errorTtsInitError">Kõneväljundi konfigureerimine luhtus</string>
-    <string name="ttsAmbiguous">Sisend on mitmene: %1$d avaldist</string>
-    <string name="ttsTtsLangAvailable">Kõneväljund on olemas keelele %1$s</string>
     <string name="menuMainSort">Sorteeri …</string>
     <string name="menuMainSortByTimestamp">aja järgi</string>
     <string name="menuMainSortByTranslation">avaldise järgi</string>
@@ -61,7 +59,6 @@
     <string name="confirmDeleteEntry">Kas tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Kas tahate kindlasti selle tulemustegrupi kustutada?</string>
     <string name="msgActionWebSearch">Otsi veebist</string>
-    <string name="msgActionSearch">Otsi</string>
     <string name="msgActionSearchLongPress">Otsi telefonist</string>
     <string name="msgActionSetAlarm">Pane äratuskell helisema</string>
     <string name="msgActionViewWolframAlpha">Ava WolframAlpha veebirakendus</string>
