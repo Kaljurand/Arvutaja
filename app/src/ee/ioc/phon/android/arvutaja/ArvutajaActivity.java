@@ -418,6 +418,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		if (mSr != null) {
 			mSr.cancel(); // TODO: do we need this, we do destroy anyway?
 			mSr.destroy();
+			mSr = null;
 		}
 
 		// Stop TTS
@@ -434,12 +435,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
-		// TODO: move this to onStop
-		if (mSr != null) {
-			mSr.destroy();
-			mSr = null;
-		}
 
 		mAdapter.changeCursor(null);
 		mAdapter = null;
