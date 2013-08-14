@@ -823,7 +823,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				if (mState == State.INIT || mState == State.ERROR) {
-					mTts.stop();
+					if (mTts != null) {
+						mTts.stop();
+					}
 					if (audioCue != null) {
 						audioCue.playStartSoundAndSleep();
 					}
