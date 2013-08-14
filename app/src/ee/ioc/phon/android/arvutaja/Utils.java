@@ -16,7 +16,7 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -149,15 +149,13 @@ public class Utils {
 	 * <p>Renders the expression and its value in a way that it can be spoken.
 	 * The value can be Infinity, NaN, very large, and have many places after the dot.
 	 * We render only 4 places after the dot and do not render scientific notation.</p>
-	 *
-	 * TODO: add localization
 	 */
 	public static String makeTtsOutput(Locale locale, String expression, Double value) {
 		if (value != null) {
-			String valueAsString = new DecimalFormat("#.####").format(value);
+			NumberFormat nf = NumberFormat.getNumberInstance(locale);
+			nf.setMaximumFractionDigits(4);
 			String equals = LocalizedStrings.getString(locale, R.string.equals);
-			return expression + " " + equals + " " + valueAsString;
-			//return expression + " = " + String.format(locale, "%.4f", value);
+			return expression + " " + equals + " " + nf.format(value);
 		}
 		return expression;
 	}
