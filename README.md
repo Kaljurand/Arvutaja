@@ -81,6 +81,9 @@ In order to execute some actions, Arvutaja expects the device to contain
   - an app that understands Google Maps' URLs (`http://maps.google.com/maps?...`);
   - an app that responds to the standard Android alarm clock intent (`android.intent.action.SET_ALARM`).
 
+In order to read back the input query, Arvutaja uses the system default text-to-speech (TTS) engine, setting it to the same language as the input query. Many TTS engines with support for different languages are available for Android. They can be installed e.g. via Google Play and set as system default in the Android language settings.
+An Estonian TTS engine for Android is available e.g. on <http://heli.eki.ee/koduleht/index.php/rakendused> ("HTS-sünteeshääl Androidile EKISpeak.apk"). (Note that EKISpeak.apk v1.0 does not support numbers in the digit form, e.g. "üks pluss kaks on 3" is not rendered to speech at all.)
+
 Included libraries
 ------------------
 
