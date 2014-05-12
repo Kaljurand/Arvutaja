@@ -136,3 +136,14 @@ Following is a list of some input examples, more can be found at
 ### Covered by multiple grammars (i.e. ambiguous)
 
   * Pii (PI vs village in Estonia)
+
+Building
+--------
+
+Into an upper directory, create the file `settings.gradle` with the content::
+
+    include ':Arvutaja:app', ':private:speechutils:app'
+
+In Arvutaja/app/ run::
+
+    gradle build
