@@ -852,14 +852,19 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	/**
 	 * Immediately launch the recognizer if
+	 *   - action is ACTION_SEARCH_LONG_PRESS, or
 	 *   - action is ACTION_VOICE_COMMAND, or
 	 *   - EXTRA_LAUNCH_RECOGNIZER == true
+	 *
+	 * Note that in case of ACTION_ASSIST the recognizer is not launched.
 	 */
 	private void processIntent(SpeechRecognizer sr, Intent intentRecognizer) {
 		Intent intentArvutaja = getIntent();
 		Bundle extras = intentArvutaja.getExtras();
 
 		if (
+				Intent.ACTION_SEARCH_LONG_PRESS.equals(intentArvutaja.getAction())
+			||
 				Intent.ACTION_VOICE_COMMAND.equals(intentArvutaja.getAction())
 			||
 				extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {

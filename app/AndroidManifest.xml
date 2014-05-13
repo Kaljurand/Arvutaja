@@ -33,15 +33,23 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Input: EXTRA_ASSIST_PACKAGE, EXTRA_ASSIST_CONTEXT. Output: nothing. -->
+            <!-- API 16 -->
+            <!-- "Search assistant" on CM10.2, which can be mapped to various buttons -->
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <!-- input/output: Nothing -->
+            <!-- API 3 -->
+            <!-- "Voice search" on CM10.2, which can be mapped to various buttons -->
             <!-- TODO: not sure if we should support this -->
-            <!--
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH_LONG_PRESS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            -->
             <!-- TODO: future work (API 16) -->
             <!--
             <intent-filter>
