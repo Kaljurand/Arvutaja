@@ -15,7 +15,7 @@
    height="512"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="ic_launcher.svg">
   <defs
      id="defs4">
@@ -187,7 +187,7 @@
        x2="5.5"
        y2="-138"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.2263682,0,0,1.0697169,-17.245025,402.62092)" />
+       gradientTransform="matrix(1.2122964,0,0,1.0173387,-20.703164,395.39272)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3850"
@@ -197,7 +197,7 @@
        x2="492.5"
        y2="257"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.0229351,0,0,1.0273795,-518.34848,-9.5365548)" />
+       gradientTransform="matrix(1.0420296,0,0,0.99776229,-523.92469,-1.5713783)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -206,17 +206,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="138.26316"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="204.81803"
      inkscape:cy="230.83871"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer4"
      showgrid="true"
-     inkscape:window-width="1309"
-     inkscape:window-height="764"
-     inkscape:window-x="99"
-     inkscape:window-y="83"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
      inkscape:snap-grids="false"
      inkscape:snap-to-guides="false">
     <inkscape:grid
@@ -261,21 +261,22 @@
      style="display:inline"
      sodipodi:insensitive="true">
     <rect
-       style="fill:url(#linearGradient3856);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:27.67918587;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4231)"
+       style="fill:url(#linearGradient3856);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:19.89271736;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4231)"
        id="rect6076"
-       width="460.32083"
-       height="462.32083"
-       x="-487.6604"
-       y="23.33959"
-       ry="32.25494"
+       width="468.91339"
+       height="448.9931"
+       x="-492.66382"
+       y="30.357016"
+       ry="31.325096"
        transform="matrix(0,-1,1,0,0,0)" />
   </g>
   <g
-     inkscape:label="Pen and mike"
+     inkscape:label="Foreground"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-540.36218)"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <text
        xml:space="preserve"
        style="font-size:160.59667969px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#003399;fill-opacity:1;stroke:#000000;stroke-width:2.97595;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
@@ -307,8 +308,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Glass"
-     style="display:inline"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <rect
        style="opacity:0;fill:url(#linearGradient6092);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect6081"
@@ -324,11 +324,11 @@
     <rect
        style="opacity:0.2;fill:url(#linearGradient3931);fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="rect3881"
-       width="493"
-       height="491"
-       x="-503.5"
-       y="9.5"
-       ry="41.126278"
+       width="487.34317"
+       height="466.95837"
+       x="-501.37869"
+       y="21.520815"
+       ry="39.112545"
        transform="matrix(0,-1,1,0,0,0)" />
   </g>
 </svg>
