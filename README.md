@@ -146,4 +146,5 @@ Into an upper directory, create the file `settings.gradle` with the content::
 
 In Arvutaja/app/ run::
 
+    gradle makeIcons
     gradle build
