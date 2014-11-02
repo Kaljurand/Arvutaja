@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14+'
+        classpath 'com.android.tools.build:gradle:0.14.0'
     }
 }
 
@@ -23,6 +23,13 @@ dependencies {
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 606
+        versionName '0.6.06'
+    }
 
     sourceSets {
         main {
@@ -50,8 +57,8 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE"))
-            keyAlias System.getenv("KEY_ALIAS")
+            storeFile file(System.getenv("KEYSTORE_ARVUTAJA"))
+            keyAlias System.getenv("KEYSTORE_ARVUTAJA_ALIAS")
         }
     }
     buildTypes {
