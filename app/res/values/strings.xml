@@ -9,7 +9,7 @@
     <string name="keyUseTts" translatable="false">keyUseTts</string>
     <string name="urlArvutajaProject">http://kaljurand.github.io/Arvutaja/index.html</string>
     <string name="urlGrammarsProject" translatable="false">http://kaljurand.github.io/Grammars/</string>
-    <string name="urlK6neleProject" translatable="false">http://code.google.com/p/recognizer-intent/</string>
+    <string name="urlK6neleProject" translatable="false">http://kaljurand.github.io/K6nele/</string>
     <string name="urlK6neleDownload" translatable="false">https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak</string>
     <!-- TODO: com -> io (but keep com for the time being) -->
     <string name="defaultGrammar" translatable="false">http://kaljurand.github.com/Grammars/grammars/pgf/Action.pgf</string>

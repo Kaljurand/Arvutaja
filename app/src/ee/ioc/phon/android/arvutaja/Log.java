@@ -18,7 +18,7 @@ package ee.ioc.phon.android.arvutaja;
 
 public class Log {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	public static final String LOG_TAG = "ee.ioc.phon.android.arvutaja";
 
