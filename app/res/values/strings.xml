@@ -36,9 +36,9 @@
     <string name="errorResultClientError">General client error</string>
     <string name="errorResultServerError">Recognizer server error</string>
     <string name="errorResultNoMatch">No match was found for the recorded speech. Please try again!</string>
-    <string name="errorRecognizerNotPresent">Arvutaja works best with the speech recognition service %1$s. Please install it from the Play Store.</string>
+    <string name="errorRecognizerNotPresent">Arvutaja works best with the speech recognition service %1$s. Please install it first.</string>
     <string name="errorCommandNotSupported">Command not supported</string>
-    <string name="errorIntentActivityNotPresent">There is no app to perform this task. Install it from Play Store first.</string>
+    <string name="errorIntentActivityNotPresent">There is no app to perform this task.</string>
     <string name="errorNoDefaultRecognizer">Speech recognizer not installed or no default recognizer set</string>
     <string name="errorTtsLangNotAvailable">Spoken output not available for language \"%1$s\"</string>
     <string name="errorTtsInitError">Spoken output initialization failed</string>
@@ -72,7 +72,6 @@
     <string name="buttonNo">No</string>
     <string name="buttonOk">OK</string>
     <string name="buttonCancel">Cancel</string>
-    <string name="buttonGoToStore">Go to Play Store</string>
     <string name="buttonNever">Never</string>
     <string name="buttonLater">Later</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
@@ -84,7 +83,7 @@
     <string name="msgActionSearchLongPress">Click to search device</string>
     <string name="msgActionSetAlarm">Click to set the alarm</string>
     <string name="msgActionViewWolframAlpha">Click to view on WolframAlpha</string>
-    <string name="msgActionViewGoogleMaps">Click to view on Google Maps</string>
+    <string name="msgActionViewGoogleMaps">Click to view in a maps app</string>
     <string name="msgActionDial">Click to dial</string>
     <string name="msgActionView">Click to view</string>
 
@@ -114,5 +113,6 @@
         <item quantity="one">Output only the most likely recognition hypothesis</item>
         <item quantity="other">Output at most %d recognition hypotheses</item>
     </plurals>
+    <string name="buttonGoToStore">Install</string>
 
 </resources>

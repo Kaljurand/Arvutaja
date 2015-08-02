@@ -13,9 +13,9 @@
     <string name="errorResultClientError">Kliendiviga</string>
     <string name="errorResultServerError">Kõnetuvastusserveri viga</string>
     <string name="errorResultNoMatch">Sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
-    <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun installeerige see Play poest.</string>
+    <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun paigaldage see kõigepealt.</string>
     <string name="errorCommandNotSupported">Ei tunne sellist käsku</string>
-    <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks. Installeerige see Play poest.</string>
+    <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks.</string>
     <string name="errorNoDefaultRecognizer">Kõnetuvastaja pole installeeritud või seadistatud</string>
     <string name="errorTtsLangNotAvailable">Kõneväljund ei ole keele \"%1$s\" jaoks installeeritud</string>
     <string name="errorTtsInitError">Kõneväljundi konfigureerimine luhtus</string>
@@ -48,7 +48,6 @@
     <string name="buttonNo">Ei</string>
     <string name="buttonOk">OK</string>
     <string name="buttonCancel">Loobu</string>
-    <string name="buttonGoToStore">Ava Play pood</string>
     <string name="buttonNever">Ei iial</string>
     <string name="buttonLater">Hiljem</string>
     <string name="alarmExtraMessage">Arvutaja pandud</string>
@@ -62,7 +61,7 @@
     <string name="msgActionSearchLongPress">Otsi telefonist</string>
     <string name="msgActionSetAlarm">Pane äratuskell helisema</string>
     <string name="msgActionViewWolframAlpha">Ava WolframAlpha veebirakendus</string>
-    <string name="msgActionViewGoogleMaps">Ava Google Maps kaardirakendus</string>
+    <string name="msgActionViewGoogleMaps">Ava kaardirakendus</string>
     <string name="msgActionDial">Vali number</string>
     <string name="msgActionView">Ava</string>
 
@@ -74,5 +73,6 @@
         <item quantity="one">Väljasta ainult kõige tõenäolisem tuvastushüpotees</item>
         <item quantity="other">Väljasta maksimaalselt %d tuvastushüpoteesi</item>
     </plurals>
+    <string name="buttonGoToStore">Paigalda</string>
 
 </resources>
