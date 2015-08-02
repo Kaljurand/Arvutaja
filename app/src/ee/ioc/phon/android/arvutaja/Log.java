@@ -20,7 +20,7 @@ public class Log {
 
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final String LOG_TAG = "ee.ioc.phon.android.arvutaja";
+	public static final String LOG_TAG = "Arvutaja";
 
 	public static void i(String msg) {
 		if (DEBUG) android.util.Log.i(LOG_TAG, msg);
