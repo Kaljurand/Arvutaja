@@ -23,10 +23,10 @@ Currently supported expressions and commands:
 
 The expressions/commands are evaluated using an external app, such as
 
-  - WolframAlpha website
   - device's built-in alarm clock app
   - device's built-in phone app
-  - Google Maps
+  - a maps app
+  - a browser loading the WolframAlpha website
 
 The arithmetical and measurement unit conversion expressions are also evaluated by Arvutaja itself.
 
@@ -45,6 +45,14 @@ differ in their UIs and how they use the speech recognizer.
 
 APK-packages for both versions are available via [Google Play](https://play.google.com/store/apps/details?id=ee.ioc.phon.android.arvutaja)
 and [GitHub Releases](https://github.com/Kaljurand/Arvutaja/releases).
+
+
+Building from source
+--------------------
+
+    git clone --recursive git@github.com:Kaljurand/Arvutaja.git
+    cd Arvutaja
+    gradle assembleRelease
 
 Features
 --------
@@ -70,9 +78,9 @@ Dependencies on other apps
 
 For speech recognition, Arvutaja can technically use any Android speech recognizer (chosen via the Arvutaja settings).
 However, it is recommended to use Kõnele, a grammar-aware speech recognition service for Android.
-You have to install it separately from either of the following URLs
+You have to install it separately from <http://kaljurand.github.io/K6nele/>, or from:
 
-  - http://recognizer-intent.googlecode.com
+  - https://f-droid.org/repository/browse/?fdid=ee.ioc.phon.android.speak
   - https://play.google.com/store/apps/details?id=ee.ioc.phon.android.speak
 
 In order to execute some actions, Arvutaja expects the device to contain
@@ -82,10 +90,13 @@ In order to execute some actions, Arvutaja expects the device to contain
   - an app that responds to the standard Android alarm clock intent (`android.intent.action.SET_ALARM`).
 
 In order to read back the input query, Arvutaja uses the system default text-to-speech (TTS) engine, setting it to the same language as the input query. Many TTS engines with support for different languages are available for Android. They can be installed e.g. via Google Play and set as system default in the Android language settings.
-An Estonian TTS engine for Android is available e.g. on <http://heli.eki.ee/koduleht/index.php/rakendused> ("HTS-sünteeshääl Androidile EKISpeak.apk"). (Note that EKISpeak.apk v1.0 does not support numbers in the digit form, e.g. "üks pluss kaks on 3" is not rendered to speech at all.)
+An Estonian TTS engine for Android is available e.g. on <http://heli.eki.ee/koduleht/index.php/rakendused> ("HTS-sünteeshääl Androidile EKISpeak.apk"). (Note that EKISpeak.apk v1.0 does not support numbers in the digit form, e.g. "üks pluss kaks on 3" is not rendered to speech at all.) Two modifications (which do not fix the "digit" problem) of this app are:
 
-Included libraries
-------------------
+  - https://github.com/Kaljurand/EKISpeak
+  - https://play.google.com/store/apps/details?id=ee.eki.heli.EKISpeak
+
+Used libraries
+--------------
 
   - Unit conversion powered by <http://jscience.org> (`jscience-4.3.jar` and `unit-api-0.6.0.jar`)
   - Evaluation of arithmetical expressions powered by <http://www.softwaremonkey.org/Code/MathEval>
@@ -136,15 +147,3 @@ Following is a list of some input examples, more can be found at
 ### Covered by multiple grammars (i.e. ambiguous)
 
   * Pii (PI vs village in Estonia)
-
-Building
---------
-
-Into an upper directory, create the file `settings.gradle` with the content::
-
-    include ':Arvutaja:app', ':private:speechutils:app'
-
-In Arvutaja/app/ run::
-
-    gradle makeIcons
-    gradle build
