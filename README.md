@@ -1,6 +1,8 @@
 Arvutaja
 ========
 
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/901a08be062d4d32b504a6c7f3905b95)](https://www.codacy.com/app/kaljurand/Arvutaja)
+
 __Arvutaja__ (= the Estonian word for _the one that computes_) is a voice actions app for Android,
 i.e. it converts a spoken utterance
 in some natural language to an expression/command in some formal language and then
