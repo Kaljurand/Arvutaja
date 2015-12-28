@@ -25,10 +25,12 @@ public class Animations {
 
 			@Override
 			public void onAnimationRepeat(Animation animation) {
+				// Intentionally empty
 			}
 
 			@Override
 			public void onAnimationStart(Animation animation) {
+				// Intentionally empty
 			}
 
 		});

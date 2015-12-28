@@ -17,9 +17,21 @@ package ee.ioc.phon.android.arvutaja;
  */
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.AsyncQueryHandler;
+import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
@@ -34,27 +46,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.SimpleCursorTreeAdapter;
 import android.widget.TextView;
-
-import android.app.AlertDialog;
-import android.content.AsyncQueryHandler;
-import android.content.ComponentName;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.preference.PreferenceManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -101,7 +100,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	private static String mCurrentSortOrder;
 
 	private MicButton mButtonMicrophone;
-	private ExpandableListView mListView;
 
 	private MyExpandableListAdapter mAdapter;
 	private QueryHandler mQueryHandler;
@@ -145,14 +143,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			switch (token) {
-			case TOKEN_GROUP:
-				mAdapter.setGroupCursor(cursor);
-				break;
+				case TOKEN_GROUP:
+					mAdapter.setGroupCursor(cursor);
+					break;
 
-			case TOKEN_CHILD:
-				int groupPosition = (Integer) cookie;
-				mAdapter.setChildrenCursor(groupPosition, cursor);
-				break;
+				case TOKEN_CHILD:
+					int groupPosition = (Integer) cookie;
+					mAdapter.setChildrenCursor(groupPosition, cursor);
+					break;
+				default:
+					break;
 			}
 			updateUi();
 		}
@@ -215,12 +215,12 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		mButtonMicrophone = (MicButton) findViewById(R.id.buttonMicrophone);
 
 
-		mListView = (ExpandableListView) findViewById(R.id.list);
+		ExpandableListView listView = (ExpandableListView) findViewById(R.id.list);
 
-		mListView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
+		listView.setGroupIndicator(getResources().getDrawable(R.drawable.list_selector_expandable));
 
 
-		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View _view, int position, long _id) {
@@ -275,7 +275,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		});
 
 
-		mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+		listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getGroup(groupPosition);
@@ -289,7 +289,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
-		mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+		listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Cursor cursor = (Cursor) parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
@@ -299,8 +299,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
-		mListView.setOnScrollListener(new OnScrollListener() {
+		listView.setOnScrollListener(new OnScrollListener() {
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				// Intentionally empty
 			}
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
 				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
@@ -322,9 +323,9 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				new int[] { R.id.list_item_utterance, R.id.list_item_translation, R.id.list_item_evaluation }
 				);
 
-		mListView.setAdapter(mAdapter);
+		listView.setAdapter(mAdapter);
 
-		registerForContextMenu(mListView);
+		registerForContextMenu(listView);
 
 		getActionBar().setHomeButtonEnabled(false);
 
@@ -402,7 +403,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 						getString(R.string.nameLangLinearize));
 				setUpRecognizerGui(mSr, intentRecognizer);
 
-				processIntent(mSr, intentRecognizer);
+				processIntent();
 			}
 		}
 	}
@@ -870,7 +871,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	 *
 	 * Note that in case of ACTION_ASSIST the recognizer is not launched.
 	 */
-	private void processIntent(SpeechRecognizer sr, Intent intentRecognizer) {
+	private void processIntent() {
 		Intent intentArvutaja = getIntent();
 		Bundle extras = intentArvutaja.getExtras();
 

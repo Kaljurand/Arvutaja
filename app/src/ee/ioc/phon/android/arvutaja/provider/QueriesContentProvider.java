@@ -59,6 +59,8 @@ public class QueriesContentProvider extends ContentProvider {
 	private static HashMap<String, String> queriesProjectionMap;
 	private static HashMap<String, String> qevalsProjectionMap;
 
+	private DatabaseHelper dbHelper;
+
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
 		DatabaseHelper(Context context) {
@@ -99,8 +101,6 @@ public class QueriesContentProvider extends ContentProvider {
 			onCreate(db);
 		}
 	}
-
-	private DatabaseHelper dbHelper;
 
 	@Override
 	public int delete(Uri uri, String where, String[] whereArgs) {
@@ -272,7 +272,7 @@ public class QueriesContentProvider extends ContentProvider {
 		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME, QEVALS);
 		sUriMatcher.addURI(AUTHORITY, QEVALS_TABLE_NAME + "/#", QEVAL_ID);
 
-		queriesProjectionMap = new HashMap<String, String>();
+		queriesProjectionMap = new HashMap<>();
 		queriesProjectionMap.put(Query.Columns._ID, Query.Columns._ID);
 		queriesProjectionMap.put(Query.Columns.TIMESTAMP, Query.Columns.TIMESTAMP);
 		queriesProjectionMap.put(Query.Columns.UTTERANCE, Query.Columns.UTTERANCE);
@@ -282,7 +282,7 @@ public class QueriesContentProvider extends ContentProvider {
 		queriesProjectionMap.put(Query.Columns.TARGET_LANG, Query.Columns.TARGET_LANG);
 		queriesProjectionMap.put(Query.Columns.MESSAGE, Query.Columns.MESSAGE);
 
-		qevalsProjectionMap = new HashMap<String, String>();
+		qevalsProjectionMap = new HashMap<>();
 		qevalsProjectionMap.put(Qeval.Columns._ID, Qeval.Columns._ID);
 		qevalsProjectionMap.put(Qeval.Columns.TIMESTAMP, Qeval.Columns.TIMESTAMP);
 		qevalsProjectionMap.put(Qeval.Columns.UTTERANCE, Qeval.Columns.UTTERANCE);

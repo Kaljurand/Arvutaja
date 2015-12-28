@@ -21,26 +21,24 @@ import android.provider.BaseColumns;
 
 public class Qeval {
 
-	public Qeval() {
-	}
+    public static final class Columns implements BaseColumns {
 
-	public static final class Columns implements BaseColumns {
-		private Columns() {
-		}
+        public static final Uri CONTENT_URI = Uri.parse("content://" +
+                QueriesContentProvider.AUTHORITY +
+                "/" +
+                QueriesContentProvider.QEVALS_TABLE_NAME);
 
-		public static final Uri CONTENT_URI = Uri.parse("content://" +
-				QueriesContentProvider.AUTHORITY +
-				"/" +
-				QueriesContentProvider.QEVALS_TABLE_NAME);
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvutaja";
 
-		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.ee.ioc.phon.android.arvuataja";
+        public static final String TIMESTAMP = "TIMESTAMP";
+        public static final String UTTERANCE = "UTTERANCE";
+        public static final String TRANSLATION = "TRANSLATION";
+        public static final String EVALUATION = "EVALUATION";
+        public static final String LANG = "LANG";
+        public static final String TARGET_LANG = "TARGET_LANG";
+        public static final String MESSAGE = "MESSAGE";
 
-		public static final String TIMESTAMP = "TIMESTAMP";
-		public static final String UTTERANCE = "UTTERANCE";
-		public static final String TRANSLATION = "TRANSLATION";
-		public static final String EVALUATION = "EVALUATION";
-		public static final String LANG = "LANG";
-		public static final String TARGET_LANG = "TARGET_LANG";
-		public static final String MESSAGE = "MESSAGE";
-	}
+        private Columns() {
+        }
+    }
 }
