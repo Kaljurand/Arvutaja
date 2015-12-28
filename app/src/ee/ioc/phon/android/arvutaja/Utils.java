@@ -109,7 +109,7 @@ public class Utils {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putBoolean(context.getString(R.string.prefFirstTime), false);
-				editor.commit();
+				editor.apply();
 				dialog.cancel();
 			}
 		})

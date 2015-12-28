@@ -3,18 +3,19 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="8dp" >
+    android:padding="8dp">
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tvUtterance"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_toLeftOf="@+id/bDelete"
+            android:layout_toStartOf="@+id/bDelete"
             android:textColor="@color/grey1"
             android:textIsSelectable="true"
             android:textSize="@dimen/textSizeUtterance"
@@ -24,11 +25,12 @@
             android:id="@+id/bDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/button_delete"
             android:contentDescription="@string/buttonDeleteContentDescription"
-            android:gravity="right"
+            android:gravity="end"
             android:src="@drawable/ic_menu_delete" />
     </RelativeLayout>
 
@@ -52,7 +54,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/bg_interpretation"
         android:orientation="vertical"
-        android:padding="8dp" >
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/tvTranslation"
@@ -97,13 +99,13 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:textColor="?android:textColorSecondary"
             android:textIsSelectable="true"
             android:textSize="@dimen/textSizeTimestamp"
@@ -112,9 +114,9 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:orientation="horizontal" >
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvLang"

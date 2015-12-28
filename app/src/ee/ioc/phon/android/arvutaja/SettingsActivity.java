@@ -87,7 +87,7 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
 		String pkg = mPrefs.getString(getString(R.string.keyService), null);
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefRecognizerServiceCls), mPkgToCls.get(pkg));
-		editor.commit();
+		editor.apply();
 	}
 
 

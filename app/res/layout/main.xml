@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <ExpandableListView
         android:id="@+id/list"
@@ -15,12 +15,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:layout_margin="10dp"
         android:background="@color/transparent"
         android:orientation="vertical"
-        android:padding="2dp" >
+        android:padding="2dp">
 
         <ee.ioc.phon.android.arvutaja.MicButton
             android:id="@+id/buttonMicrophone"

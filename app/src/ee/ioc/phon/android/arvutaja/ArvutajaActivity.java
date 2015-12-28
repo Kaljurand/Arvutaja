@@ -16,6 +16,7 @@ package ee.ioc.phon.android.arvutaja;
  * limitations under the License.
  */
 
+import android.Manifest;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -24,6 +25,7 @@ import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -67,6 +69,7 @@ import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
+import ee.ioc.phon.android.speechutils.AudioCue;
 import ee.ioc.phon.android.speechutils.TtsProvider;
 
 
@@ -345,7 +348,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				editor.putString(getString(R.string.keyService), getString(R.string.nameK6nelePkg));
 				editor.putString(getString(R.string.prefRecognizerServiceCls), getString(R.string.nameK6neleService));
 				editor.putBoolean(getString(R.string.prefFirstTime), false);
-				editor.commit();
+				editor.apply();
 				AlertDialog d = Utils.getOkDialog(
 						this,
 						getString(R.string.msgFoundK6nele)
@@ -428,7 +431,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putString(getString(R.string.prefCurrentSortOrder), mCurrentSortOrder);
-		editor.commit();
+		editor.apply();
 	}
 
 
@@ -485,7 +488,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		// TODO: ideally this should be done in onDestory
 		SharedPreferences.Editor editor = mPrefs.edit();
 		editor.putInt(getString(R.string.prefCurrentSortOrderMenu), item.getItemId());
-		editor.commit();
+		editor.apply();
 	}
 
 
@@ -829,7 +832,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					if (audioCue != null) {
 						audioCue.playStartSoundAndSleep();
 					}
-					sr.startListening(intentRecognizer);
+					// Request the RECORD_AUDIO permission if
+					// java.lang.SecurityException: Not allowed to bind to service Intent
+					// TODO: preliminary solution (requires restart)
+					try {
+						sr.startListening(intentRecognizer);
+					} catch (SecurityException e) {
+						ActivityCompat.requestPermissions(ArvutajaActivity.this,
+								new String[]{Manifest.permission.RECORD_AUDIO},
+								0);
+					}
 				}
 				else if (mState == State.RECORDING) {
 					//sr.cancel();
@@ -932,7 +944,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			SharedPreferences.Editor editor = mPrefs.edit();
 			editor.putString(getString(R.string.keyService), pkg);
 			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
-			editor.commit();
+			editor.apply();
 		}
 		return new ComponentName(pkg, cls);
 	}
