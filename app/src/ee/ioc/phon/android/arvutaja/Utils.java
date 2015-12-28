@@ -133,12 +133,6 @@ public class Utils {
 	}
 
 
-	public static String makeLangLabel(String localeAsStr) {
-		Locale l = new Locale(localeAsStr);
-		return l.getDisplayName(l) + " (" + localeAsStr + ")";
-	}
-
-
 	public static String localeToTtsCode(Locale locale) {
 		String iso3 = locale.getISO3Language();
 		return Character.toUpperCase(iso3.charAt(0)) + iso3.substring(1) + "tts";

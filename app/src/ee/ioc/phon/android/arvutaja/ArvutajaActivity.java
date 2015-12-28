@@ -69,6 +69,7 @@ import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
 import ee.ioc.phon.android.speechutils.AudioCue;
+import ee.ioc.phon.android.speechutils.RecognitionServiceManager;
 import ee.ioc.phon.android.speechutils.TtsProvider;
 
 
@@ -233,7 +234,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				final Uri contentUri;
 				final long key;
 				String translation = null;
-				if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {			
+				if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 					cursor = (Cursor) listView.getExpandableListAdapter().getGroup(position);
 					if (cursor == null) {
 						return false;
@@ -343,11 +344,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public void onStart() {
 		super.onStart();
 
+		ComponentName serviceComponent = ComponentName.unflattenFromString(
+		    mPrefs.getString(getString(R.string.keyService), getString(R.string.nameK6neleService)));
+
 		if (mPrefs.getBoolean(getString(R.string.prefFirstTime), true)) {
-			if (isRecognizerInstalled(getString(R.string.nameK6nelePkg), getString(R.string.nameK6neleCls))) {
+			if (RecognitionServiceManager.isRecognitionServiceInstalled(getPackageManager(), serviceComponent)) {
 				SharedPreferences.Editor editor = mPrefs.edit();
-				editor.putString(getString(R.string.keyService), getString(R.string.nameK6nelePkg));
-				editor.putString(getString(R.string.prefRecognizerServiceCls), getString(R.string.nameK6neleService));
+				editor.putString(getString(R.string.keyService), getString(R.string.nameK6neleService));
 				editor.putBoolean(getString(R.string.prefFirstTime), false);
 				editor.apply();
 				AlertDialog d = Utils.getOkDialog(
@@ -361,8 +364,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				goToStore();
 			}
 		}
-
-		ComponentName serviceComponent = getServiceComponent();
 
 		if (serviceComponent == null) {
 			toast(getString(R.string.errorNoDefaultRecognizer));
@@ -921,33 +922,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.setComponent(new ComponentName(pkg, cls));
 		return (getIntentActivities(intent).size() > 0);
-	}
-
-
-	/**
-	 * Look up the default recognizer service in the preferences.
-	 * If the default have not been set then set the first available
-	 * recognizer as the default. If no recognizer is installed then
-	 * return null.
-	 */
-	private ComponentName getServiceComponent() {
-		String pkg = mPrefs.getString(getString(R.string.keyService), null);
-		String cls = mPrefs.getString(getString(R.string.prefRecognizerServiceCls), null);
-		if (pkg == null || cls == null) {
-			List<ResolveInfo> services = getPackageManager().queryIntentServices(
-					new Intent(RecognitionService.SERVICE_INTERFACE), 0);
-			if (services.isEmpty()) {
-				return null;
-			}
-			ResolveInfo ri = services.iterator().next();
-			pkg = ri.serviceInfo.packageName;
-			cls = ri.serviceInfo.name;
-			SharedPreferences.Editor editor = mPrefs.edit();
-			editor.putString(getString(R.string.keyService), pkg);
-			editor.putString(getString(R.string.prefRecognizerServiceCls), cls);
-			editor.apply();
-		}
-		return new ComponentName(pkg, cls);
 	}
 
 

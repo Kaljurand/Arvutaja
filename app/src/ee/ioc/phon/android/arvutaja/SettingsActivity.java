@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2015, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,237 +16,179 @@
 
 package ee.ioc.phon.android.arvutaja;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.speech.RecognitionService;
-import android.speech.RecognizerIntent;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import ee.ioc.phon.android.speechutils.RecognitionServiceManager;
 
 public class SettingsActivity extends SubActivity implements OnSharedPreferenceChangeListener {
+    private SettingsFragment mSettingsFragment;
+    private SharedPreferences mPrefs;
+    private String mKeyService;
+    private String mKeyLanguage;
+    private String mKeyMaxResults;
+    private final Map<String, Set<String>> serviceToLangs = new HashMap<>();
 
-	private SettingsFragment mSettingsFragment;
-	private SharedPreferences mPrefs;
-	private String mKeyService;
-	private String mKeyLanguage;
-	private String mKeyMaxResults;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	// TODO: we support one service per package, this might
-	// be a limitation...
-	private final Map<String, String> mPkgToCls = new HashMap<String, String>();
+        mSettingsFragment = new SettingsFragment();
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mKeyService = getString(R.string.keyService);
+        mKeyLanguage = getString(R.string.keyLanguage);
+        mKeyMaxResults = getString(R.string.keyMaxResults);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		mSettingsFragment = new SettingsFragment();
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		mKeyService = getString(R.string.keyService);
-		mKeyLanguage = getString(R.string.keyLanguage);
-		mKeyMaxResults = getString(R.string.keyMaxResults);
-
-		// Display the fragment as the main content.
-		getFragmentManager().beginTransaction().replace(android.R.id.content, mSettingsFragment).commit();
-	}
+        getFragmentManager().beginTransaction().replace(android.R.id.content, mSettingsFragment).commit();
+    }
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mPrefs.registerOnSharedPreferenceChangeListener(this);
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-		Preference pref = (Preference) mSettingsFragment.findPreference(mKeyMaxResults);
-		String maxResults = mPrefs.getString(mKeyMaxResults, getString(R.string.defaultMaxResults));
-		setSummary(pref, R.plurals.summaryMaxResults, maxResults);
+        RecognitionServiceManager mngr = new RecognitionServiceManager();
+        mngr.populateCombos(this, new RecognitionServiceManager.Listener() {
+            @Override
+            public void onComplete(List<String> combos, Set<String> selectedCombos) {
+                for (String combo : combos) {
+                    String[] serviceAndLang = RecognitionServiceManager.getServiceAndLang(combo);
+                    String service = serviceAndLang[0];
+                    String lang = serviceAndLang[1];
+                    if (serviceToLangs.containsKey(service)) {
+                        serviceToLangs.get(service).add(lang);
+                    } else {
+                        Set<String> langs = new HashSet<>();
+                        langs.add(lang);
+                        serviceToLangs.put(service, langs);
+                    }
+                }
+                ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
+                populateServices(prefServices, serviceToLangs);
+            }
+        });
 
-		populateServices();
-	}
+        Preference pref = mSettingsFragment.findPreference(mKeyMaxResults);
+        String maxResults = mPrefs.getString(mKeyMaxResults, getString(R.string.defaultMaxResults));
+        setSummary(pref, R.plurals.summaryMaxResults, maxResults);
 
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mPrefs.unregisterOnSharedPreferenceChangeListener(this);
-
-		// Save the selected service class name, otherwise we cannot construct the
-		//recognizer.
-		String pkg = mPrefs.getString(getString(R.string.keyService), null);
-		SharedPreferences.Editor editor = mPrefs.edit();
-		editor.putString(getString(R.string.prefRecognizerServiceCls), mPkgToCls.get(pkg));
-		editor.apply();
-	}
-
-
-	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		if (key.equals(mKeyService)) {
-			ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
-			pref.setSummary(pref.getEntry());
-			populateLangs();
-		} else if (key.equals(mKeyLanguage)) {
-			ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
-			pref.setSummary(pref.getEntry());
-		} else if (mKeyMaxResults.equals(key)) {
-			ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
-			setSummary(pref, R.plurals.summaryMaxResults, pref.getEntry().toString());
-		}
-	}
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+    }
 
 
-	private void setSummary(Preference pref, int pluralsResource, String countAsString) {
-		int count = Integer.parseInt(countAsString);
-		pref.setSummary(getResources().getQuantityString(pluralsResource, count, count));
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+    }
 
 
-	private void populateServices() {
-		PackageManager pm = getPackageManager();
-		List<ResolveInfo> services = pm.queryIntentServices(
-				new Intent(RecognitionService.SERVICE_INTERFACE), 0);
-
-		String selectedService = mPrefs.getString(mKeyService, null);
-		int selectedIndex = 0;
-
-		CharSequence[] entries = new CharSequence[services.size()];
-		CharSequence[] entryValues = new CharSequence[services.size()];
-
-		int index = 0;
-		for (ResolveInfo ri : services) {
-			ServiceInfo si = ri.serviceInfo;
-			if (si == null) {
-				Log.i("serviceInfo == null");
-				continue;
-			}
-			String pkg = si.packageName;
-			String cls = si.name;
-			CharSequence label = si.loadLabel(pm);
-			mPkgToCls.put(pkg, cls);
-			Log.i(pkg + " :: " + label + " :: " + mPkgToCls.get(pkg));
-			entries[index] = label;
-			entryValues[index] = pkg;
-			if (pkg.equals(selectedService)) {
-				selectedIndex = index;
-			}
-			index++;
-		}
-
-		if (services.size() > 0) {
-			ListPreference list = (ListPreference) mSettingsFragment.findPreference(mKeyService);
-			list.setEntries(entries);
-			list.setEntryValues(entryValues);
-			list.setValueIndex(selectedIndex);
-			list.setSummary(list.getEntry());
-			populateLangs();
-		}
-	}
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (key.equals(mKeyService)) {
+            ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
+            pref.setSummary(pref.getEntry());
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.putString(getString(R.string.keyService), pref.getValue());
+            editor.apply();
+            populateLangs();
+        } else if (key.equals(mKeyLanguage)) {
+            ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
+            pref.setSummary(pref.getEntry());
+        } else if (mKeyMaxResults.equals(key)) {
+            ListPreference pref = (ListPreference) mSettingsFragment.findPreference(key);
+            setSummary(pref, R.plurals.summaryMaxResults, pref.getEntry().toString());
+        }
+    }
 
 
-	/**
-	 * Update the list of languages by filling in those that the currently selected
-	 * recognizer supports.
-	 * 
-	 * TODO: This works with Google and K6nele, but not with Vlingo.
-	 */
-	private void populateLangs() {
-		ListPreference pref = (ListPreference) mSettingsFragment.findPreference(mKeyService);
-		updateSupportedLanguages(pref.getValue());
-	}
+    private void setSummary(Preference pref, int pluralsResource, String countAsString) {
+        int count = Integer.parseInt(countAsString);
+        pref.setSummary(getResources().getQuantityString(pluralsResource, count, count));
+    }
 
 
-	/**
-	 * Note: According to the <code>BroadcastReceiver</code> documentation,
-	 * setPackage is respected only on ICS and later.
-	 *
-	 * @param packageName name of the app that is the only one to receive the broadcast
-	 */
-	private void updateSupportedLanguages(String packageName) {
-		Intent intent = new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
-		intent.setPackage(packageName);
-		// This is needed to include newly installed apps or stopped apps
-		// as receivers of the broadcast.
-		intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-		updateSupportedLanguages(intent);
-	}
+    private void populateServices(ListPreference prefServices, Map<String, Set<String>> serviceToLangs) {
+        Set<String> services = serviceToLangs.keySet();
+        CharSequence[] entryValues = services.toArray(new CharSequence[services.size()]);
+        Arrays.sort(entryValues);
+
+        CharSequence[] entries = new CharSequence[services.size()];
+
+        String selectedService = mPrefs.getString(mKeyService, null);
+        int index = 0;
+        int selectedIndex = 0;
+        for (CharSequence service : entryValues) {
+            entries[index] = RecognitionServiceManager.getServiceLabel(this, service.toString());
+            if (service.equals(selectedService)) {
+                selectedIndex = index;
+            }
+            index++;
+        }
+
+        prefServices.setEntries(entries);
+        prefServices.setEntryValues(entryValues);
+        prefServices.setValueIndex(selectedIndex);
+        prefServices.setSummary(prefServices.getEntry());
+        populateLangs();
+    }
 
 
-	/**
-	 * Send a broadcast to find up what is the language preference of
-	 * the speech recognizer service that matches the intent.
-	 * The expectation is that only one service matches this intent.
-	 */
-	private void updateSupportedLanguages(Intent intent) {
+    /**
+     * Update the list of languages by filling in those that the currently selected
+     * recognizer supports.
+     */
+    private void populateLangs() {
+        ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
+        ListPreference prefLanguages = (ListPreference) mSettingsFragment.findPreference(mKeyLanguage);
+        Set<String> languages = serviceToLangs.get(prefServices.getValue());
+        if (languages.size() > 1) {
+            updateSupportedLanguages(prefLanguages, languages);
+        }
+    }
 
-		sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
 
-			@Override
-			public void onReceive(Context context, Intent intent) {
+    private void updateSupportedLanguages(ListPreference prefLanguages, Set<String> languages) {
+        String selectedLang = prefLanguages.getValue();
+        // Populate the entry values with the supported languages
+        CharSequence[] entryValues = languages.toArray(new CharSequence[languages.size()]);
+        Arrays.sort(entryValues);
+        prefLanguages.setEntryValues(entryValues);
 
-				if (getResultCode() != Activity.RESULT_OK) {
-					toast(getString(R.string.errorNoDefaultRecognizer));
-					return;
-				}
+        // Populate the entries with human-readable language names
+        CharSequence[] entries = new CharSequence[languages.size()];
+        int index = 0;
+        for (CharSequence lang : entryValues) {
+            entries[index] = RecognitionServiceManager.makeLangLabel(lang.toString());
+            index++;
+        }
+        prefLanguages.setEntries(entries);
 
-				Bundle results = getResultExtras(true);
-
-				// Current list
-				ListPreference list = (ListPreference) mSettingsFragment.findPreference(mKeyLanguage);
-				String selectedLang = list.getValue();
-
-				// Supported languages
-				String prefLang = results.getString(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE);
-				ArrayList<CharSequence> allLangs = results.getCharSequenceArrayList(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES);
-
-				Log.i("Supported langs: " + prefLang + ": " + allLangs);
-
-				if (allLangs == null) {
-					allLangs = new ArrayList<CharSequence>();
-				}
-
-				// Make sure we don't end up with an empty list of languages
-				if (allLangs.isEmpty()) {
-					if (prefLang == null) {
-						allLangs.add(getString(R.string.defaultLanguage));
-					} else {
-						allLangs.add(prefLang);
-					}
-				}
-
-				// Populate the entry values with the supported languages
-				CharSequence[] entryValues = allLangs.toArray(new CharSequence[allLangs.size()]);
-				list.setEntryValues(entryValues);
-
-				// Populate the entries with human-readable language names
-				CharSequence[] entries = new CharSequence[allLangs.size()];
-				for (int i = 0; i < allLangs.size(); i++) {
-					String ev = entryValues[i].toString();
-					entries[i] = Utils.makeLangLabel(ev);
-				}
-				list.setEntries(entries);
-
-				// Set the selected item
-				if (allLangs.contains(selectedLang)) {
-					list.setValue(selectedLang);
-				} else if (prefLang != null) {
-					list.setValue(prefLang);
-				} else {
-					list.setValueIndex(0);
-				}
-				// Update the summary to show the selected value
-				list.setSummary(list.getEntry());
-
-			}}, null, Activity.RESULT_OK, null, null);
-	}
+        // Select one entry, trying in this order:
+        // 1. Select the previously selected language
+        // 2. Select the language that Arvutaja prefers
+        // 3. Select the first language
+        if (languages.contains(selectedLang)) {
+            prefLanguages.setValue(selectedLang);
+        } else {
+            String defaultLang = getString(R.string.defaultLanguage);
+            if (languages.contains(defaultLang)) {
+                prefLanguages.setValue(defaultLang);
+            } else {
+                prefLanguages.setValueIndex(0);
+            }
+        }
+        // Update the summary to show the selected value
+        prefLanguages.setSummary(prefLanguages.getEntry());
+    }
 }

@@ -18,13 +18,10 @@
     <string name="arrowRight" translatable="false">→</string>
     <string name="nameLangLinearize" translatable="false">App</string>
     <string name="nameRecognizer" translatable="false">Kõnele</string>
-    <string name="nameK6nelePkg" translatable="false">ee.ioc.phon.android.speak</string>
-    <string name="nameK6neleCls" translatable="false">ee.ioc.phon.android.speak.RecognizerIntentActivity</string>
-    <string name="nameK6neleService" translatable="false">ee.ioc.phon.android.speak.SpeechRecognitionService</string>
+    <string name="nameK6neleService" translatable="false">ee.ioc.phon.android.speak/.service.HttpRecognitionService</string>
     <string name="labelApp">Arvutaja</string>
     <string name="prefCurrentSortOrder" translatable="false">prefCurrentSortOrder</string>
     <string name="prefCurrentSortOrderMenu" translatable="false">prefCurrentSortOrderMenu</string>
-    <string name="prefRecognizerServiceCls" translatable="false">prefRecognizerServiceCls</string>
     <string name="prefFirstTime" translatable="false">prefFirstTime</string>
     <string name="labelExamples">Examples</string>
     <string name="labelSettings">Settings</string>
