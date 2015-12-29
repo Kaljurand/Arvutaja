@@ -24,10 +24,8 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import ee.ioc.phon.android.speechutils.RecognitionServiceManager;
@@ -38,7 +36,6 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
     private String mKeyService;
     private String mKeyLanguage;
     private String mKeyMaxResults;
-    private final Map<String, Set<String>> serviceToLangs = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,25 +56,9 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
         super.onResume();
 
         RecognitionServiceManager mngr = new RecognitionServiceManager();
-        mngr.populateCombos(this, new RecognitionServiceManager.Listener() {
-            @Override
-            public void onComplete(List<String> combos, Set<String> selectedCombos) {
-                for (String combo : combos) {
-                    String[] serviceAndLang = RecognitionServiceManager.getServiceAndLang(combo);
-                    String service = serviceAndLang[0];
-                    String lang = serviceAndLang[1];
-                    if (serviceToLangs.containsKey(service)) {
-                        serviceToLangs.get(service).add(lang);
-                    } else {
-                        Set<String> langs = new HashSet<>();
-                        langs.add(lang);
-                        serviceToLangs.put(service, langs);
-                    }
-                }
-                ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
-                populateServices(prefServices, serviceToLangs);
-            }
-        });
+        ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
+        populateServices(prefServices, mngr.getServices(getPackageManager()));
+        populateLangs();
 
         Preference pref = mSettingsFragment.findPreference(mKeyMaxResults);
         String maxResults = mPrefs.getString(mKeyMaxResults, getString(R.string.defaultMaxResults));
@@ -118,8 +99,7 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
     }
 
 
-    private void populateServices(ListPreference prefServices, Map<String, Set<String>> serviceToLangs) {
-        Set<String> services = serviceToLangs.keySet();
+    private void populateServices(ListPreference prefServices, List<String> services) {
         CharSequence[] entryValues = services.toArray(new CharSequence[services.size()]);
         Arrays.sort(entryValues);
 
@@ -140,7 +120,6 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
         prefServices.setEntryValues(entryValues);
         prefServices.setValueIndex(selectedIndex);
         prefServices.setSummary(prefServices.getEntry());
-        populateLangs();
     }
 
 
@@ -149,12 +128,22 @@ public class SettingsActivity extends SubActivity implements OnSharedPreferenceC
      * recognizer supports.
      */
     private void populateLangs() {
-        ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
-        ListPreference prefLanguages = (ListPreference) mSettingsFragment.findPreference(mKeyLanguage);
-        Set<String> languages = serviceToLangs.get(prefServices.getValue());
-        if (languages.size() > 1) {
-            updateSupportedLanguages(prefLanguages, languages);
-        }
+        final ListPreference prefServices = (ListPreference) mSettingsFragment.findPreference(mKeyService);
+        final ListPreference prefLanguages = (ListPreference) mSettingsFragment.findPreference(mKeyLanguage);
+        RecognitionServiceManager mngr = new RecognitionServiceManager();
+        mngr.populateCombos(this, prefServices.getValue(), new RecognitionServiceManager.Listener() {
+            @Override
+            public void onComplete(List<String> combos, Set<String> selectedCombos) {
+                Set<String> languages = new HashSet<>();
+                for (String combo : combos) {
+                    String[] serviceAndLang = RecognitionServiceManager.getServiceAndLang(combo);
+                    languages.add(serviceAndLang[1]);
+                }
+                if (languages.size() > 1) {
+                    updateSupportedLanguages(prefLanguages, languages);
+                }
+            }
+        });
     }
 
 
