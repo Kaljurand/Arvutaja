@@ -32,6 +32,7 @@
     <string name="errorResultNetworkError">Something is wrong with the network</string>
     <string name="errorResultClientError">General client error</string>
     <string name="errorResultServerError">Recognizer server error</string>
+    <string name="errorResultInsufficientPermissionsError">Insufficient permissions</string>
     <string name="errorResultNoMatch">No match was found for the recorded speech. Please try again!</string>
     <string name="errorRecognizerNotPresent">Arvutaja works best with the speech recognition service %1$s. Please install it first.</string>
     <string name="errorCommandNotSupported">Command not supported</string>

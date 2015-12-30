@@ -16,8 +16,6 @@ package ee.ioc.phon.android.arvutaja;
  * limitations under the License.
  */
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,49 +24,54 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.widget.Toast;
 
+import java.util.List;
+
 /**
- * 
  * @author Kaarel Kaljurand
  */
 public abstract class AbstractRecognizerActivity extends Activity {
 
-	/**
-	 * Launches an activity which the user probably does not want to see
-	 * if he presses HOME while in this activity and then starts Arvutaja again
-	 * from the launcher.
-	 */
-	public void startForeignActivity(Intent intent) {
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-		startActivity(intent);
-	}
+    /**
+     * Launches an activity which the user probably does not want to see
+     * if he presses HOME while in this activity and then starts Arvutaja again
+     * from the launcher.
+     */
+    public void startForeignActivity(Intent intent) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        startActivity(intent);
+    }
 
-	public String getVersionName() {
-		return Utils.getVersionName(this);
-	}
-
-
-	protected List<ResolveInfo> getIntentActivities(Intent intent) {
-		PackageManager pm = getPackageManager();
-		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
-		return activities;
-	}
+    public String getVersionName() {
+        return Utils.getVersionName(this);
+    }
 
 
-	protected void toast(String message) {
-		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-	}
+    protected List<ResolveInfo> getIntentActivities(Intent intent) {
+        PackageManager pm = getPackageManager();
+        List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
+        return activities;
+    }
 
 
-	public void showErrorDialog(int msg) {
-		new AlertDialog.Builder(this)
-		.setPositiveButton(getString(R.string.buttonOk), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
-			}
-		})
-		.setTitle(R.string.error)
-		.setMessage(msg)
-		.create()
-		.show();
-	}
+    protected void toast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+
+    public void showErrorDialog(int msg) {
+        new AlertDialog.Builder(this)
+                .setPositiveButton(getString(R.string.buttonOk), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .setTitle(R.string.error)
+                .setMessage(msg)
+                .create()
+                .show();
+    }
+
+    public void showError(int msg) {
+        Toast.makeText(getApplicationContext(), getString(msg), Toast.LENGTH_LONG).show();
+    }
 }

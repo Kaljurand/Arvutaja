@@ -12,6 +12,7 @@
     <string name="errorResultNetworkError">Puudub võrguühendus kõnetuvastusserveriga</string>
     <string name="errorResultClientError">Kliendiviga</string>
     <string name="errorResultServerError">Kõnetuvastusserveri viga</string>
+    <string name="errorResultInsufficientPermissionsError">Vajalikud õigused puuduvad</string>
     <string name="errorResultNoMatch">Sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
     <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun paigaldage see kõigepealt.</string>
     <string name="errorCommandNotSupported">Ei tunne sellist käsku</string>

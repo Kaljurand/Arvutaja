@@ -474,7 +474,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		if (lins == null || lins.isEmpty() || counts == null || counts.isEmpty()) {
 			if (matches == null || matches.isEmpty()) {
-				showErrorDialog(R.string.errorResultNoMatch);
+				showError(R.string.errorResultNoMatch);
 				return;
 			}
 			lins = new ArrayList<>();
@@ -618,7 +618,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		}
 
 		if (valuesList.isEmpty()) {
-			showErrorDialog(R.string.errorResultNoMatch);
+			showError(R.string.errorResultNoMatch);
 			// We use the speech input locale, not the GUI locale,
 			// i.e. if the user speaks in English, then respond in English,
 			// even though the (visual) GUI is in German.
@@ -726,31 +726,34 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				}
 				switch (error) {
 				case SpeechRecognizer.ERROR_AUDIO:
-					showErrorDialog(R.string.errorResultAudioError);
+					showError(R.string.errorResultAudioError);
 					break;
 				case SpeechRecognizer.ERROR_CLIENT:
-					showErrorDialog(R.string.errorResultClientError);
+					showError(R.string.errorResultClientError);
 					break;
 				case SpeechRecognizer.ERROR_NETWORK:
-					showErrorDialog(R.string.errorResultNetworkError);
+					showError(R.string.errorResultNetworkError);
 					break;
 				case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-					showErrorDialog(R.string.errorResultNetworkError);
+					showError(R.string.errorResultNetworkError);
 					break;
 				case SpeechRecognizer.ERROR_SERVER:
-					showErrorDialog(R.string.errorResultServerError);
+					showError(R.string.errorResultServerError);
 					break;
 				case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-					showErrorDialog(R.string.errorResultServerError);
+					showError(R.string.errorResultServerError);
 					break;
 				case SpeechRecognizer.ERROR_NO_MATCH:
-					showErrorDialog(R.string.errorResultNoMatch);
+					showError(R.string.errorResultNoMatch);
 					break;
 				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-					showErrorDialog(R.string.errorResultNoMatch);
+					showError(R.string.errorResultNoMatch);
 					break;
 				case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-					showErrorDialog(R.string.errorResultClientError); // TODO: change error message
+					ActivityCompat.requestPermissions(ArvutajaActivity.this,
+							new String[]{Manifest.permission.RECORD_AUDIO},
+							0);
+					showError(R.string.errorResultInsufficientPermissionsError);
 					break;
 				default:
 					break;
@@ -759,7 +762,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onEvent(int eventType, Bundle params) {
-				// TODO ???
+				// ignore
 			}
 
 			@Override
@@ -803,6 +806,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					try {
 						sr.startListening(intentRecognizer);
 					} catch (SecurityException e) {
+						showError(R.string.errorResultInsufficientPermissionsError);
 						ActivityCompat.requestPermissions(ArvutajaActivity.this,
 								new String[]{Manifest.permission.RECORD_AUDIO},
 								0);
