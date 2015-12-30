@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ee.ioc.phon.android.arvutaja" >
+    package="ee.ioc.phon.android.arvutaja">
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" >
-    </uses-permission>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
 
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/labelApp"
-        android:theme="@style/LightTheme" >
+        android:theme="@style/Theme.Arvutaja">
         <activity
             android:name=".ArvutajaActivity"
-            android:label="@string/labelApp" >
+            android:label="@string/labelApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,17 +54,14 @@
         </activity>
         <activity
             android:name=".ExamplesActivity"
-            android:label="@string/labelExamples" >
-        </activity>
+            android:label="@string/labelExamples"></activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/labelSettings" >
-        </activity>
+            android:label="@string/labelSettings"></activity>
         <activity
             android:name=".ShowActivity"
             android:label="@string/labelShow"
-            android:theme="@style/LightThemeDialog" >
-        </activity>
+            android:theme="@style/Theme.Arvutaja.Dialog"></activity>
 
         <provider
             android:name=".provider.QueriesContentProvider"
@@ -74,7 +70,7 @@
 
         <receiver
             android:name=".provider.ArvutajaAppWidgetProvider"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
