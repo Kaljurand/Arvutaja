@@ -25,7 +25,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,7 +32,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
-import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
@@ -43,10 +41,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.CursorTreeAdapter;
@@ -62,7 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import ee.ioc.phon.android.arvutaja.Constants.State;
 import ee.ioc.phon.android.arvutaja.command.Command;
 import ee.ioc.phon.android.arvutaja.command.CommandParseException;
 import ee.ioc.phon.android.arvutaja.command.CommandParser;
@@ -71,6 +65,7 @@ import ee.ioc.phon.android.arvutaja.provider.Query;
 import ee.ioc.phon.android.speechutils.AudioCue;
 import ee.ioc.phon.android.speechutils.RecognitionServiceManager;
 import ee.ioc.phon.android.speechutils.TtsProvider;
+import ee.ioc.phon.android.speechutils.view.MicButton;
 
 
 public class ArvutajaActivity extends AbstractRecognizerActivity {
@@ -85,7 +80,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	public static final String RESULTS_RECOGNITION_LINEARIZATION_COUNTS = "ee.ioc.phon.android.extra.RESULTS_RECOGNITION_LINEARIZATION_COUNTS";
 
 
-	private State mState = State.INIT;
+	private MicButton.State mState = MicButton.State.INIT;
 
 	private static final Uri QUERY_CONTENT_URI = Query.Columns.CONTENT_URI;
 	private static final Uri QEVAL_CONTENT_URI = Qeval.Columns.CONTENT_URI;
@@ -300,20 +295,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
-		listView.setOnScrollListener(new OnScrollListener() {
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				// Intentionally empty
-			}
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-					mButtonMicrophone.fadeIn();
-				} else {
-					mButtonMicrophone.fadeOut();
-				}
-			}
-		});
-
-
 		mAdapter = new MyExpandableListAdapter(
 				this,
 				R.layout.list_item_group,
@@ -505,8 +486,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				showErrorDialog(R.string.errorResultNoMatch);
 				return;
 			}
-			lins = new ArrayList<String>();
-			counts = new ArrayList<Integer>();
+			lins = new ArrayList<>();
+			counts = new ArrayList<>();
 			for (String match : matches) {
 				lins.add(match); // utterance
 				lins.add(match); // translation
@@ -727,7 +708,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onBeginningOfSpeech() {
-				mState = State.LISTENING;
+				mState = MicButton.State.LISTENING;
+				mButtonMicrophone.setState(mState);
 			}
 
 			@Override
@@ -737,7 +719,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onEndOfSpeech() {
-				mState = State.TRANSCRIBING;
+				mState = MicButton.State.TRANSCRIBING;
 				mButtonMicrophone.setState(mState);
 				if (audioCue != null) {
 					audioCue.playStopSound();
@@ -746,7 +728,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onError(int error) {
-				mState = State.ERROR;
+				mState = MicButton.State.ERROR;
 				mButtonMicrophone.setState(mState);
 				if (audioCue != null) {
 					audioCue.playErrorSound();
@@ -777,7 +759,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 					showErrorDialog(R.string.errorResultNoMatch);
 					break;
 				case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-					// This is programmer error.
+					showErrorDialog(R.string.errorResultClientError); // TODO: change error message
 					break;
 				default:
 					break;
@@ -796,13 +778,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			@Override
 			public void onReadyForSpeech(Bundle params) {
-				mState = State.RECORDING;
+				mState = MicButton.State.RECORDING;
 				mButtonMicrophone.setState(mState);
 			}
 
 			@Override
 			public void onResults(Bundle results) {
-				mState = State.INIT;
+				mState = MicButton.State.INIT;
 				mButtonMicrophone.setState(mState);
 				onSuccess(intentRecognizer.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE), results);
 			}
@@ -813,21 +795,11 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			}
 		});
 
-		mButtonMicrophone.setOnTouchListener(new View.OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-				}
-
-				return false;
-			}
-		});
-
 		mButtonMicrophone.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (mState == State.INIT || mState == State.ERROR) {
+				if (mState == MicButton.State.INIT || mState == MicButton.State.ERROR) {
+					mState = MicButton.State.WAITING;
+					mButtonMicrophone.setState(mState);
 					if (mTts != null) {
 						mTts.stop();
 					}
@@ -845,13 +817,16 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 								0);
 					}
 				}
-				else if (mState == State.RECORDING) {
+				else if (mState == MicButton.State.WAITING) {
 					//sr.cancel();
 				}
-				else if (mState == State.TRANSCRIBING) {
+				else if (mState == MicButton.State.RECORDING) {
 					//sr.cancel();
 				}
-				else if (mState == State.LISTENING) {
+				else if (mState == MicButton.State.TRANSCRIBING) {
+					//sr.cancel();
+				}
+				else if (mState == MicButton.State.LISTENING) {
 					sr.stopListening();
 				} else {
 					// TODO: bad state to press the button
@@ -887,12 +862,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			intentVoid.setAction(null);
 			setIntent(intentVoid);
 			mButtonMicrophone.performClick();
-		}
-	}
-
-	private void vibrate() {
-		if (mVibrator != null) {
-			mVibrator.vibrate(30);
 		}
 	}
 

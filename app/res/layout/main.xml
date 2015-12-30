@@ -23,7 +23,7 @@
         android:orientation="vertical"
         android:padding="2dp">
 
-        <ee.ioc.phon.android.arvutaja.MicButton
+        <ee.ioc.phon.android.speechutils.view.MicButton
             android:id="@+id/buttonMicrophone"
             android:layout_width="@dimen/layoutHeightButtonMicrophone"
             android:layout_height="@dimen/layoutHeightButtonMicrophone"
@@ -33,7 +33,7 @@
             android:contentDescription="@string/buttonMicrophoneContentDescription"
             android:gravity="center"
             android:padding="20dp"
-            android:src="@drawable/ic_voice_search_api_holo_light" />
+            android:src="@drawable/ic_voice_search_api_material" />
     </LinearLayout>
 
 </RelativeLayout>

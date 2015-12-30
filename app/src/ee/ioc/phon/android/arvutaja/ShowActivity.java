@@ -88,7 +88,7 @@ public class ShowActivity extends AbstractRecognizerActivity {
 				if (translation == null || translation.length() == 0) {
 					// If translation is missing, then only show a red error message
 					llInterpretation.setVisibility(View.GONE);
-					((TextView) findViewById(R.id.tvInterpretationMissing)).setVisibility(View.VISIBLE);
+					findViewById(R.id.tvInterpretationMissing).setVisibility(View.VISIBLE);
 				} else {
 					// otherwise show the translation
 					llInterpretation.setVisibility(View.VISIBLE);
