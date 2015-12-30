@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import ee.ioc.phon.android.arvutaja.R;
 import ee.ioc.phon.android.arvutaja.ArvutajaActivity;
+import ee.ioc.phon.android.speechutils.Extras;
 
 public class ArvutajaAppWidgetProvider extends AppWidgetProvider {
 
@@ -35,7 +36,7 @@ public class ArvutajaAppWidgetProvider extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 
 			Intent intent = new Intent(context, ArvutajaActivity.class);
-			intent.putExtra(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER, true);
+			intent.putExtra(Extras.EXTRA_LAUNCH_RECOGNIZER, true);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 0);
 
 			// Get the layout for the App Widget and attach an on-click listener to the button

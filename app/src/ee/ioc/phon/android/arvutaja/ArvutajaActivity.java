@@ -63,22 +63,13 @@ import ee.ioc.phon.android.arvutaja.command.CommandParser;
 import ee.ioc.phon.android.arvutaja.provider.Qeval;
 import ee.ioc.phon.android.arvutaja.provider.Query;
 import ee.ioc.phon.android.speechutils.AudioCue;
+import ee.ioc.phon.android.speechutils.Extras;
 import ee.ioc.phon.android.speechutils.RecognitionServiceManager;
 import ee.ioc.phon.android.speechutils.TtsProvider;
 import ee.ioc.phon.android.speechutils.view.MicButton;
 
 
 public class ArvutajaActivity extends AbstractRecognizerActivity {
-
-	public static final String EXTRA_LAUNCH_RECOGNIZER = "ee.ioc.phon.android.extra.LAUNCH_RECOGNIZER";
-
-	// Set of non-standard extras that K6nele supports
-	public static final String EXTRA_GRAMMAR_URL = "ee.ioc.phon.android.extra.GRAMMAR_URL";
-	public static final String EXTRA_GRAMMAR_TARGET_LANG = "ee.ioc.phon.android.extra.GRAMMAR_TARGET_LANG";
-
-	public static final String RESULTS_RECOGNITION_LINEARIZATIONS = "ee.ioc.phon.android.extra.RESULTS_RECOGNITION_LINEARIZATIONS";
-	public static final String RESULTS_RECOGNITION_LINEARIZATION_COUNTS = "ee.ioc.phon.android.extra.RESULTS_RECOGNITION_LINEARIZATION_COUNTS";
-
 
 	private MicButton.State mState = MicButton.State.INIT;
 
@@ -132,7 +123,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		public QueryHandler(ArvutajaActivity activity, CursorTreeAdapter adapter) {
 			super(activity.getContentResolver());
-			mRef = new WeakReference<ArvutajaActivity>(activity);
+			mRef = new WeakReference<>(activity);
 			mAdapter = adapter;
 		}
 
@@ -476,8 +467,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 
 	private void onSuccess(String lang, Bundle bundle) {
-		ArrayList<String> lins = bundle.getStringArrayList(RESULTS_RECOGNITION_LINEARIZATIONS);
-		ArrayList<Integer> counts = bundle.getIntegerArrayList(RESULTS_RECOGNITION_LINEARIZATION_COUNTS);
+		ArrayList<String> lins = bundle.getStringArrayList(Extras.RESULTS_RECOGNITION_LINEARIZATIONS);
+		ArrayList<Integer> counts = bundle.getIntegerArrayList(Extras.RESULTS_RECOGNITION_LINEARIZATION_COUNTS);
 		ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		// TODO: confidence scores support is only in API 14
 
@@ -531,13 +522,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 		// e.g. GVS always returns 5 results regardless of this setting.
 		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,
 				Integer.parseInt(mPrefs.getString(getString(R.string.keyMaxResults), getString(R.string.defaultMaxResults))));
-		intent.putExtra(EXTRA_GRAMMAR_URL, grammar);
+		intent.putExtra(Extras.EXTRA_GRAMMAR_URL, grammar);
 		// Request the App-language and (if switched on) the TTS-language (e.g. Engtts).
 		// We assume (in the following) that only a single variant is returned for both types of languages.
 		if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
-			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget + "," + Utils.localeToTtsCode(locale));
+			intent.putExtra(Extras.EXTRA_GRAMMAR_TARGET_LANG, langTarget + "," + Utils.localeToTtsCode(locale));
 		} else {
-			intent.putExtra(EXTRA_GRAMMAR_TARGET_LANG, langTarget);
+			intent.putExtra(Extras.EXTRA_GRAMMAR_TARGET_LANG, langTarget);
 		}
 		return intent;
 	}
@@ -856,7 +847,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			||
 				Intent.ACTION_VOICE_COMMAND.equals(intentArvutaja.getAction())
 			||
-				extras != null && extras.getBoolean(ArvutajaActivity.EXTRA_LAUNCH_RECOGNIZER)) {
+				extras != null && extras.getBoolean(Extras.EXTRA_LAUNCH_RECOGNIZER)) {
 			// We disable the intent so that it would not fire on orientation change
 			Intent intentVoid = new Intent(this, ArvutajaActivity.class);
 			intentVoid.setAction(null);
