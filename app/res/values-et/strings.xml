@@ -8,13 +8,13 @@
     <string name="urlArvutajaProject">http://kaljurand.github.io/Arvutaja/index.et.html</string>
     <string name="warningUtteranceNotSupported">Sisendlause pole toetatud</string>
     <string name="error">Viga</string>
-    <string name="errorResultAudioError">Lindistamine luhtus</string>
+    <string name="errorResultAudioError">Heli salvestamine luhtus. Kõnetuvastusteenusel puudub heli salvestamise õigus või mõni teine rakendus parasjagu salvestab.</string>
     <string name="errorResultNetworkError">Puudub võrguühendus kõnetuvastusserveriga</string>
     <string name="errorResultClientError">Kliendiviga</string>
     <string name="errorResultServerError">Kõnetuvastusserveri viga</string>
     <string name="errorResultInsufficientPermissionsError">Vajalikud õigused puuduvad</string>
     <string name="errorResultNoMatch">Sisendkõne transkribeerimine luhtus. Proovige uuesti!</string>
-    <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun paigaldage see kõigepealt.</string>
+    <string name="errorRecognizerNotPresent">Arvutaja vajab tööks kõnetuvastusteenust %1$s. Palun paigaldage see kõigepealt (ning andke heli salvestamise õigus).</string>
     <string name="errorCommandNotSupported">Ei tunne sellist käsku</string>
     <string name="errorIntentActivityNotPresent">Puudub rakendus selle käsu täitmiseks.</string>
     <string name="errorNoDefaultRecognizer">Kõnetuvastaja pole installeeritud või seadistatud</string>
@@ -34,7 +34,7 @@
     <string name="titleUseExternalEvaluator">Käivita väline arvutaja</string>
     <string name="summaryUseExternalEvaluator">Käivita väline arvutaja (Google Maps, WolframAlpha) kohe pärast kõnetuvastust</string>
     <string name="titleAudioCues">Helisignaalid</string>
-    <string name="summaryAudioCues">Anna lindistamise algusest ja lõpust märku lühikese helisignaaliga</string>
+    <string name="summaryAudioCues">Anna salvestamise algusest ja lõpust märku lühikese helisignaaliga</string>
     <string name="titleUseTts">Kõneväljund</string>
     <string name="summaryUseTts">Korda sisendit süsteemse kõnesüntesaatoriga</string>
     <string name="titleArvutajaProject">Arvutaja projekt</string>
