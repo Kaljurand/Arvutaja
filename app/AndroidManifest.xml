@@ -10,6 +10,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/labelApp"
+        android:supportsRtl="true"
         android:theme="@style/Theme.Arvutaja">
         <activity
             android:name=".ArvutajaActivity"

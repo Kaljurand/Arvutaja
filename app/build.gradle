@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 701
-        versionName '0.7.01'
+        versionCode 702
+        versionName '0.7.02'
     }
 
     sourceSets {

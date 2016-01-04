@@ -82,7 +82,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 	private Resources mRes;
 	private SharedPreferences mPrefs;
-	private Vibrator mVibrator;
 
 	private static String mCurrentSortOrder;
 
@@ -192,12 +191,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 		mRes = getResources();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-		// Some devices (NOOK) do not have a vibrator
-		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		if (mVibrator != null && ! mVibrator.hasVibrator()) {
-			mVibrator = null;
-		}
 
 		mButtonMicrophone = (MicButton) findViewById(R.id.buttonMicrophone);
 
@@ -875,17 +868,6 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				Uri.parse(getString(R.string.urlK6neleDownload))
 				);
 		d.show();
-	}
-
-
-	/**
-	 * This is one way to find out if a specific recognizer is installed.
-	 * Alternatively we could query the service.
-	 */
-	private boolean isRecognizerInstalled(String pkg, String cls) {
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.setComponent(new ComponentName(pkg, cls));
-		return (getIntentActivities(intent).size() > 0);
 	}
 
 
