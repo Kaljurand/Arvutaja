@@ -29,7 +29,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -209,10 +208,10 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				// Converts a flat list position (the raw position of an item (child or group) in the list)
 				// to a group and/or child position (represented in a packed position).
 				long packedPosition = listView.getExpandableListPosition(position);
-				Cursor cursor = null;
+				Cursor cursor;
 				final Uri contentUri;
 				final long key;
-				String translation = null;
+				String translation;
 				if (ExpandableListView.getPackedPositionType(packedPosition) == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
 					cursor = (Cursor) listView.getExpandableListAdapter().getGroup(position);
 					if (cursor == null) {
@@ -339,7 +338,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			if (mSr == null) {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
-				final String lang = mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage));
+				String intentLang = getIntent().getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
+				final String lang = intentLang == null ? mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)) : intentLang;
 
 				if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
 				mTts = new TtsProvider(this, new TextToSpeech.OnInitListener() {

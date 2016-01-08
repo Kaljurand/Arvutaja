@@ -35,11 +35,22 @@ public abstract class AbstractRecognizerActivity extends Activity {
      * Launches an activity which the user probably does not want to see
      * if he presses HOME while in this activity and then starts Arvutaja again
      * from the launcher.
+     * <p/>
+     * TODO: Note that activities cannot be launched when the app was launched via voice interaction.
+     * We get the exception:
+     * java.lang.SecurityException: Starting under voice control not allowed for:
+     * Intent { act=android.intent.action.VIEW dat=http://maps.google.com/... flg=0x80000 }
      */
     public void startForeignActivity(Intent intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        } catch (SecurityException e) {
+            // TODO: localize the error message
+            toast(e.getMessage());
+        }
     }
+
 
     public String getVersionName() {
         return Utils.getVersionName(this);

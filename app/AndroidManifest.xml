@@ -53,6 +53,17 @@
             </intent-filter>
             -->
         </activity>
+        <!-- TODO: Experimental. Allows one to launch Arvutaja by saying "Ok Google take a picture" -->
+        <activity
+            android:name=".activity.VoiceActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.VOICE" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ExamplesActivity"
             android:label="@string/labelExamples"></activity>
