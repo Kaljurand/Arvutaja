@@ -338,8 +338,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 			if (mSr == null) {
 				toast(getString(R.string.errorNoDefaultRecognizer));
 			} else {
-				String intentLang = getIntent().getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
-				final String lang = intentLang == null ? mPrefs.getString(getString(R.string.keyLanguage), getString(R.string.defaultLanguage)) : intentLang;
+				final String lang = getLang(mPrefs, mRes);
 
 				if (mPrefs.getBoolean(getString(R.string.keyUseTts), mRes.getBoolean(R.bool.defaultUseTts))) {
 				mTts = new TtsProvider(this, new TextToSpeech.OnInitListener() {
@@ -633,9 +632,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 
 			// If the transcription is not ambiguous, and the user prefers to
 			// evaluate using an external activity, then we launch it via an intent.
-			boolean launchExternalEvaluator = mPrefs.getBoolean(
-					getString(R.string.keyUseExternalEvaluator),
-					mRes.getBoolean(R.bool.defaultUseExternalEvaluator));
+			boolean launchExternalEvaluator = useExternalEvaluator(mPrefs, mRes);
 
 			mQueryHandler.insert(QUERY_CONTENT_URI, valuesList.get(0), ! launchExternalEvaluator);
 
@@ -680,13 +677,7 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 	}
 
 	private void setUpRecognizerGui(final SpeechRecognizer sr, final Intent intentRecognizer) {
-		final AudioCue audioCue;
-
-		if (mPrefs.getBoolean(getString(R.string.keyAudioCues), mRes.getBoolean(R.bool.defaultAudioCues))) {
-			audioCue = new AudioCue(this);
-		} else {
-			audioCue = null;
-		}
+		final AudioCue audioCue = createAudioCue(mPrefs, mRes);
 
 		sr.setRecognitionListener(new RecognitionListener() {
 
@@ -845,9 +836,13 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				Intent.ACTION_VOICE_COMMAND.equals(intentArvutaja.getAction())
 			||
 				extras != null && extras.getBoolean(Extras.EXTRA_LAUNCH_RECOGNIZER)) {
-			// We disable the intent so that it would not fire on orientation change
+			// We disable the intent so that it would not fire on orientation change,
+			// but we keep the EXTRAs (e.g. this is needed later for the launching of the external
+			// evaluator).
 			Intent intentVoid = new Intent(this, ArvutajaActivity.class);
 			intentVoid.setAction(null);
+			intentVoid.putExtras(extras);
+			intentVoid.putExtra(Extras.EXTRA_LAUNCH_RECOGNIZER, false);
 			setIntent(intentVoid);
 			mButtonMicrophone.performClick();
 		}

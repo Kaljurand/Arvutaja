@@ -68,6 +68,11 @@ public class VoiceActivity extends Activity {
         Intent intent = new Intent(this, ArvutajaActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Extras.EXTRA_LAUNCH_RECOGNIZER, true);
+        // In hands-free mode we want to have the audio cue
+        intent.putExtra(Extras.EXTRA_AUDIO_CUES, true);
+        // In hands-free mode we want to evaluate the results using an external app,
+        // without the user having to click the respective button.
+        intent.putExtra(Extras.EXTRA_USE_EXTERNAL_EVALUATOR, true);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, lang);
         startActivity(intent);
         finish();
