@@ -53,7 +53,9 @@
             </intent-filter>
             -->
         </activity>
-        <!-- TODO: Experimental. Allows one to launch Arvutaja by saying "Ok Google take a picture" -->
+        <!-- TODO: Experimental. Allows one to launch Arvutaja by saying "Ok Google take a picture".
+         Currently disabled to wait for support for a better hot phrase. -->
+        <!--
         <activity
             android:name=".activity.VoiceActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
@@ -64,6 +66,7 @@
                 <category android:name="android.intent.category.VOICE" />
             </intent-filter>
         </activity>
+        -->
         <activity
             android:name=".ExamplesActivity"
             android:label="@string/labelExamples"></activity>
