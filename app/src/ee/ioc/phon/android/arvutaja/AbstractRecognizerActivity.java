@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011-2015, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2016, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package ee.ioc.phon.android.arvutaja;
  */
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -48,7 +46,7 @@ public abstract class AbstractRecognizerActivity extends Activity {
      * java.lang.SecurityException: Starting under voice control not allowed for:
      * Intent { act=android.intent.action.VIEW dat=http://maps.google.com/... flg=0x80000 }
      */
-    void startForeignActivity(Intent intent) {
+    protected void startForeignActivity(Intent intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         try {
             startActivity(intent);
@@ -59,39 +57,25 @@ public abstract class AbstractRecognizerActivity extends Activity {
     }
 
 
-    List<ResolveInfo> getIntentActivities(Intent intent) {
+    protected List<ResolveInfo> getIntentActivities(Intent intent) {
         PackageManager pm = getPackageManager();
         return pm.queryIntentActivities(intent, 0);
     }
 
 
-    void toast(String message) {
+    protected void toast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
-
-    void showErrorDialog(int msg) {
-        new AlertDialog.Builder(this)
-                .setPositiveButton(getString(R.string.buttonOk), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                })
-                .setTitle(R.string.error)
-                .setMessage(msg)
-                .create()
-                .show();
-    }
-
-    void showError(int msg) {
-        Toast.makeText(getApplicationContext(), getString(msg), Toast.LENGTH_LONG).show();
+    protected void showError(int msg) {
+        toast(getString(msg));
     }
 
     /**
      * If the caller defines the EXTRA_LANGUAGE, then use that language.
      * Otherwise take the language from the Language-setting.
      */
-    String getLang(SharedPreferences prefs, Resources res) {
+    protected String getLang(SharedPreferences prefs, Resources res) {
         Intent intent = getIntent();
         if (intent != null) {
             String lang = intent.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE);
@@ -108,7 +92,7 @@ public abstract class AbstractRecognizerActivity extends Activity {
      * Otherwise play the audio cues if the AudioCues-setting is true.
      * TODO: future work: just pass this EXTRA on to the recognizer engine (i.e. do not play cues in Arvutaja)
      */
-    AudioCue createAudioCue(SharedPreferences prefs, Resources res) {
+    protected AudioCue createAudioCue(SharedPreferences prefs, Resources res) {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(Extras.EXTRA_AUDIO_CUES)) {
             if (intent.getBooleanExtra(Extras.EXTRA_AUDIO_CUES, false)) {
@@ -124,7 +108,7 @@ public abstract class AbstractRecognizerActivity extends Activity {
     }
 
 
-    boolean useExternalEvaluator(SharedPreferences prefs, Resources res) {
+    protected boolean useExternalEvaluator(SharedPreferences prefs, Resources res) {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(Extras.EXTRA_USE_EXTERNAL_EVALUATOR)) {
             return intent.getBooleanExtra(Extras.EXTRA_USE_EXTERNAL_EVALUATOR, false);

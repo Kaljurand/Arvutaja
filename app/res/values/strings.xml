@@ -27,7 +27,6 @@
     <string name="labelSettings">Settings</string>
     <string name="labelShow">Info</string>
     <string name="warningUtteranceNotSupported">Input sentence not supported</string>
-    <string name="error">Error</string>
     <string name="errorResultAudioError">Audio recording failed. Either the recognition service lacks permission to record, or another app is currently recording.</string>
     <string name="errorResultNetworkError">Something is wrong with the network</string>
     <string name="errorResultClientError">General client error</string>

@@ -7,7 +7,6 @@
     <string name="labelShow">Info</string>
     <string name="urlArvutajaProject">http://kaljurand.github.io/Arvutaja/index.et.html</string>
     <string name="warningUtteranceNotSupported">Sisendlause pole toetatud</string>
-    <string name="error">Viga</string>
     <string name="errorResultAudioError">Heli salvestamine luhtus. Kõnetuvastusteenusel puudub heli salvestamise õigus või mõni teine rakendus parasjagu salvestab.</string>
     <string name="errorResultNetworkError">Puudub võrguühendus kõnetuvastusserveriga</string>
     <string name="errorResultClientError">Kliendiviga</string>
