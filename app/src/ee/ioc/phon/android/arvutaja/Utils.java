@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2016, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
@@ -124,15 +121,6 @@ public class Utils {
 	}
 
 
-	public static String getVersionName(Context c) {
-		PackageInfo info = getPackageInfo(c);
-		if (info == null) {
-			return "?.?.?";
-		}
-		return info.versionName;
-	}
-
-
 	public static String localeToTtsCode(Locale locale) {
 		String iso3 = locale.getISO3Language();
 		return Character.toUpperCase(iso3.charAt(0)) + iso3.substring(1) + "tts";
@@ -152,16 +140,5 @@ public class Utils {
 			return expression + " " + equals + " " + nf.format(value);
 		}
 		return expression;
-	}
-
-
-	private static PackageInfo getPackageInfo(Context c) {
-		PackageManager manager = c.getPackageManager();
-		try {
-			return manager.getPackageInfo(c.getPackageName(), 0);
-		} catch (NameNotFoundException e) {
-			Log.e("Couldn't find package information in PackageManager: " + e);
-		}
-		return null;
 	}
 }

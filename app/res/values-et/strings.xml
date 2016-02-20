@@ -53,7 +53,7 @@
     <string name="alarmExtraMessage">Arvutaja pandud</string>
     <string name="titleCategoryLinks">Viited</string>
     <string name="fileExamples">file:///android_asset/examples/et.html</string>
-    <string name="msgFoundK6nele">Kasutan kõnetuvastuseks rakendust Kõnele.
+    <string name="msgFoundK6nele">Kasutan kõnetuvastuseks teenust \"%1$s\".
         Seda valikut on võimalik soovi korral Arvutaja-seadetes muuta.</string>
     <string name="confirmDeleteEntry">Kas tahate kindlasti kustutada \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Kas tahate kindlasti selle tulemustegrupi kustutada?</string>

@@ -1,7 +1,7 @@
 package ee.ioc.phon.android.arvutaja;
 
 /*
- * Copyright 2011-2013, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2011-2016, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -319,7 +319,8 @@ public class ArvutajaActivity extends AbstractRecognizerActivity {
 				editor.apply();
 				AlertDialog d = Utils.getOkDialog(
 						this,
-						getString(R.string.msgFoundK6nele)
+						String.format(getString(R.string.msgFoundK6nele),
+								RecognitionServiceManager.getServiceLabel(this, serviceComponent))
 						);
 				d.show();
 			} else {

@@ -1,63 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
         android:dialogTitle="@string/dialogTitleService"
         android:entries="@array/empty"
         android:entryValues="@array/empty"
         android:key="@string/keyService"
-        android:title="@string/titleService" >
-    </ListPreference>
+        android:title="@string/titleService"></ListPreference>
     <ListPreference
         android:dialogTitle="@string/dialogTitleLanguage"
         android:entries="@array/empty"
         android:entryValues="@array/empty"
         android:key="@string/keyLanguage"
-        android:title="@string/titleLanguage" >
-    </ListPreference>
+        android:title="@string/titleLanguage"></ListPreference>
     <ListPreference
         android:defaultValue="@string/defaultMaxResults"
         android:dialogTitle="@string/titleMaxResults"
         android:entries="@array/entryValuesMaxResults"
         android:entryValues="@array/entryValuesMaxResults"
         android:key="@string/keyMaxResults"
-        android:title="@string/titleMaxResults" >
-    </ListPreference>
+        android:title="@string/titleMaxResults"></ListPreference>
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
         android:title="@string/titleUseExternalEvaluator" />
-    <CheckBoxPreference
+    <SwitchPreference
         android:defaultValue="@bool/defaultAudioCues"
         android:key="@string/keyAudioCues"
         android:summary="@string/summaryAudioCues"
         android:title="@string/titleAudioCues" />
-    <CheckBoxPreference
+    <SwitchPreference
         android:defaultValue="@bool/defaultUseTts"
         android:key="@string/keyUseTts"
         android:summary="@string/summaryUseTts"
         android:title="@string/titleUseTts" />
 
-    <PreferenceCategory android:title="@string/titleCategoryLinks" >
+    <PreferenceCategory android:title="@string/titleCategoryLinks">
         <Preference
             android:summary="@string/summaryArvutajaProject"
-            android:title="@string/titleArvutajaProject" >
+            android:title="@string/titleArvutajaProject">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/urlArvutajaProject" />
         </Preference>
         <Preference
             android:summary="@string/summaryGrammarsProject"
-            android:title="@string/titleGrammarsProject" >
+            android:title="@string/titleGrammarsProject">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/urlGrammarsProject" />
         </Preference>
         <Preference
             android:summary="@string/summaryK6neleProject"
-            android:title="@string/titleK6neleProject" >
+            android:title="@string/titleK6neleProject">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/urlK6neleProject" />
