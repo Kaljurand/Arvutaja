@@ -22,7 +22,7 @@ dependencies {
     compile ('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:23.1.1'
+    compile 'com.android.support:support-v13:23.2.0'
 }
 
 android {
@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 706
-        versionName '0.7.06'
+        versionCode 708
+        versionName '0.7.08'
     }
 
     sourceSets {
