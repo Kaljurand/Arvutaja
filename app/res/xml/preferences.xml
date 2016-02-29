@@ -21,17 +21,17 @@
         android:key="@string/keyMaxResults"
         android:title="@string/titleMaxResults"></ListPreference>
 
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/defaultUseExternalEvaluator"
         android:key="@string/keyUseExternalEvaluator"
         android:summary="@string/summaryUseExternalEvaluator"
         android:title="@string/titleUseExternalEvaluator" />
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/defaultAudioCues"
         android:key="@string/keyAudioCues"
         android:summary="@string/summaryAudioCues"
         android:title="@string/titleAudioCues" />
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/defaultUseTts"
         android:key="@string/keyUseTts"
         android:summary="@string/summaryUseTts"
