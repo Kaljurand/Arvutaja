@@ -2,17 +2,17 @@
 // The project itself needs to declare its own repositories and dependencies.
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta7'
     }
 }
 
 apply plugin: 'com.android.application'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -22,7 +22,7 @@ dependencies {
     compile ('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:23.2.0'
+    compile 'com.android.support:support-v13:23.2.1'
 }
 
 android {
@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 708
-        versionName '0.7.08'
+        versionCode 710
+        versionName '0.7.10'
     }
 
     sourceSets {
@@ -69,6 +69,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFile getDefaultProguardFile('proguard-android.txt')
             proguardFile 'proguard.cfg'
             signingConfig signingConfigs.release
@@ -83,4 +84,34 @@ if (project.hasProperty('storePassword') &&
     android.signingConfigs.release.keyPassword = keyPassword
 } else {
     android.buildTypes.release.signingConfig = null
+}
+
+
+task(deploy) << {
+    description 'Copy the APK and the ProGuard mapping file to the deploy directory'
+
+    def deploy_dir = System.getenv('APK_DEPLOY_DIR')
+
+    def version = android.defaultConfig.versionName
+
+    def outputs = 'build/outputs/'
+    def apk1 = outputs + 'apk/app-release.apk'
+    def apk2 = "${deploy_dir}Arvutaja-${version}.apk"
+    def mapping1 = outputs + 'mapping/release/mapping.txt'
+    def mapping2 = "${deploy_dir}Arvutaja-mapping-${version}.txt"
+
+    def output1 = exec {
+        commandLine 'cp', '--verbose', apk1, apk2
+    }
+
+    def output2 = exec {
+        commandLine 'cp', '--verbose', mapping1, mapping2
+    }
+
+    def output3 = exec {
+        commandLine 'ls', '-l', deploy_dir
+    }
+
+    println "adb uninstall ee.ioc.phon.android.arvutaja"
+    println "adb install ${apk2}"
 }
