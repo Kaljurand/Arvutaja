@@ -1,19 +1,4 @@
-// Note: This only affects the code running the build, not the project.
-// The project itself needs to declare its own repositories and dependencies.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
-    }
-}
-
 apply plugin: 'com.android.application'
-
-repositories {
-    jcenter()
-}
 
 dependencies {
     compile project(':speechutils:app')
@@ -22,18 +7,18 @@ dependencies {
     compile ('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:23.3.0'
+    compile 'com.android.support:support-v13:24.2.0'
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 24
+    buildToolsVersion '24.0.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 712
-        versionName '0.7.12'
+        targetSdkVersion 24
+        versionCode 714
+        versionName '0.7.14'
     }
 
     sourceSets {

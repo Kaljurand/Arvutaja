@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.os.Build;
 import android.speech.RecognizerIntent;
 import android.widget.Toast;
 
@@ -48,6 +49,12 @@ public abstract class AbstractRecognizerActivity extends Activity {
      */
     protected void startForeignActivity(Intent intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // If in split-screen mode, launch the foreign activity into the 2nd screen.
+            // TODO: not sure this has any effect,
+            // the launched activity ends up in the 2nd screen anyway.
+            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        }
         try {
             startActivity(intent);
         } catch (SecurityException e) {
