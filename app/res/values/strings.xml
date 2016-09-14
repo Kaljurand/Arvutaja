@@ -23,6 +23,8 @@
     <string name="prefCurrentSortOrder" translatable="false">prefCurrentSortOrder</string>
     <string name="prefCurrentSortOrderMenu" translatable="false">prefCurrentSortOrderMenu</string>
     <string name="prefFirstTime" translatable="false">prefFirstTime702</string>
+    <string name="fileExamplesEt" translatable="false">file:///android_asset/examples/et.html</string>
+    <string name="fileExamplesEnUs" translatable="false">file:///android_asset/examples/en_US.html</string>
     <string name="labelExamples">Examples</string>
     <string name="labelSettings">Settings</string>
     <string name="labelShow">Info</string>
@@ -72,7 +74,6 @@
     <string name="buttonNever">Never</string>
     <string name="buttonLater">Later</string>
     <string name="alarmExtraMessage">set by Arvutaja</string>
-    <string name="fileExamples">file:///android_asset/examples/en_US.html</string>
     <string name="msgFoundK6nele">Using \"%1$s\" as the speech recognizer. You can change it in the Arvutaja-settings, but note that Arvutaja works best only with \"%1$s\".</string>
     <string name="confirmDeleteEntry">Are you sure you want to delete entry \"%1$s\"?</string>
     <string name="confirmDeleteMultiEntry">Are you sure you want to delete this multielement entry?</string>

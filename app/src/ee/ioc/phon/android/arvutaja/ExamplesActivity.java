@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Institute of Cybernetics at Tallinn University of Technology
+ * Copyright 2012-2016, Institute of Cybernetics at Tallinn University of Technology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,25 @@
 package ee.ioc.phon.android.arvutaja;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.webkit.WebView;
+
+import ee.ioc.phon.android.speechutils.utils.PreferenceUtils;
 
 public class ExamplesActivity extends SubActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		WebView webview = new WebView(this);
-		setContentView(webview);
-		webview.loadUrl(getString(R.string.fileExamples));
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WebView webview = new WebView(this);
+        setContentView(webview);
+        String locale = PreferenceUtils.getPrefString(PreferenceManager.getDefaultSharedPreferences(this),
+                getResources(), R.string.keyLanguage, R.string.defaultLanguage);
+        if ("et-EE".equals(locale)) {
+            webview.loadUrl(getString(R.string.fileExamplesEt));
+        } else {
+            webview.loadUrl(getString(R.string.fileExamplesEnUs));
+        }
+    }
 
 }
