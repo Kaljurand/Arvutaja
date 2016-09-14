@@ -7,7 +7,7 @@ dependencies {
     compile ('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:24.2.0'
+    compile 'com.android.support:support-v13:24.2.1'
 }
 
 android {
