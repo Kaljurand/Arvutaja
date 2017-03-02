@@ -7,18 +7,18 @@ dependencies {
     compile ('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:24.2.1'
+    compile 'com.android.support:support-v13:25.2.0'
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 24
-        versionCode 716
-        versionName '0.7.16'
+        targetSdkVersion 25
+        versionCode 718
+        versionName '0.7.18'
     }
 
     sourceSets {
