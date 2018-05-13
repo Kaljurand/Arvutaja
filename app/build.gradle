@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile project(':speechutils:app')
+    implementation project(':speechutils:app')
 
     // See also: http://stackoverflow.com/questions/23838362/gradle-how-to-exclude-javax-realtime-package-from-jscience-jar-dependency-mult
-    compile('org.jscience:jscience:4.3.1') {
+    implementation('org.jscience:jscience:4.3.1') {
         exclude group: 'org.javolution', module: 'javolution'
     }
-    compile 'com.android.support:support-v13:' + rootProject.supportLibVersion
+    implementation 'com.android.support:support-v13:' + rootProject.supportLibVersion
 }
 
 android {
@@ -16,9 +16,9 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 720
-        versionName '0.7.20'
+        targetSdkVersion 27
+        versionCode 721
+        versionName '0.7.21'
     }
 
     sourceSets {
@@ -31,9 +31,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
 
         // Move the build types to build-types/<type>
         // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
